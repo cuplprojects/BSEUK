@@ -19,9 +19,7 @@ import { BsHandIndexThumb } from "react-icons/bs";
 import { motion, AnimatePresence } from "framer-motion";
 import { useThemeStore } from '../store/themeStore';
 import { useState } from 'react';
-import logo from './../assets/logo/EMS-Logo-1.png';
-import logoLight from './../assets/logo/EMS-Light.png';
-import CUPL from './../assets/logo/CUPL-Logo.png';
+
 const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
   const location = useLocation();
   const theme = useThemeStore((state) => state.theme);
@@ -193,7 +191,7 @@ const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
                 className="w-full flex justify-center"
               >
                 <Link to="/dashboard">
-                  <img src={theme === 'dark' ? logo : logoLight} alt="CUPL | EMS" className="h-24 w-auto" />
+                  {/* <img src={theme === 'dark' ? logo : logoLight} alt="CUPL | EMS" className="h-24 w-auto" /> */}
                   {/* <img src={CUPL} alt="CUPL | EMS" className={`h-14 w-auto rounded-xl p-2 ${
                     theme === 'dark' 
                       ? 'bg-gradient-to-r from-purple-900/50 to-purple-600/50' 

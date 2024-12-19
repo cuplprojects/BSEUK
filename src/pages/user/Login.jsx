@@ -49,122 +49,130 @@ const Login = () => {
     e.preventDefault();
     if (validateForm()) {
       setLoading(true);
-      // Simulating API call
       await new Promise((resolve) => setTimeout(resolve, 2000));
       setLoading(false);
-      navigate('/dashboard'); // Navigate to layout after successful login
+      navigate('/dashboard');
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-purple-900 to-black flex items-center justify-center p-4">
-      <div className="relative w-full max-w-md">
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 blur-lg opacity-30 animate-pulse"></div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-300 via-blue-100 to-blue-300 flex items-center justify-center p-4">
+      <div className="relative w-full max-w-5xl">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-400/50 to-blue-500/50 blur-lg opacity-30 animate-pulse"></div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative bg-black/40 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-purple-500/20"
+          className="relative overflow-hidden bg-white rounded-2xl shadow-2xl flex h-[600px]"
         >
-          <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-8 text-center">
-            EMS Login Interface
-          </h2>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <div className="relative">
-                <FiMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-400" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className={`w-full bg-purple-900/20 border ${errors.email ? 'border-red-500 animate-shake' : 'border-purple-500/50'} rounded-lg py-3 px-10 text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300`}
-                  placeholder="User ID (Email)"
-                  aria-label="Email"
-                />
+          {/* Left side with image and gradient overlay */}
+          <div className="hidden md:block w-1/2 relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-500">
+              <div className="absolute inset-0 opacity-20">
+                {/* Add your decorative elements here */}
+                <div className="absolute top-1/4 left-1/4 w-20 h-20 bg-white/20 rounded-full blur-xl"></div>
+                <div className="absolute bottom-1/3 right-1/3 w-32 h-32 bg-white/20 rounded-full blur-xl"></div>
               </div>
-              <AnimatePresence>
-                {errors.email && (
-                  <motion.p
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="text-red-400 text-sm"
-                  >
-                    {errors.email}
-                  </motion.p>
-                )}
-              </AnimatePresence>
-              {suggestions.length > 0 && (
-                <div className="absolute z-10 w-full bg-black/90 border border-purple-500/50 rounded-lg mt-1">
-                  {suggestions.map((suggestion, index) => (
+            </div>
+            <div className="relative p-12 text-white z-10 flex flex-col justify-center h-full">
+              <h1 className="text-4xl font-bold mb-6">Welcome to BSEUK Portal</h1>
+              <p className="text-lg opacity-90">
+                Log in to access your account and manage your Account, or sign up to create a new account.
+              </p>
+            </div>
+          </div>
+
+          {/* Right side with form */}
+          <div className="w-full md:w-1/2 p-8 sm:p-12 bg-white flex items-center">
+            <div className="max-w-md mx-auto w-full">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-8 text-center bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">
+                LOGIN
+              </h2>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="space-y-2">
+                  <div className="relative">
+                    <FiMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className={`w-full bg-gray-50 border ${
+                        errors.email ? 'border-red-500' : 'border-gray-200'
+                      } rounded-lg py-3 px-10 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300`}
+                      placeholder="Email"
+                    />
+                  </div>
+                  <AnimatePresence>
+                    {errors.email && (
+                      <motion.p
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="text-red-500 text-sm"
+                      >
+                        {errors.email}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="relative">
+                    <FiLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className={`w-full bg-gray-50 border ${
+                        errors.password ? 'border-red-500' : 'border-gray-200'
+                      } rounded-lg py-3 px-10 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300`}
+                      placeholder="Password"
+                    />
                     <button
-                      key={index}
                       type="button"
-                      onClick={() => setEmail(suggestion)}
-                      className="w-full text-left px-4 py-2 text-purple-300 hover:bg-purple-900/30 transition-colors duration-200"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                     >
-                      {suggestion}
+                      {showPassword ? <FiEyeOff /> : <FiEye />}
                     </button>
-                  ))}
+                  </div>
+                  <AnimatePresence>
+                    {errors.password && (
+                      <motion.p
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="text-red-500 text-sm"
+                      >
+                        {errors.password}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
                 </div>
-              )}
-            </div>
 
-            <div className="space-y-2">
-              <div className="relative">
-                <FiLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-400" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className={`w-full bg-purple-900/20 border ${errors.password ? 'border-red-500 animate-shake' : 'border-purple-500/50'} rounded-lg py-3 px-10 text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300`}
-                  placeholder="Access Key (Password)"
-                  aria-label="Password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-purple-400 hover:text-purple-300 transition-colors duration-200"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
+                <div className="flex justify-end text-sm">
+                  <Link to="/forgot" className="text-blue-600 hover:text-blue-700 transition-colors duration-200">
+                    Forgot Password?
+                  </Link>
+                </div>
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg py-3 px-6 font-semibold transform transition-all duration-300 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
                 >
-                  {showPassword ? <FiEyeOff /> : <FiEye />}
-                </button>
-              </div>
-              <AnimatePresence>
-                {errors.password && (
-                  <motion.p
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="text-red-400 text-sm"
-                  >
-                    {errors.password}
-                  </motion.p>
-                )}
-              </AnimatePresence>
+                  {loading ? (
+                    <div className="flex items-center justify-center">
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span className="ml-2">Logging in...</span>
+                    </div>
+                  ) : (
+                    "Login"
+                  )}
+                </motion.button>
+              </form>
             </div>
-
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg py-3 px-6 font-semibold transform transition-all duration-300 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50"
-            >
-              {loading ? (
-                <div className="flex items-center justify-center">
-                  <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                </div>
-              ) : (
-                "Initialize Connection"
-              )}
-            </motion.button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <Link to="/forgot-password" className="text-purple-400 hover:text-purple-300 transition-colors duration-200">
-              Reset Access Credentials?
-            </Link>
           </div>
         </motion.div>
       </div>
