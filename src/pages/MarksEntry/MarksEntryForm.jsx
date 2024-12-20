@@ -1,45 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useParams } from 'react-router-dom';
 import StudentData from './StudentData';
 import Papers from './Papers';
 import EditMarks from './EditMarks';
-import API from '../../services/api';
 import { useThemeStore } from '../../store/themeStore';
+import axios from 'axios';
 
-const MarksEntryForm = ({ studentId, onSubmit }) => {
+const MarksEntryForm = () => {
+    const { studentId } = useParams();
     const theme = useThemeStore((state) => state.theme);
     const [studentData, setStudentData] = useState(null);
+    const [sessionName, setSessionName] = useState('');
+    const [semesterName, setSemesterName] = useState('');
     const [papers, setPapers] = useState([]);
     const [loading, setLoading] = useState(true);
-
-    // Fetch student data based on studentId
-    useEffect(() => {
-        const fetchStudentData = async () => {
-            try {
-                setLoading(true);
-                const response = await API.get(API.endpoints.students.detail(studentId));
-                setStudentData(response.data);
-            } catch (error) {
-                console.error('Error fetching student data:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        if (studentId) {
-            fetchStudentData();
-        }
-    }, [studentId]);
-
-    // Fetch papers data (mock for now)
-    useEffect(() => {
-        const mockPapers = [
-            { id: 1, name: 'Mathematics' },
-            { id: 2, name: 'Science' },
-            { id: 3, name: 'History' },
-        ];
-        setPapers(mockPapers);
-    }, []);
 
     // Theme-based styles
     const cardClass = theme === 'dark'
@@ -53,6 +28,36 @@ const MarksEntryForm = ({ studentId, onSubmit }) => {
     const subTextClass = theme === 'dark'
         ? 'text-purple-300'
         : 'text-blue-600';
+
+    // Fetch all required data
+    useEffect(() => {
+        const fetchAllData = async () => {
+            if (studentId) {
+                try {
+                    setLoading(true);
+                    // Fetch student data
+                    const studentResponse = await axios.get(`https://localhost:7133/api/Candidates/${studentId}`);
+                    const student = studentResponse.data;
+                    setStudentData(student);
+
+                    // Fetch session and semester names
+                    const [sessionResponse, semesterResponse] = await Promise.all([
+                        axios.get(`https://localhost:7133/api/Sessions/${student.sesID}`),
+                        axios.get(`https://localhost:7133/api/Semesters/${student.semID}`)
+                    ]);
+
+                    setSessionName(sessionResponse.data.sessionName);
+                    setSemesterName(semesterResponse.data.semesterName);
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                } finally {
+                    setLoading(false);
+                }
+            }
+        };
+
+        fetchAllData();
+    }, [studentId]);
 
     return (
         <div className="space-y-6">
@@ -82,7 +87,12 @@ const MarksEntryForm = ({ studentId, onSubmit }) => {
                                 <span className="ml-2">Loading student data...</span>
                             </div>
                         ) : (
-                            <StudentData studentData={studentData} theme={theme} />
+                            <StudentData 
+                                studentData={studentData}
+                                sessionName={sessionName}
+                                semesterName={semesterName}
+                                theme={theme}
+                            />
                         )}
                     </motion.div>
 
@@ -103,7 +113,7 @@ const MarksEntryForm = ({ studentId, onSubmit }) => {
                             className={`border rounded-lg p-6 ${cardClass}`}
                         >
                             <h2 className={`text-xl font-semibold ${textClass} mb-4`}>Enter Marks</h2>
-                            <EditMarks studentId={studentId} onSubmit={onSubmit} theme={theme} />
+                            <EditMarks studentId={studentId} theme={theme} />
                         </motion.div>
                     </div>
                 </div>
