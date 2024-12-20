@@ -1,48 +1,55 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const StudentData = ({
-    candidateID,
-    candidateName,
-    group,
-    rollNumber,
-    fName,
-    mName,
-    dob,
-    institutionName,
-    semID,
-    sesID,
-}) => {
-    return (
-        <div className="bg-gray-100 p-4 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold mb-4">Candidate Details</h3>
-            <div className="space-y-2">
-                <p><strong>Candidate ID:</strong> {candidateID}</p>
-                <p><strong>Name:</strong> {candidateName}</p>
-                <p><strong>Group:</strong> {group}</p>
-                <p><strong>Roll Number:</strong> {rollNumber}</p>
-                <p><strong>Father's Name:</strong> {fName}</p>
-                <p><strong>Mother's Name:</strong> {mName}</p>
-                <p><strong>Date of Birth:</strong> {dob}</p>
-                <p><strong>Institution:</strong> {institutionName}</p>
-                <p><strong>Semester:</strong> {semID}</p>
-                <p><strong>Session:</strong> {sesID}</p>
+const StudentData = ({ studentData, theme }) => {
+    const textClass = theme === 'dark'
+        ? 'text-white'
+        : 'text-blue-900';
+
+    const subTextClass = theme === 'dark'
+        ? 'text-purple-300'
+        : 'text-blue-600';
+
+    const labelClass = theme === 'dark'
+        ? 'text-purple-300'
+        : 'text-blue-700';
+
+    if (!studentData) {
+        return (
+            <div className={`text-center py-4 ${subTextClass}`}>
+                No student data available
             </div>
+        );
+    }
+
+    const fields = [
+        { label: 'Name', value: studentData.name },
+        { label: 'Roll Number', value: studentData.rollNo },
+        { label: 'Group', value: studentData.group },
+        { label: "Father's Name", value: studentData.fatherName },
+        { label: "Mother's Name", value: studentData.motherName },
+        { label: 'Institution', value: studentData.institution }
+    ];
+
+    return (
+        <div className="space-y-4">
+            {fields.map((field, index) => (
+                <div key={index} className="space-y-1">
+                    <label className={`text-sm font-medium ${labelClass}`}>
+                        {field.label}
+                    </label>
+                    <p className={`${textClass}`}>
+                        {field.value || 'Not provided'}
+                    </p>
+                </div>
+            ))}
         </div>
     );
 };
 
 StudentData.propTypes = {
-    candidateID: PropTypes.number.isRequired,
-    candidateName: PropTypes.string.isRequired,
-    group: PropTypes.string.isRequired,
-    rollNumber: PropTypes.string.isRequired,
-    fName: PropTypes.string.isRequired,
-    mName: PropTypes.string.isRequired,
-    dob: PropTypes.string.isRequired,
-    institutionName: PropTypes.string.isRequired,
-    semID: PropTypes.number.isRequired,
-    sesID: PropTypes.number.isRequired,
+    studentData: PropTypes.object,
+    theme: PropTypes.string.isRequired,
 };
 
 export default StudentData;

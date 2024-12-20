@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import StudentData from './StudentData';
 import Papers from './Papers';
 import EditMarks from './EditMarks';
 import API from '../../services/api';
+import { useThemeStore } from '../../store/themeStore';
 
-const MarksEntryForm = ({ studentId, onSubmit, theme }) => {
+const MarksEntryForm = ({ studentId, onSubmit }) => {
+    const theme = useThemeStore((state) => state.theme);
     const [studentData, setStudentData] = useState(null);
     const [papers, setPapers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -39,32 +42,72 @@ const MarksEntryForm = ({ studentId, onSubmit, theme }) => {
     }, []);
 
     // Theme-based styles
-    const containerClass = theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-gray-800';
-    const headerClass = theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-blue-500 text-white';
+    const cardClass = theme === 'dark'
+        ? 'bg-black/40 backdrop-blur-xl border-r border-purple-500/20'
+        : 'bg-white border-slate-200 shadow-lg';
+
+    const textClass = theme === 'dark'
+        ? 'text-white'
+        : 'text-blue-900';
+
+    const subTextClass = theme === 'dark'
+        ? 'text-purple-300'
+        : 'text-blue-600';
 
     return (
-        <div className={`min-h-screen p-6 ${containerClass}`}>
-            {/* Header */}
-            <header className={`${headerClass} p-4 rounded-lg mb-6`}>
-                <h1 className="text-2xl font-semibold">Marks Entry</h1>
-            </header>
+        <div className="space-y-6">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="max-w-7xl mx-auto"
+            >
+                <h1 className={`text-3xl font-bold ${theme === 'dark'
+                    ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-800'
+                    : 'text-blue-700'}`}
+                >
+                    Marks Entry Form
+                </h1>
 
-            <div className="grid grid-cols-3 gap-6">
-                {/* Left Section: Student Data */}
-                <div className="col-span-1">
-                    {loading ? (
-                        <div className="text-center text-gray-500">Loading student data...</div>
-                    ) : (
-                        <StudentData studentData={studentData} />
-                    )}
-                </div>
+                <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Left Section: Student Data */}
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className={`border rounded-lg p-6 ${cardClass}`}
+                    >
+                        <h2 className={`text-xl font-semibold ${textClass} mb-4`}>Student Information</h2>
+                        {loading ? (
+                            <div className={`flex justify-center items-center py-4 ${subTextClass}`}>
+                                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-current"></div>
+                                <span className="ml-2">Loading student data...</span>
+                            </div>
+                        ) : (
+                            <StudentData studentData={studentData} theme={theme} />
+                        )}
+                    </motion.div>
 
-                {/* Right Section: Papers List and Edit Marks */}
-                <div className="col-span-2 grid grid-rows-2 gap-6">
-                    <Papers papers={papers} />
-                    <EditMarks studentId={studentId} onSubmit={onSubmit} />
+                    {/* Right Section: Papers List and Edit Marks */}
+                    <div className="lg:col-span-2 space-y-6">
+                        <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className={`border rounded-lg p-6 ${cardClass}`}
+                        >
+                            <h2 className={`text-xl font-semibold ${textClass} mb-4`}>Papers</h2>
+                            <Papers papers={papers} theme={theme} />
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className={`border rounded-lg p-6 ${cardClass}`}
+                        >
+                            <h2 className={`text-xl font-semibold ${textClass} mb-4`}>Enter Marks</h2>
+                            <EditMarks studentId={studentId} onSubmit={onSubmit} theme={theme} />
+                        </motion.div>
+                    </div>
                 </div>
-            </div>
+            </motion.div>
         </div>
     );
 };
