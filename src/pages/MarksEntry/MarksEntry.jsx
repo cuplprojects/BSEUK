@@ -3,46 +3,25 @@ import { FiSearch } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 import { useThemeStore } from '../../store/themeStore';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const MarksEntry = () => {
     const theme = useThemeStore((state) => state.theme);
     const navigate = useNavigate();
 
     // State management
-    const [sessions, setSessions] = useState([
-        { _id: 's1', session: '2021-2022' },
-        { _id: 's2', session: '2022-2023' },
-        { _id: 's3', session: '2023-2024' },
-    ]);
-    const [semesters, setSemesters] = useState([
-        { _id: 's1', semester: 'Semester 1' },
-        { _id: 's2', semester: 'Semester 2' },
-        { _id: 's3', semester: 'Semester 3' },
-        { _id: 's4', semester: 'Semester 4' },
-        { _id: 's5', semester: 'Semester 5' },
-        { _id: 's6', semester: 'Semester 6' },
-        { _id: 's7', semester: 'Semester 7' },
-        { _id: 's8', semester: 'Semester 8' },
-    ]);
+    const [sessions, setSessions] = useState([]);
+    const [semesters, setSemesters] = useState([]);
     const [selectedSession, setSelectedSession] = useState('');
     const [selectedSemester, setSelectedSemester] = useState('');
-    const [students, setStudents] = useState([
-        { _id: 's1', rollNo: '12345', name: 'John Doe', marks: 90 },
-        { _id: 's2', rollNo: '67890', name: 'Jane Doe', marks: 80 },
-        { _id: 's3', rollNo: '34567', name: 'Bob Smith', marks: 70 },
-        { _id: 's4', rollNo: '89012', name: 'Alice Johnson', marks: 60 },
-        { _id: 's5', rollNo: '56789', name: 'Charlie Brown', marks: 50 },
-        { _id: 's6', rollNo: '23456', name: 'Eva Green', marks: 40 },
-        { _id: 's7', rollNo: '90123', name: 'David Lee', marks: 30 },
-        { _id: 's8', rollNo: '45678', name: 'Sophia Kim', marks: 20 },
-    ]);
+    const [students, setStudents] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [entriesToShow, setEntriesToShow] = useState(10);
     const [page, setPage] = useState(1);
     const [totalEntries, setTotalEntries] = useState(0);
     const [loadingDropdown, setLoadingDropdown] = useState(false);
+    const [loadingStudents, setLoadingStudents] = useState(false);
     const [sortConfig, setSortConfig] = useState({ key: '', direction: '' });
-
 
     // Fetch dropdown data on component mount
     useEffect(() => {
@@ -54,20 +33,35 @@ const MarksEntry = () => {
         if (selectedSession && selectedSemester) {
             fetchStudents();
         }
-    }, [selectedSession, selectedSemester, page, searchTerm, entriesToShow]);
+    }, [selectedSession, selectedSemester]);
 
     // Fetch sessions and semesters for dropdowns
     const fetchSessionsAndSemesters = async () => {
         setLoadingDropdown(true);
         try {
-            const [sessionsData, semestersData] = await Promise.all([
-                fetch('/api/sessions').then((res) => res.json()),
-                fetch('/api/semesters').then((res) => res.json()),
+            const [sessionsResponse, semestersResponse] = await Promise.all([
+                axios.get('https://localhost:7133/api/Sessions'),
+                axios.get('https://localhost:7133/api/Semesters')
             ]);
-            setSessions(sessionsData);
-            setSemesters(semestersData);
+            
+            // Map the responses to match the expected format
+            const mappedSessions = sessionsResponse.data.map(session => ({
+                id: session.sesID.toString(),
+                session: session.sessionName
+            }));
+            
+            const mappedSemesters = semestersResponse.data.map(semester => ({
+                id: semester.semID.toString(),
+                semester: semester.semesterName
+            }));
+
+            setSessions(mappedSessions);
+            setSemesters(mappedSemesters);
         } catch (error) {
             console.error('Error fetching dropdown data:', error);
+            // Set empty arrays to prevent loading state from hanging
+            setSessions([]);
+            setSemesters([]);
         } finally {
             setLoadingDropdown(false);
         }
@@ -75,17 +69,48 @@ const MarksEntry = () => {
 
     // Fetch students data
     const fetchStudents = async () => {
+        setLoadingStudents(true);
         try {
-            const response = await fetch(
-                `/api/students?session=${selectedSession}&semester=${selectedSemester}&page=${page}&search=${searchTerm}&limit=${entriesToShow}`
+            const response = await axios.post(
+                'https://localhost:7133/api/Candidates/GetStudents',  // Change GET to POST
+                {
+                    sesID: parseInt(selectedSession),
+                    semID: parseInt(selectedSemester)
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json', // Ensure content type is set to JSON for POST
+                        'Accept': 'application/json' // Ensure you accept JSON response
+                    }
+                }
             );
-            const data = await response.json();
-            setStudents(data.students);
-            setTotalEntries(data.totalEntries);
+    
+            // Map the full response data
+            const mappedStudents = response.data.map(candidate => ({
+                id: candidate.candidateID.toString(),
+                candidateId: candidate.candidateID,
+                name: candidate.candidateName,
+                rollNo: candidate.rollNumber,
+                group: candidate.group,
+                fName: candidate.fName,
+                mName: candidate.mName,
+                dob: candidate.dob,
+                institutionName: candidate.institutionName,
+                semID: candidate.semID,
+                sesID: candidate.sesID
+            }));
+    
+            setStudents(mappedStudents);
+            setTotalEntries(response.data.length);
         } catch (error) {
             console.error('Error fetching students:', error);
+            setStudents([]);
+            setTotalEntries(0);
+        } finally {
+            setLoadingStudents(false);
         }
     };
+    
 
     const  handleEdit = (studentId) => {
         navigate(`/marks-entry/MarksEntryForm/${studentId}`);
@@ -164,7 +189,7 @@ const MarksEntry = () => {
                         ? dropdownLoading
                         : sessions.length
                             ? sessions.map((session) => (
-                                <option key={session._id} value={session._id}>
+                                <option key={session.id} value={session.id}>
                                     {session.session}
                                 </option>
                             ))
@@ -183,7 +208,7 @@ const MarksEntry = () => {
                         ? dropdownLoading
                         : semesters.length
                             ? semesters.map((semester) => (
-                                <option key={semester._id} value={semester._id}>
+                                <option key={semester.id} value={semester.id}>
                                     {semester.semester}
                                 </option>
                             ))
@@ -239,51 +264,112 @@ const MarksEntry = () => {
                     className={`border rounded-lg p-2 ${cardClass}`}
                 >
                     <div className="overflow-x-auto">
-                        <table className="table-auto w-full text-left border border-gray-300">
-                            <thead className="bg-gray-100">
-                                <tr>
-                                    <th
-                                        className="px-4 py-2 border border-gray-300 cursor-pointer"
-                                        onClick={() => handleSort('rollNo')}
-                                    >
-                                        Roll No {getSortIndicator('rollNo')}
-                                    </th>
-                                    <th
-                                        className="px-4 py-2 border border-gray-300 cursor-pointer"
-                                        onClick={() => handleSort('name')}
-                                    >
-                                        Name {getSortIndicator('name')}
-                                    </th>
-                                    <th
-                                        className="px-4 py-2 border border-gray-300 cursor-pointer"
-                                        onClick={() => handleSort('marks')}
-                                    >
-                                        Marks {getSortIndicator('marks')}
-                                    </th>
-                                    <th className="px-4 py-2 border border-gray-300">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {students.map((student, index) => (
-                                    <tr
-                                        key={student.rollNo}
-                                        className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}
-                                    >
-                                        <td className="px-4 py-2 border border-gray-300">{student.rollNo}</td>
-                                        <td className="px-4 py-2 border border-gray-300">{student.name}</td>
-                                        <td className="px-4 py-2 border border-gray-300">{student.marks}</td>
-                                        <td className="px-4 py-2 border border-gray-300">
-                                            <button
-                                                onClick={() => handleEdit(student._id)}
-                                                className="p-2 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
+                        {selectedSession && selectedSemester ? (
+                            loadingStudents ? (
+                                <div className="flex justify-center items-center py-4">
+                                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500"></div>
+                                    <span className="ml-2">Loading students...</span>
+                                </div>
+                            ) : students.length > 0 ? (
+                                <table className="w-full border-collapse border border-gray-300">
+                                    <thead className="bg-gray-200">
+                                        <tr>
+                                            <th className="px-4 py-2 border border-gray-300">Candidate ID</th>
+                                            <th 
+                                                className="px-4 py-2 border border-gray-300 cursor-pointer"
+                                                onClick={() => handleSort('name')}
                                             >
-                                                Edit
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                                Name {getSortIndicator('name')}
+                                            </th>
+                                            <th 
+                                                className="px-4 py-2 border border-gray-300 cursor-pointer"
+                                                onClick={() => handleSort('rollNo')}
+                                            >
+                                                Roll No {getSortIndicator('rollNo')}
+                                            </th>
+                                            <th 
+                                                className="px-4 py-2 border border-gray-300 cursor-pointer"
+                                                onClick={() => handleSort('group')}
+                                            >
+                                                Group {getSortIndicator('group')}
+                                            </th>
+                                            <th 
+                                                className="px-4 py-2 border border-gray-300 cursor-pointer"
+                                                onClick={() => handleSort('fName')}
+                                            >
+                                                Father's Name {getSortIndicator('fName')}
+                                            </th>
+                                            <th 
+                                                className="px-4 py-2 border border-gray-300 cursor-pointer"
+                                                onClick={() => handleSort('mName')}
+                                            >
+                                                Mother's Name {getSortIndicator('mName')}
+                                            </th>
+                                            <th 
+                                                className="px-4 py-2 border border-gray-300 cursor-pointer"
+                                                onClick={() => handleSort('dob')}
+                                            >
+                                                Date of Birth {getSortIndicator('dob')}
+                                            </th>
+                                            <th 
+                                                className="px-4 py-2 border border-gray-300 cursor-pointer"
+                                                onClick={() => handleSort('institutionName')}
+                                            >
+                                                Institution Name {getSortIndicator('institutionName')}
+                                            </th>
+                                            <th 
+                                                className="px-4 py-2 border border-gray-300 cursor-pointer"
+                                                onClick={() => handleSort('semID')}
+                                            >
+                                                Semester ID {getSortIndicator('semID')}
+                                            </th>
+                                            <th 
+                                                className="px-4 py-2 border border-gray-300 cursor-pointer"
+                                                onClick={() => handleSort('sesID')}
+                                            >
+                                                Session ID {getSortIndicator('sesID')}
+                                            </th>
+                                            <th className="px-4 py-2 border border-gray-300">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {students.map((student, index) => (
+                                            <tr
+                                                key={student.id}
+                                                className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}
+                                            >
+                                                <td className="px-4 py-2 border border-gray-300">{student.candidateId}</td>
+                                                <td className="px-4 py-2 border border-gray-300">{student.name}</td>
+                                                <td className="px-4 py-2 border border-gray-300">{student.rollNo}</td>
+                                                <td className="px-4 py-2 border border-gray-300">{student.group}</td>
+                                                <td className="px-4 py-2 border border-gray-300">{student.fName}</td>
+                                                <td className="px-4 py-2 border border-gray-300">{student.mName}</td>
+                                                <td className="px-4 py-2 border border-gray-300">{student.dob}</td>
+                                                <td className="px-4 py-2 border border-gray-300">{student.institutionName}</td>
+                                                <td className="px-4 py-2 border border-gray-300">{student.semID}</td>
+                                                <td className="px-4 py-2 border border-gray-300">{student.sesID}</td>
+                                                <td className="px-4 py-2 border border-gray-300">
+                                                    <button
+                                                        onClick={() => handleEdit(student.id)}
+                                                        className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+                                                    >
+                                                        Edit
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            ) : (
+                                <div className="text-center py-4 text-gray-500">
+                                    No students found for the selected session and semester.
+                                </div>
+                            )
+                        ) : (
+                            <div className="text-center py-4 text-gray-500">
+                                Please select both Session and Semester to view students.
+                            </div>
+                        )}
                     </div>
                 </motion.div>
 
