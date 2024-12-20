@@ -1,16 +1,20 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useState } from 'react';
 import Layout from "./layout/layout";
-import Login from './pages/user/login';
+import Login from './pages/user/Login';
 import Forgot from './pages/user/Forgot';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/user/Profile';
 import Settings from './pages/user/Settings';
 import ChangePassword from './pages/user/ChangePassword';
+import MarksEntry from './pages/MarksEntry/MarksEntry';
+import MarksEntryForm from './pages/MarksEntry/MarksEntryForm';
+import Certificate from './pages/Certificate/Certificate';
+import Report from './pages/Report/Report';
 
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   return (
     <Router>
@@ -34,10 +38,11 @@ function App() {
           <Route path="settings" element={<Settings />} />
           <Route path="change-password" element={<ChangePassword />} />
           
-          {/* Masters Routes */}
-          <Route path="masters" element={<Navigate to="/masters/employee/view" replace />} />
-          <Route path="masters/employee" element={<Navigate to="/masters/employee/view" replace />} />
- 
+          {/* Pages Routes */}
+          <Route path="marks-entry" element={<MarksEntry />} />
+          <Route path="marks-entry/MarksEntryForm/:studentId" element={<MarksEntryForm />} title="Marks Entry" />
+          <Route path="certificate-generation" element={<Certificate />} />
+          <Route path="report" element={<Report />} />
 
           {/* Catch all route for authenticated users */}
           <Route path="*" element={<Navigate to="/dashboard" replace />} />

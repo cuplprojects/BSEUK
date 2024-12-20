@@ -1,24 +1,20 @@
 import { Link, useLocation } from "react-router-dom";
 import { 
   FiHome, 
-  FiDatabase, 
   FiChevronDown, 
   FiChevronLeft, 
   FiChevronRight, 
   FiX,
-  FiUsers,
-  FiUserCheck,
-  FiGrid,
-  FiMapPin,
-  FiBriefcase,
-  FiDollarSign,
   FiCreditCard,
   FiFileText,
 } from "react-icons/fi";
-import { BsHandIndexThumb } from "react-icons/bs";
 import { motion, AnimatePresence } from "framer-motion";
 import { useThemeStore } from '../store/themeStore';
 import { useState } from 'react';
+import { PiCertificateBold } from "react-icons/pi";
+import { GoReport } from "react-icons/go";
+import { TbReportSearch } from "react-icons/tb";
+import { GiNotebook } from "react-icons/gi";
 
 const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
   const location = useLocation();
@@ -27,22 +23,9 @@ const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
 
   const menuItems = [
     { path: "/dashboard", icon: <FiHome className="w-6 h-6" />, label: "Dashboard" },
-    {
-      path: "/masters",
-      icon: <FiDatabase className="w-6 h-6" />,
-      label: "Masters",
-      subItems: [
-        { path: "/masters/employee/view", icon: <FiUsers className="w-4 h-4" />, label: "Employees" },
-        { path: "/masters/roles", icon: <FiUserCheck className="w-4 h-4" />, label: "Roles" },
-        { path: "/masters/departments", icon: <FiGrid className="w-4 h-4" />, label: "Departments" },
-        { path: "/masters/locations", icon: <FiMapPin className="w-4 h-4" />, label: "Locations" },
-        { path: "/masters/designations", icon: <FiBriefcase className="w-4 h-4" />, label: "Designations" },
-        { path: "/masters/banks", icon: <FiDollarSign className="w-4 h-4" />, label: "Banks" },
-      ]
-    },
-    { path: "/payrolls", icon: <FiFileText className="w-6 h-6" />, label: "Payrolls" },
-    { path: "/loans-and-advances", icon: <FiCreditCard className="w-6 h-6" />, label: "Loans & Advances" },
-    { path: "/attendance", icon: <BsHandIndexThumb className="w-6 h-6" />, label: "Attendance" },
+    { path: "/marks-entry", icon: <GiNotebook className="w-6 h-6" />, label: "Marks Entry" },
+    { path: "/certificate-generation", icon: <PiCertificateBold className="w-6 h-6" />, label: "Certificate" },
+    { path: "/report", icon: <TbReportSearch className="w-6 h-6" />, label: "Reports" },
   ];
 
   const toggleExpand = (path) => {

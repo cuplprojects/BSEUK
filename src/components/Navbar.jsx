@@ -26,12 +26,14 @@ const Navbar = ({ onMenuClick }) => {
             <FiMenu className="w-6 h-6" />
           </motion.button>
           <Link to="/dashboard" className={`text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${theme === 'dark' ? 'from-purple-400 to-pink-400' : 'text-white'}`}>
-            CUPL | EMS
+          BSEUK
           </Link>
         </div>
 
         <div className="flex items-center space-x-4">
-          <AnimatePresence mode="wait">
+          {/* themes toggle */}
+          
+          {/* <AnimatePresence mode="wait">
             <motion.button
               key={theme}
               initial={{ y: -20, opacity: 0 }}
@@ -48,7 +50,7 @@ const Navbar = ({ onMenuClick }) => {
             >
               {theme === 'dark' ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5" />}
             </motion.button>
-          </AnimatePresence>
+          </AnimatePresence> */}
 
           <UserMenu onLogout={handleLogout} />
         </div>
