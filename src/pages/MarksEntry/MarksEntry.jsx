@@ -161,7 +161,7 @@ const MarksEntry = () => {
     // Theme-based styles
     const cardClass =
         theme === 'dark'
-            ? 'bg-black/40 backdrop-blur-xl border-purple-500/20'
+            ? 'bg-black/20 backdrop-blur-xl border-purple-500/20'
             : 'bg-white border-slate-200 shadow-lg';
 
     return (

@@ -1,70 +1,123 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { useParams } from 'react-router-dom';
 import StudentData from './StudentData';
 import Papers from './Papers';
 import EditMarks from './EditMarks';
-import API from '../../services/api';
+import { useThemeStore } from '../../store/themeStore';
+import axios from 'axios';
 
-const MarksEntryForm = ({ studentId, onSubmit, theme }) => {
+const MarksEntryForm = () => {
+    const { studentId } = useParams();
+    const theme = useThemeStore((state) => state.theme);
     const [studentData, setStudentData] = useState(null);
+    const [sessionName, setSessionName] = useState('');
+    const [semesterName, setSemesterName] = useState('');
     const [papers, setPapers] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Fetch student data based on studentId
+    // Theme-based styles
+    const cardClass = theme === 'dark'
+        ? 'bg-black/40 backdrop-blur-xl border-r border-purple-500/20'
+        : 'bg-white border-slate-200 shadow-lg';
+
+    const textClass = theme === 'dark'
+        ? 'text-white'
+        : 'text-blue-900';
+
+    const subTextClass = theme === 'dark'
+        ? 'text-purple-300'
+        : 'text-blue-600';
+
+    // Fetch all required data
     useEffect(() => {
-        const fetchStudentData = async () => {
-            try {
-                setLoading(true);
-                const response = await API.get(API.endpoints.students.detail(studentId));
-                setStudentData(response.data);
-            } catch (error) {
-                console.error('Error fetching student data:', error);
-            } finally {
-                setLoading(false);
+        const fetchAllData = async () => {
+            if (studentId) {
+                try {
+                    setLoading(true);
+                    // Fetch student data
+                    const studentResponse = await axios.get(`https://localhost:7133/api/Candidates/${studentId}`);
+                    const student = studentResponse.data;
+                    setStudentData(student);
+
+                    // Fetch session and semester names
+                    const [sessionResponse, semesterResponse] = await Promise.all([
+                        axios.get(`https://localhost:7133/api/Sessions/${student.sesID}`),
+                        axios.get(`https://localhost:7133/api/Semesters/${student.semID}`)
+                    ]);
+
+                    setSessionName(sessionResponse.data.sessionName);
+                    setSemesterName(semesterResponse.data.semesterName);
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                } finally {
+                    setLoading(false);
+                }
             }
         };
 
-        if (studentId) {
-            fetchStudentData();
-        }
+        fetchAllData();
     }, [studentId]);
 
-    // Fetch papers data (mock for now)
-    useEffect(() => {
-        const mockPapers = [
-            { id: 1, name: 'Mathematics' },
-            { id: 2, name: 'Science' },
-            { id: 3, name: 'History' },
-        ];
-        setPapers(mockPapers);
-    }, []);
-
-    // Theme-based styles
-    const containerClass = theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-gray-800';
-    const headerClass = theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-blue-500 text-white';
-
     return (
-        <div className={`min-h-screen p-6 ${containerClass}`}>
-            {/* Header */}
-            <header className={`${headerClass} p-4 rounded-lg mb-6`}>
-                <h1 className="text-2xl font-semibold">Marks Entry</h1>
-            </header>
+        <div className="space-y-6">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="max-w-7xl mx-auto"
+            >
+                <h1 className={`text-3xl font-bold ${theme === 'dark'
+                    ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-800'
+                    : 'text-blue-700'}`}
+                >
+                    Marks Entry Form
+                </h1>
 
-            <div className="grid grid-cols-3 gap-6">
-                {/* Left Section: Student Data */}
-                <div className="col-span-1">
-                    {loading ? (
-                        <div className="text-center text-gray-500">Loading student data...</div>
-                    ) : (
-                        <StudentData studentData={studentData} />
-                    )}
-                </div>
+                <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Left Section: Student Data */}
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className={`border rounded-lg p-6 ${cardClass}`}
+                    >
+                        <h2 className={`text-xl font-semibold ${textClass} mb-4`}>Student Information</h2>
+                        {loading ? (
+                            <div className={`flex justify-center items-center py-4 ${subTextClass}`}>
+                                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-current"></div>
+                                <span className="ml-2">Loading student data...</span>
+                            </div>
+                        ) : (
+                            <StudentData 
+                                studentData={studentData}
+                                sessionName={sessionName}
+                                semesterName={semesterName}
+                                theme={theme}
+                            />
+                        )}
+                    </motion.div>
 
-                {/* Right Section: Papers List and Edit Marks */}
-                <div className="col-span-2 grid grid-rows-2 gap-6">
-                    <Papers papers={papers} />
-                    <EditMarks studentId={studentId} onSubmit={onSubmit} />
+                    {/* Right Section: Papers List and Edit Marks */}
+                    <div className="lg:col-span-2 space-y-6">
+                        <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className={`border rounded-lg p-6 ${cardClass}`}
+                        >
+                            <h2 className={`text-xl font-semibold ${textClass} mb-4`}>Papers</h2>
+                            <Papers papers={papers} theme={theme} />
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className={`border rounded-lg p-6 ${cardClass}`}
+                        >
+                            <h2 className={`text-xl font-semibold ${textClass} mb-4`}>Enter Marks</h2>
+                            <EditMarks studentId={studentId} theme={theme} />
+                        </motion.div>
+                    </div>
                 </div>
-            </div>
+            </motion.div>
         </div>
     );
 };

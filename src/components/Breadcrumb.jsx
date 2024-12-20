@@ -1,22 +1,44 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { FiChevronRight } from 'react-icons/fi';
 import { useThemeStore } from '../store/themeStore';
 import { motion } from 'framer-motion';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 
 const Breadcrumb = () => {
   const location = useLocation();
+  const params = useParams();
   const theme = useThemeStore((state) => state.theme);
+  const [candidateName, setCandidateName] = useState('');
   
   // Create a mapping for prettier path names and parent paths
   const pathConfig = {
     'dashboard': { display: 'Dashboard' },
     'settings': { display: 'Settings' },
     'profile': { display: 'Profile' },
+    'marks-entry': { display: 'Marks Entry' },
     'change-password': { 
       display: 'Change Password',
-      parent: 'settings' // Define the parent path
+      parent: 'settings'
     }
   };
+
+  // Fetch candidate name when studentId is present
+  useEffect(() => {
+    const fetchCandidateName = async () => {
+      if (params.studentId) {
+        try {
+          const response = await axios.get(`https://localhost:7133/api/Candidates/${params.studentId}`);
+          setCandidateName(response.data.candidateName);
+        } catch (error) {
+          console.error('Error fetching candidate:', error);
+          setCandidateName('Unknown Candidate');
+        }
+      }
+    };
+
+    fetchCandidateName();
+  }, [params.studentId]);
 
   const pathnames = location.pathname.split('/').filter((x) => x);
   
@@ -24,9 +46,18 @@ const Breadcrumb = () => {
   const buildBreadcrumbPath = (paths) => {
     const result = [];
     paths.forEach(path => {
+      // Check if this is a studentId parameter
+      if (path === params.studentId) {
+        result.push({
+          name: path,
+          path: location.pathname,
+          display: candidateName || 'Loading...'
+        });
+        return;
+      }
+
       const config = pathConfig[path];
       if (config && config.parent && !paths.includes(config.parent)) {
-        // Add parent path if it exists and isn't already in the path
         result.push({
           name: config.parent,
           path: `/${config.parent}`,

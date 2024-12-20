@@ -1,48 +1,74 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const StudentData = ({
-    candidateID,
-    candidateName,
-    group,
-    rollNumber,
-    fName,
-    mName,
-    dob,
-    institutionName,
-    semID,
-    sesID,
-}) => {
+const StudentData = ({ studentData, sessionName, semesterName, theme }) => {
+    const textClass = theme === 'dark'
+        ? 'text-white'
+        : 'text-blue-900';
+
+    const labelClass = theme === 'dark'
+        ? 'text-purple-300'
+        : 'text-blue-700';
+
+    if (!studentData) {
+        return null;
+    }
+
+    const fields = [
+        { label: 'Name', value: studentData.candidateName },
+        { label: 'Roll Number', value: studentData.rollNumber },
+        { label: 'Group', value: studentData.group },
+        { label: "Father's Name", value: studentData.fName },
+        { label: "Mother's Name", value: studentData.mName },
+        { label: 'Date of Birth', value: studentData.dob },
+        { label: 'Institution', value: studentData.institutionName },
+        { label: 'Session', value: sessionName },
+        { label: 'Semester', value: semesterName },
+    ];
+
     return (
-        <div className="bg-gray-100 p-4 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold mb-4">Candidate Details</h3>
-            <div className="space-y-2">
-                <p><strong>Candidate ID:</strong> {candidateID}</p>
-                <p><strong>Name:</strong> {candidateName}</p>
-                <p><strong>Group:</strong> {group}</p>
-                <p><strong>Roll Number:</strong> {rollNumber}</p>
-                <p><strong>Father's Name:</strong> {fName}</p>
-                <p><strong>Mother's Name:</strong> {mName}</p>
-                <p><strong>Date of Birth:</strong> {dob}</p>
-                <p><strong>Institution:</strong> {institutionName}</p>
-                <p><strong>Semester:</strong> {semID}</p>
-                <p><strong>Session:</strong> {sesID}</p>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+            {fields.map((field, index) => (
+                <div 
+                    key={index} 
+                    className={`${
+                        // Make certain fields span full width
+                        (field.label === 'Name' || 
+                         field.label === "Father's Name" || 
+                         field.label === 'Institution') 
+                            ? 'col-span-full' 
+                            : ''
+                    }`}
+                >
+                    <div className="flex flex-col">
+                        <label className={`text-xs font-medium ${labelClass}`}>
+                            {field.label}
+                        </label>
+                        <p className={`${textClass} text-sm font-medium truncate`}>
+                            {field.value || 'Not provided'}
+                        </p>
+                    </div>
+                </div>
+            ))}
         </div>
     );
 };
 
 StudentData.propTypes = {
-    candidateID: PropTypes.number.isRequired,
-    candidateName: PropTypes.string.isRequired,
-    group: PropTypes.string.isRequired,
-    rollNumber: PropTypes.string.isRequired,
-    fName: PropTypes.string.isRequired,
-    mName: PropTypes.string.isRequired,
-    dob: PropTypes.string.isRequired,
-    institutionName: PropTypes.string.isRequired,
-    semID: PropTypes.number.isRequired,
-    sesID: PropTypes.number.isRequired,
+    studentData: PropTypes.shape({
+        candidateName: PropTypes.string,
+        rollNumber: PropTypes.string,
+        group: PropTypes.string,
+        fName: PropTypes.string,
+        mName: PropTypes.string,
+        dob: PropTypes.string,
+        institutionName: PropTypes.string,
+        semID: PropTypes.number,
+        sesID: PropTypes.number,
+    }),
+    sessionName: PropTypes.string,
+    semesterName: PropTypes.string,
+    theme: PropTypes.string.isRequired,
 };
 
 export default StudentData;
