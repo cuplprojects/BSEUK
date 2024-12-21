@@ -144,13 +144,7 @@ const MarksEntryForm = () => {
                 : "bg-white border-slate-200 shadow-lg"
             }`}
           >
-            <h2
-              className={`text-xl font-semibold ${
-                theme === "dark" ? "text-white" : "text-blue-900"
-              } mb-4`}
-            >
-              Papers
-            </h2>
+            
             {loading ? (
               <div
                 className={`flex justify-center items-center py-4 ${
