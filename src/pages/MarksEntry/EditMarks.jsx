@@ -1,14 +1,16 @@
 import React from "react";
 
-const EditMarks = ({ paperID, paperName, theme }) => {
+const EditMarks = ({ paperID, paperName, paperCode,paperType , theme }) => {
   const textClass = theme === "dark" ? "text-purple-300" : "text-blue-600";
 
   return (
     <div className="mt-4">
-      <p className={`text-lg font-medium ${textClass}`}>Selected Paper Details:</p>
-      <div className={textClass}>
+      <p className={`text-xl font-bold ${textClass}`}>Selected Paper Details:</p>
+      <div className={`${textClass} font-bold`}>
         <p>ID: {paperID}</p>
         <p>Name: {paperName}</p>
+        <p>Code: {paperCode}</p>
+        <p>Type: {paperType}</p>
       </div>
     </div>
   );
