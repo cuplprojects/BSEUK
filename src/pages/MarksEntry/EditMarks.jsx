@@ -7,10 +7,10 @@ const EditMarks = ({ paperID, paperName, paperCode,paperType , theme }) => {
     <div className="mt-4">
       <p className={`text-xl font-bold ${textClass}`}>Selected Paper Details:</p>
       <div className={`${textClass} font-bold`}>
-        <p>ID: {paperID}</p>
-        <p>Name: {paperName}</p>
-        <p>Code: {paperCode}</p>
-        <p>Type: {paperType}</p>
+        <p>ID: {paperID ? paperID : "Unavailable"}</p>
+        <p>Name: {paperName ? paperName : "Unavailable"}</p>
+        <p>Code: {paperCode ? paperCode : "Unavailable"}</p>
+        <p>Type: {paperType ? paperType : "Unavailable"}</p>
       </div>
     </div>
   );

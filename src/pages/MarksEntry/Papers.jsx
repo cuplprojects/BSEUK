@@ -60,7 +60,6 @@ const Papers = ({ papers = [], theme, onSelectPaper }) => {
                     </div>
                 </div>
             )}
-
             {/* Practicals Section */}
             {practicalsSection.length > 0 && (
                 <div>
