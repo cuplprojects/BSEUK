@@ -17,18 +17,15 @@ const MarksEntryForm = () => {
     const [loading, setLoading] = useState(true);
     const [selectedPaper, setSelectedPaper] = useState(null);
 
-    // Fetch all required data
     useEffect(() => {
         const fetchAllData = async () => {
             if (studentId) {
                 try {
                     setLoading(true);
-                    // Fetch student data
                     const studentResponse = await axios.get(`https://localhost:7133/api/Candidates/${studentId}`);
                     const student = studentResponse.data;
                     setStudentData(student);
 
-                    // Fetch session and semester names
                     const [sessionResponse, semesterResponse] = await Promise.all([
                         axios.get(`https://localhost:7133/api/Sessions/${student.sesID}`),
                         axios.get(`https://localhost:7133/api/Semesters/${student.semID}`)
@@ -37,50 +34,38 @@ const MarksEntryForm = () => {
                     setSessionName(sessionResponse.data.sessionName);
                     setSemesterName(semesterResponse.data.semesterName);
 
-                    // Fetch papers for the current semester and session
-                    try {
-                        const papersResponse = await axios.get('https://localhost:7133/api/Papers');
-                        const allPapers = papersResponse.data;
-                        console.log('All papers:', allPapers);
+                    const papersResponse = await axios.get('https://localhost:7133/api/Papers');
+                    const allPapers = papersResponse.data;
 
-                        // Filter papers for the current semester
-                        const filteredPapers = allPapers.filter(
-                            (paper) => parseInt(paper.semID) === parseInt(student.semID)
-                        );
-                        console.log('Filtered papers:', filteredPapers);
+                    const filteredPapers = allPapers.filter(
+                        (paper) => parseInt(paper.semID) === parseInt(student.semID)
+                    );
 
-                        // Fetch paperType names and enrich the papers data
-                        const enrichedPapers = await Promise.all(
-                            filteredPapers.map(async (paper) => {
-                                try {
-                                    const paperTypeResponse = await axios.get(
-                                        `https://localhost:7133/api/PaperTypes/${paper.paperType}`
-                                    );
-                                    return {
-                                        ...paper,
-                                        paperTypee: paperTypeResponse.data.paperTypee,
-                                        paperID: paper.paperID || paper.PaperID,
-                                        paperName: paper.paperName || paper.PaperName,
-                                        paperCode: paper.paperCode || paper.PaperCode,
-                                    };
-                                } catch (error) {
-                                    console.error(`Error fetching paper type for paper ${paper.paperID}:`, error);
-                                    return {
-                                        ...paper,
-                                        paperTypee: 'Unknown Type',
-                                        paperID: paper.paperID || paper.PaperID,
-                                        paperName: paper.paperName || paper.PaperName,
-                                        paperCode: paper.paperCode || paper.PaperCode,
-                                    };
-                                }
-                            })
-                        );
-                        console.log('Enriched papers:', enrichedPapers);
-                        setPapers(enrichedPapers);
-                    } catch (error) {
-                        console.error('Error fetching papers:', error);
-                        setPapers([]);
-                    }
+                    const enrichedPapers = await Promise.all(
+                        filteredPapers.map(async (paper) => {
+                            try {
+                                const paperTypeResponse = await axios.get(
+                                    `https://localhost:7133/api/PaperTypes/${paper.paperType}`
+                                );
+                                return {
+                                    ...paper,
+                                    paperTypee: paperTypeResponse.data.paperTypee,
+                                    paperID: paper.paperID || paper.PaperID,
+                                    paperName: paper.paperName || paper.PaperName,
+                                    paperCode: paper.paperCode || paper.PaperCode,
+                                };
+                            } catch (error) {
+                                return {
+                                    ...paper,
+                                    paperTypee: 'Unknown Type',
+                                    paperID: paper.paperID || paper.PaperID,
+                                    paperName: paper.paperName || paper.PaperName,
+                                    paperCode: paper.paperCode || paper.PaperCode,
+                                };
+                            }
+                        })
+                    );
+                    setPapers(enrichedPapers);
                 } catch (error) {
                     console.error('Error fetching data:', error);
                 } finally {
@@ -94,27 +79,11 @@ const MarksEntryForm = () => {
 
     return (
         <div className="space-y-6">
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="max-w-7xl mx-auto"
-            >
-                <h1 className={`text-3xl font-bold ${theme === 'dark'
-                    ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-800'
-                    : 'text-blue-700'}`}
-                >
-                    Marks Entry Form
-                </h1>
-
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-7xl mx-auto">
+                <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-800' : 'text-blue-700'}`}>Marks Entry Form</h1>
                 <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Left Section: Student Data */}
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className={`border rounded-lg p-6 ${theme === 'dark'
-                            ? 'bg-black/40 backdrop-blur-xl border-r border-purple-500/20'
-                            : 'bg-white border-slate-200 shadow-lg'}`}
-                    >
+                    {/* Student Data */}
+                    <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className={`border rounded-lg p-6 ${theme === 'dark' ? 'bg-black/40 backdrop-blur-xl border-r border-purple-500/20' : 'bg-white border-slate-200 shadow-lg'}`}>
                         <h2 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-blue-900'} mb-4`}>Student Information</h2>
                         {loading ? (
                             <div className={`flex justify-center items-center py-4 ${theme === 'dark' ? 'text-purple-300' : 'text-blue-600'}`}>
@@ -122,24 +91,13 @@ const MarksEntryForm = () => {
                                 <span className="ml-2">Loading student data...</span>
                             </div>
                         ) : (
-                            <StudentData 
-                                studentData={studentData}
-                                sessionName={sessionName}
-                                semesterName={semesterName}
-                                theme={theme}
-                            />
+                            <StudentData studentData={studentData} sessionName={sessionName} semesterName={semesterName} theme={theme} />
                         )}
                     </motion.div>
 
-                    {/* Right Section: Papers List and Edit Marks */}
+                    {/* Papers and Edit Marks */}
                     <div className="lg:col-span-2 space-y-6">
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className={`border rounded-lg p-6 ${theme === 'dark'
-                                ? 'bg-black/40 backdrop-blur-xl border-r border-purple-500/20'
-                                : 'bg-white border-slate-200 shadow-lg'}`}
-                        >
+                        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className={`border rounded-lg p-6 ${theme === 'dark' ? 'bg-black/40 backdrop-blur-xl border-r border-purple-500/20' : 'bg-white border-slate-200 shadow-lg'}`}>
                             <h2 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-blue-900'} mb-4`}>Papers</h2>
                             {loading ? (
                                 <div className={`flex justify-center items-center py-4 ${theme === 'dark' ? 'text-purple-300' : 'text-blue-600'}`}>
@@ -148,39 +106,16 @@ const MarksEntryForm = () => {
                                 </div>
                             ) : (
                                 <>
-                                    <Papers 
-                                        papers={papers} 
-                                        theme={theme} 
-                                        onSelectPaper={setSelectedPaper}
-                                    />
+                                    <Papers papers={papers} theme={theme} onSelectPaper={setSelectedPaper} />
                                     {selectedPaper && (
                                         <div className={`mt-6 p-4 border rounded-lg ${theme === 'dark' ? 'border-purple-500/20' : 'border-blue-200'}`}>
-                                            <h3 className={`text-lg font-medium ${theme === 'dark' ? 'text-white' : 'text-blue-900'}`}>
-                                                Selected Paper: {selectedPaper.paperName}
-                                            </h3>
-                                            <p className={`mt-2 ${theme === 'dark' ? 'text-purple-300' : 'text-blue-600'}`}>
-                                                Paper ID: {selectedPaper.paperID}
-                                            </p>
-                                            <EditMarks 
-                                                paperID={selectedPaper.paperID}
-                                                paperName={selectedPaper.paperName}
-                                                theme={theme}
-                                            />
+                                            {/* <h3 className={`text-lg font-medium ${theme === 'dark' ? 'text-white' : 'text-blue-900'}`}>Selected Paper: {selectedPaper.paperName}</h3>
+                                            <p className={`mt-2 ${theme === 'dark' ? 'text-purple-300' : 'text-blue-600'}`}>Paper ID: {selectedPaper.paperID}</p> */}
+                                            <EditMarks paperID={selectedPaper.paperID} paperName={selectedPaper.paperName} theme={theme} />
                                         </div>
                                     )}
                                 </>
                             )}
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className={`border rounded-lg p-6 ${theme === 'dark'
-                                ? 'bg-black/40 backdrop-blur-xl border-r border-purple-500/20'
-                                : 'bg-white border-slate-200 shadow-lg'}`}
-                        >
-                            <h2 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-blue-900'} mb-4`}>Enter Marks</h2>
-                            <EditMarks studentId={studentId} theme={theme} />
                         </motion.div>
                     </div>
                 </div>
