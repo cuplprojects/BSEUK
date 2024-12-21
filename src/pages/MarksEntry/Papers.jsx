@@ -40,6 +40,7 @@ const Papers = ({ papers = [], theme, onSelectPaper }) => {
                             const paperId = paper.paperID || paper.PaperID;
                             const paperName = paper.paperName || paper.PaperName;
                             const paperCode = paper.paperCode || paper.PaperCode;
+                            const paperType = paper.paperType || paper.PaperType;
 
                             return (
                                 <div
@@ -51,7 +52,7 @@ const Papers = ({ papers = [], theme, onSelectPaper }) => {
                                         {paperName}
                                     </p>
                                     {/* <p className={`text-sm ${textClass}`}>
-                                        {paperCode}
+                                        {paperType}
                                     </p> */}
                                 </div>
                             );

@@ -189,6 +189,7 @@ const MarksEntryForm = () => {
                 paperID={selectedPaper.paperID}
                 paperName={selectedPaper.paperName}
                 paperCode={selectedPaper.paperCode}
+                paperType={selectedPaper.paperType}
                 theme={theme}
               />
             </motion.div>
