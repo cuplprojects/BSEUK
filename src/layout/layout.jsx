@@ -46,7 +46,7 @@ function Layout() {
             <Outlet />
           </div>
         </main>
-        <Footer />
+        {/* <Footer /> */}
       </div>
     </div>
   );
