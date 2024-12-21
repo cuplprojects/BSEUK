@@ -81,8 +81,8 @@ const MarksEntryForm = () => {
         <div className="space-y-6">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-7xl mx-auto">
                 <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-800' : 'text-blue-700'}`}>Marks Entry Form</h1>
-                <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Student Data */}
+                <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Student Data and Papers side by side, equally divided */}
                     <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className={`border rounded-lg p-6 ${theme === 'dark' ? 'bg-black/40 backdrop-blur-xl border-r border-purple-500/20' : 'bg-white border-slate-200 shadow-lg'}`}>
                         <h2 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-blue-900'} mb-4`}>Student Information</h2>
                         {loading ? (
@@ -95,27 +95,29 @@ const MarksEntryForm = () => {
                         )}
                     </motion.div>
 
-                    {/* Papers and Edit Marks */}
-                    <div className="lg:col-span-2 space-y-6">
+                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className={`border rounded-lg p-6 ${theme === 'dark' ? 'bg-black/40 backdrop-blur-xl border-r border-purple-500/20' : 'bg-white border-slate-200 shadow-lg'}`}>
+                        <h2 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-blue-900'} mb-4`}>Papers</h2>
+                        {loading ? (
+                            <div className={`flex justify-center items-center py-4 ${theme === 'dark' ? 'text-purple-300' : 'text-blue-600'}`}>
+                                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-current"></div>
+                                <span className="ml-2">Loading papers...</span>
+                            </div>
+                        ) : (
+                            <>
+                                <Papers papers={papers} theme={theme} onSelectPaper={setSelectedPaper} />
+                            </>
+                        )}
+                    </motion.div>
+                </div>
+
+                {/* EditMarks Full Width below the other sections */}
+                <div className="mt-6">
+                    {selectedPaper && (
                         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className={`border rounded-lg p-6 ${theme === 'dark' ? 'bg-black/40 backdrop-blur-xl border-r border-purple-500/20' : 'bg-white border-slate-200 shadow-lg'}`}>
-                            <h2 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-blue-900'} mb-4`}>Papers</h2>
-                            {loading ? (
-                                <div className={`flex justify-center items-center py-4 ${theme === 'dark' ? 'text-purple-300' : 'text-blue-600'}`}>
-                                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-current"></div>
-                                    <span className="ml-2">Loading papers...</span>
-                                </div>
-                            ) : (
-                                <>
-                                    <Papers papers={papers} theme={theme} onSelectPaper={setSelectedPaper} />
-                                    {selectedPaper && (
-                                        <div className={`mt-6 p-4 border rounded-lg ${theme === 'dark' ? 'border-purple-500/20' : 'border-blue-200'}`}>
-                                            <EditMarks paperID={selectedPaper.paperID} paperName={selectedPaper.paperName} theme={theme} />
-                                        </div>
-                                    )}
-                                </>
-                            )}
+                            <h2 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-blue-900'} mb-4`}>Enter Marks</h2>
+                            <EditMarks paperID={selectedPaper.paperID} paperName={selectedPaper.paperName} theme={theme} />
                         </motion.div>
-                    </div>
+                    )}
                 </div>
             </motion.div>
         </div>
