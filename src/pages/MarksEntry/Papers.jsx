@@ -23,19 +23,20 @@ const Papers = ({ papers = [], theme, onSelectPaper }) => {
     }
 
     return (
-        <div className="p-4 rounded-lg">
+        <div className="p-2">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {papers.map((paper) => {
                     const paperId = paper.paperID || paper.PaperID;
                     const paperName = paper.paperName || paper.PaperName;
+                    const paperCode = paper.paperCode || paper.PaperCode;
 
                     return (
                         <div
                             key={paperId}
-                            className={`border rounded-lg p-4 ${cardClass} hover:scale-105 transition-transform duration-200`}
+                            className={`border rounded-lg p-3 ${cardClass} hover:scale-105 transition-transform duration-200`}
                             onClick={() => onSelectPaper(paper)} // Trigger onSelectPaper when a paper is clicked
                         >
-                            <p className={`font-medium ${textClass}`}>{paperName}</p>
+                            <p className={`text-l font-bold ${textClass}`}>{paperName}</p>
                         </div>
                     );
                 })}

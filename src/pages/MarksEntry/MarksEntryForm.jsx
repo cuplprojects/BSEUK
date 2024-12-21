@@ -166,6 +166,7 @@ const MarksEntryForm = () => {
                   papers={papers}
                   theme={theme}
                   onSelectPaper={setSelectedPaper}
+                  
                 />
               </>
             )}
@@ -194,6 +195,7 @@ const MarksEntryForm = () => {
               <EditMarks
                 paperID={selectedPaper.paperID}
                 paperName={selectedPaper.paperName}
+                paperCode={selectedPaper.paperCode}
                 theme={theme}
               />
             </motion.div>

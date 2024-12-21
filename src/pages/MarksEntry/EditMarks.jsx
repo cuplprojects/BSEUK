@@ -1,6 +1,6 @@
 import React from "react";
 
-const EditMarks = ({ paperID, paperName, theme }) => {
+const EditMarks = ({ paperID, paperName, paperCode, theme }) => {
   const textClass = theme === "dark" ? "text-purple-300" : "text-blue-600";
 
   return (
@@ -9,6 +9,7 @@ const EditMarks = ({ paperID, paperName, theme }) => {
       <div className={textClass}>
         <p>ID: {paperID}</p>
         <p>Name: {paperName}</p>
+        <p>Code: {paperCode}</p>
       </div>
     </div>
   );
