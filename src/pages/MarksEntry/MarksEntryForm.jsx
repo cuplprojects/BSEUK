@@ -16,19 +16,6 @@ const MarksEntryForm = () => {
     const [papers, setPapers] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Theme-based styles
-    const cardClass = theme === 'dark'
-        ? 'bg-black/40 backdrop-blur-xl border-r border-purple-500/20'
-        : 'bg-white border-slate-200 shadow-lg';
-
-    const textClass = theme === 'dark'
-        ? 'text-white'
-        : 'text-blue-900';
-
-    const subTextClass = theme === 'dark'
-        ? 'text-purple-300'
-        : 'text-blue-600';
-
     // Fetch all required data
     useEffect(() => {
         const fetchAllData = async () => {
@@ -48,6 +35,51 @@ const MarksEntryForm = () => {
 
                     setSessionName(sessionResponse.data.sessionName);
                     setSemesterName(semesterResponse.data.semesterName);
+
+                    // Fetch papers for the current semester and session
+                    try {
+                        const papersResponse = await axios.get('https://localhost:7133/api/Papers');
+                        const allPapers = papersResponse.data;
+                        console.log('All papers:', allPapers);
+
+                        // Filter papers for the current semester
+                        const filteredPapers = allPapers.filter(
+                            (paper) => parseInt(paper.semID) === parseInt(student.semID)
+                        );
+                        console.log('Filtered papers:', filteredPapers);
+
+                        // Fetch paperType names and enrich the papers data
+                        const enrichedPapers = await Promise.all(
+                            filteredPapers.map(async (paper) => {
+                                try {
+                                    const paperTypeResponse = await axios.get(
+                                        `https://localhost:7133/api/PaperTypes/${paper.paperType}`
+                                    );
+                                    return {
+                                        ...paper,
+                                        paperTypee: paperTypeResponse.data.paperTypee,
+                                        paperID: paper.paperID || paper.PaperID,
+                                        paperName: paper.paperName || paper.PaperName,
+                                        paperCode: paper.paperCode || paper.PaperCode,
+                                    };
+                                } catch (error) {
+                                    console.error(`Error fetching paper type for paper ${paper.paperID}:`, error);
+                                    return {
+                                        ...paper,
+                                        paperTypee: 'Unknown Type',
+                                        paperID: paper.paperID || paper.PaperID,
+                                        paperName: paper.paperName || paper.PaperName,
+                                        paperCode: paper.paperCode || paper.PaperCode,
+                                    };
+                                }
+                            })
+                        );
+                        console.log('Enriched papers:', enrichedPapers);
+                        setPapers(enrichedPapers);
+                    } catch (error) {
+                        console.error('Error fetching papers:', error);
+                        setPapers([]);
+                    }
                 } catch (error) {
                     console.error('Error fetching data:', error);
                 } finally {
@@ -78,11 +110,13 @@ const MarksEntryForm = () => {
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className={`border rounded-lg p-6 ${cardClass}`}
+                        className={`border rounded-lg p-6 ${theme === 'dark'
+                            ? 'bg-black/40 backdrop-blur-xl border-r border-purple-500/20'
+                            : 'bg-white border-slate-200 shadow-lg'}`}
                     >
-                        <h2 className={`text-xl font-semibold ${textClass} mb-4`}>Student Information</h2>
+                        <h2 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-blue-900'} mb-4`}>Student Information</h2>
                         {loading ? (
-                            <div className={`flex justify-center items-center py-4 ${subTextClass}`}>
+                            <div className={`flex justify-center items-center py-4 ${theme === 'dark' ? 'text-purple-300' : 'text-blue-600'}`}>
                                 <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-current"></div>
                                 <span className="ml-2">Loading student data...</span>
                             </div>
@@ -101,18 +135,29 @@ const MarksEntryForm = () => {
                         <motion.div
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className={`border rounded-lg p-6 ${cardClass}`}
+                            className={`border rounded-lg p-6 ${theme === 'dark'
+                                ? 'bg-black/40 backdrop-blur-xl border-r border-purple-500/20'
+                                : 'bg-white border-slate-200 shadow-lg'}`}
                         >
-                            <h2 className={`text-xl font-semibold ${textClass} mb-4`}>Papers</h2>
-                            <Papers papers={papers} theme={theme} />
+                            <h2 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-blue-900'} mb-4`}>Papers</h2>
+                            {loading ? (
+                                <div className={`flex justify-center items-center py-4 ${theme === 'dark' ? 'text-purple-300' : 'text-blue-600'}`}>
+                                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-current"></div>
+                                    <span className="ml-2">Loading papers...</span>
+                                </div>
+                            ) : (
+                                <Papers papers={papers} theme={theme} />
+                            )}
                         </motion.div>
 
                         <motion.div
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className={`border rounded-lg p-6 ${cardClass}`}
+                            className={`border rounded-lg p-6 ${theme === 'dark'
+                                ? 'bg-black/40 backdrop-blur-xl border-r border-purple-500/20'
+                                : 'bg-white border-slate-200 shadow-lg'}`}
                         >
-                            <h2 className={`text-xl font-semibold ${textClass} mb-4`}>Enter Marks</h2>
+                            <h2 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-blue-900'} mb-4`}>Enter Marks</h2>
                             <EditMarks studentId={studentId} theme={theme} />
                         </motion.div>
                     </div>
