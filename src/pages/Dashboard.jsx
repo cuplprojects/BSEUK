@@ -2,14 +2,15 @@ import { useState } from 'react';
 import { FiUsers, FiCalendar, FiDollarSign, FiTrendingUp } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 import { useThemeStore } from '../store/themeStore';
+import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
   const theme = useThemeStore((state) => state.theme);
   const [stats] = useState([
-    { title: 'Total Employees', value: '156', icon: <FiUsers />, color: 'from-blue-500 to-blue-700' },
-    { title: 'Active Projects', value: '12', icon: <FiCalendar />, color: 'from-blue-500 to-blue-700' },
-    { title: 'Revenue', value: '$52,000', icon: <FiDollarSign />, color: 'from-blue-500 to-blue-700' },
-    { title: 'Growth', value: '+12%', icon: <FiTrendingUp />, color: 'from-blue-500 to-blue-700' }
+    { title: 'Total Candidates', value: '156', icon: <FiUsers />, color: 'from-blue-500 to-blue-700' },
+    { title: 'Active Session', value: '12', icon: <FiCalendar />, color: 'from-blue-500 to-blue-700' },
+    // { title: 'Revenue', value: '$52,000', icon: <FiDollarSign />, color: 'from-blue-500 to-blue-700' },
+    // { title: 'Growth', value: '+12%', icon: <FiTrendingUp />, color: 'from-blue-500 to-blue-700' }
   ]);
 
   const cardClass = theme === 'dark' 
@@ -65,9 +66,15 @@ const Dashboard = () => {
             Quick Actions
           </h2>
           <div className="grid grid-cols-2 gap-4">
-            {['Add Employee', 'Create Project', 'View Reports', 'Settings'].map((action) => (
-              <button
+            {['Add Candidate', 'Create Session', 'View Reports', 'Certificate'].map((action, index) => (
+              <Link
                 key={action}
+                to={{
+                  'Add Candidate': '/dashboard/add-candidate',
+                  'Create Session': '/dashboard/create-session',
+                  'View Reports': '/report',
+                  'Certificate': '/certificate-generation',
+                }[action]}
                 className={`p-4 rounded-lg transition-colors duration-200 ${
                   theme === 'dark'
                     ? 'bg-purple-600/20 hover:bg-purple-600/30 text-purple-300'
@@ -75,7 +82,7 @@ const Dashboard = () => {
                 }`}
               >
                 {action}
-              </button>
+              </Link>
             ))}
           </div>
         </div>
