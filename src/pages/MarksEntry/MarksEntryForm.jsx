@@ -109,8 +109,6 @@ const MarksEntryForm = () => {
                                     <Papers papers={papers} theme={theme} onSelectPaper={setSelectedPaper} />
                                     {selectedPaper && (
                                         <div className={`mt-6 p-4 border rounded-lg ${theme === 'dark' ? 'border-purple-500/20' : 'border-blue-200'}`}>
-                                            {/* <h3 className={`text-lg font-medium ${theme === 'dark' ? 'text-white' : 'text-blue-900'}`}>Selected Paper: {selectedPaper.paperName}</h3>
-                                            <p className={`mt-2 ${theme === 'dark' ? 'text-purple-300' : 'text-blue-600'}`}>Paper ID: {selectedPaper.paperID}</p> */}
                                             <EditMarks paperID={selectedPaper.paperID} paperName={selectedPaper.paperName} theme={theme} />
                                         </div>
                                     )}
