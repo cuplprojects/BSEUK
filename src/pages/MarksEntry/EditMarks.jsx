@@ -1,11 +1,17 @@
-import React from 'react'
+import React from "react";
 
-const EditMarks = () => {
+const EditMarks = ({ paperID, paperName, theme }) => {
+  const textClass = theme === "dark" ? "text-purple-300" : "text-blue-600";
+
   return (
-    <div>
-      
+    <div className="mt-4">
+      <p className={`text-lg font-medium ${textClass}`}>Selected Paper Details:</p>
+      <div className={textClass}>
+        <p>ID: {paperID}</p>
+        <p>Name: {paperName}</p>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default EditMarks
+export default EditMarks;

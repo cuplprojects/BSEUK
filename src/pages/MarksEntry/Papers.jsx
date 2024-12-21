@@ -1,30 +1,44 @@
 import React from 'react';
 
-const Papers = ({ papers, theme }) => {
+const Papers = ({ papers = [], theme, onSelectPaper }) => {
     const cardClass = theme === 'dark'
         ? 'bg-black/40 backdrop-blur-xl border-r border-purple-500/20'
         : 'bg-white border-slate-200 shadow-lg';
+    const textClass = theme === 'dark' ? 'text-white' : 'text-blue-900';
 
-    const textClass = theme === 'dark'
-        ? 'text-white'
-        : 'text-blue-900';
+    if (!Array.isArray(papers)) {
+        return (
+            <div className={`p-4 rounded-lg ${textClass}`}>
+                No papers data available
+            </div>
+        );
+    }
 
-    const subTextClass = theme === 'dark'
-        ? 'text-purple-300'
-        : 'text-blue-600';
+    if (papers.length === 0) {
+        return (
+            <div className={`p-4 rounded-lg ${textClass}`}>
+                No papers found for this semester
+            </div>
+        );
+    }
 
     return (
-        <div className={`p-4 rounded-lg`}>
-            <div className="grid grid-cols-2 gap-4">
-                {papers.map((paper) => (
-                    <div
-                        key={paper.id}
-                        className={`border rounded-lg p-4 ${cardClass} hover:scale-105 transition-transform duration-200`}
-                    >
-                        <p className={`font-medium ${textClass}`}>{paper.name}</p>
-                        <p className={`text-sm ${subTextClass}`}>Code: {paper.code}</p>
-                    </div>
-                ))}
+        <div className="p-4 rounded-lg">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {papers.map((paper) => {
+                    const paperId = paper.paperID || paper.PaperID;
+                    const paperName = paper.paperName || paper.PaperName;
+
+                    return (
+                        <div
+                            key={paperId}
+                            className={`border rounded-lg p-4 ${cardClass} hover:scale-105 transition-transform duration-200`}
+                            onClick={() => onSelectPaper(paper)} // Trigger onSelectPaper when a paper is clicked
+                        >
+                            <p className={`font-medium ${textClass}`}>{paperName}</p>
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );
