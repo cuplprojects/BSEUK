@@ -5,8 +5,8 @@ const EditMarks = ({ paperID, paperName, paperCode, theme }) => {
 
   return (
     <div className="mt-4">
-      <p className={`text-lg font-medium ${textClass}`}>Selected Paper Details:</p>
-      <div className={textClass}>
+      <p className={`text-lg font-bold ${textClass}`}>Selected Paper Details:</p>
+      <div className={`${textClass} font-bold`}>
         <p>ID: {paperID}</p>
         <p>Name: {paperName}</p>
         <p>Code: {paperCode}</p>

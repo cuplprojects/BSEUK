@@ -166,7 +166,6 @@ const MarksEntryForm = () => {
                   papers={papers}
                   theme={theme}
                   onSelectPaper={setSelectedPaper}
-                  
                 />
               </>
             )}
