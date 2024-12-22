@@ -113,7 +113,7 @@ const MarksEntryForm = () => {
                 theme === "dark" ? "text-white" : "text-blue-900"
               } mb-4`}
             >
-              Student Information
+              Candidate Information
             </h2>
             {loading ? (
               <div
@@ -191,6 +191,7 @@ const MarksEntryForm = () => {
                 paperCode={selectedPaper.paperCode}
                 paperType={selectedPaper.paperType}
                 theme={theme}
+                studentId={studentId}
               />
             </motion.div>
           )}

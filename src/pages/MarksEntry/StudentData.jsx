@@ -34,7 +34,8 @@ const StudentData = ({ studentData, sessionName, semesterName, theme }) => {
                     className={`${
                         // Make certain fields span full width
                         (field.label === 'Name' || 
-                         field.label === "Father's Name" || 
+                         field.label === "Father's Name" ||
+                         field.label === "Mother's Name" || 
                          field.label === 'Institution') 
                             ? 'col-span-full' 
                             : ''
