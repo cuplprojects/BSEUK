@@ -1,10 +1,4 @@
-if (marksResponse.data) {  // Changed from marksResponse.data && marksResponse.data.length > 0
-  setMarks({
-    theoryMarks: marksResponse.data.theoryPaperMarks || "",
-    internalMarks: marksResponse.data.interalMarks || "",
-    practicalMarks: marksResponse.data.practicalMaxMarks || "",
-  });
-}import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import { FiSave, FiAlertCircle, FiLoader, FiX } from "react-icons/fi";
@@ -15,7 +9,7 @@ const EditMarks = ({ paperID, paperName, paperCode, paperType, theme, studentId 
     internalMarks: "",
     practicalMarks: "",
   });
-
+  
   const [maxMarks, setMaxMarks] = useState({
     theoryMax: 0,
     internalMax: 0,
@@ -42,12 +36,12 @@ const EditMarks = ({ paperID, paperName, paperCode, paperType, theme, studentId 
     const fetchData = async () => {
       try {
         setLoading(true);
-
+        
         // Fetch paper details for max marks
         const paperResponse = await axios.get(
           `https://localhost:7133/api/Papers/${paperID}`
         );
-
+        
         if (paperResponse.data) {
           setMaxMarks({
             theoryMax: paperResponse.data.theoryPaperMaxMarks || 0,
