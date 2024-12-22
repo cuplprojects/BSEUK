@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { useThemeStore } from "../../store/themeStore";
-import { FiDownload, FiSearch, FiLoader } from "react-icons/fi";
+import { FiDownload, FiLoader } from "react-icons/fi";
 import API from "../../services/api";
+import Template from "./Template";
+import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
-import autoTable from 'jspdf-autotable';
 
 const Certificate = () => {
-  const theme = useThemeStore((state) => state.theme);
   const [sessions, setSessions] = useState([]);
   const [semesters, setSemesters] = useState([]);
   const [selectedSession, setSelectedSession] = useState("");
@@ -15,23 +13,8 @@ const Certificate = () => {
   const [rollNumber, setRollNumber] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  // Theme classes
-  const cardClass = theme === "dark"
-    ? "bg-black/40 backdrop-blur-xl border-purple-500/20"
-    : "bg-white border-blue-200 shadow-sm";
-
-  const textClass = theme === "dark"
-    ? "text-purple-100"
-    : "text-blue-700";
-
-  const inputClass = theme === "dark"
-    ? "bg-purple-900/20 border-purple-500/20 text-purple-100 placeholder-purple-400"
-    : "bg-blue-50 border-blue-200 text-blue-600 placeholder-blue-400";
-
-  const buttonClass = theme === "dark"
-    ? "bg-purple-600 hover:bg-purple-700 text-white"
-    : "bg-blue-600 hover:bg-blue-700 text-white";
+  const [certificateData, setCertificateData] = useState(null);
+  const [showPreview, setShowPreview] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,9 +33,56 @@ const Certificate = () => {
     fetchData();
   }, []);
 
+  const formatCertificateData = (result) => {
+    return {
+      name: result.studentDetails.candidateName,
+      mothersName: result.studentDetails.mName,
+      fathersName: result.studentDetails.fName,
+      rollNo: result.studentDetails.rollNumber,
+      class: result.studentDetails.group,
+      institutionName: result.studentDetails.institutionName,
+      marks: result.marksDetails.map(mark => ({
+        code: mark.paperCode,
+        name: mark.paperName,
+        maxMarks: mark.maxMarks,
+        theory: mark.theoryMarks,
+        practical: mark.practicalMarks,
+        total: mark.total
+      })),
+      totalMarks: result.totalMarks,
+      result: ((result.totalMarks / result.maximumMarks) * 100).toFixed(2) >= 33 ? "PASS" : "FAIL",
+      watermarkImage: "/path/to/watermark.png",
+      headerImage: "/path/to/logo.png"
+    };
+  };
+
+  const generatePDF = async (result) => {
+    const data = formatCertificateData(result);
+    setCertificateData(data);
+    setShowPreview(true);
+
+    // Wait for the template to render
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    const template = document.getElementById('certificate-template');
+    const canvas = await html2canvas(template, {
+      scale: 2,
+      useCORS: true,
+      logging: false
+    });
+
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = pdf.internal.pageSize.width;
+    const pageHeight = pdf.internal.pageSize.height;
+    pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
+
+    return pdf;
+  };
+
   const handleSingleDownload = async () => {
-    if (!rollNumber) {
-      setError("Please enter a roll number");
+    if (!rollNumber || !selectedSession || !selectedSemester) {
+      setError("Please enter roll number and select session and semester");
       return;
     }
 
@@ -60,93 +90,19 @@ const Certificate = () => {
     setError(null);
 
     try {
-      // Get student result using the new endpoint
-      const response = await API.get(`/StudentsMarksObtaineds/GetStudentResult/${rollNumber}`);
-      const result = response.data;
-
-      // Generate certificate
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pageWidth = pdf.internal.pageSize.width;
-      const pageHeight = pdf.internal.pageSize.height;
-
-      // Add border
-      pdf.setDrawColor(0);
-      pdf.setLineWidth(0.5);
-      pdf.rect(10, 10, pageWidth - 20, pageHeight - 20);
-
-      // Add Serial Number
-      pdf.setFontSize(10);
-      pdf.text(`Sr. No. ${result.studentDetails.rollNumber}`, 15, 20);
-
-      // Add Header (Hindi + English)
-      pdf.setFontSize(16);
-      pdf.text("BOARD OF SCHOOL EDUCATION UTTARAKHAND", pageWidth / 2, 35, { align: "center" });
-
-      // Add Title
-      pdf.setFontSize(14);
-      pdf.text("TWO-YEAR DIPLOMA IN ELEMENTARY EDUCATION - 2023", pageWidth / 2, 90, { align: "center" });
-      pdf.text("MARKS STATEMENT : FIRST SEMESTER", pageWidth / 2, 100, { align: "center" });
-
-      // Add Student Details
-      pdf.setFontSize(12);
-      pdf.text(`Name: ${result.studentDetails.candidateName}`, 15, 120);
-      pdf.text(`Roll No.: ${result.studentDetails.rollNumber}`, pageWidth - 80, 120);
-      pdf.text(`Group: ${result.studentDetails.group}`, pageWidth - 40, 120);
-      
-      pdf.text(`Mother's Name: ${result.studentDetails.mName}`, 15, 130);
-      pdf.text(`Father's Name: ${result.studentDetails.fName}`, pageWidth/2, 130);
-      
-      pdf.text(`Institution's Name: ${result.studentDetails.institutionName}`, 15, 140);
-
-      // Add Marks Table
-      const tableData = result.marksDetails.map(mark => [
-        mark.paperCode,
-        mark.paperName,
-        mark.maxMarks,
-        mark.theoryMarks,
-        mark.internalMarks,
-        mark.practicalMarks,
-        mark.total
-      ]);
-
-      autoTable(pdf, {
-        startY: 150,
-        head: [["Code", "Subject", "Max Marks", "Theory", "Internal", "Practical", "Total"]],
-        body: tableData,
-        theme: "grid",
-        styles: {
-          fontSize: 10,
-          cellPadding: 2,
-          overflow: "linebreak",
-        },
-        columnStyles: {
-          0: { cellWidth: 20 },
-          1: { cellWidth: 60 },
-          2: { cellWidth: 20 },
-          3: { cellWidth: 20 },
-          4: { cellWidth: 20 },
-          5: { cellWidth: 20 },
-          6: { cellWidth: 20 },
-        },
+      const response = await API.post('/StudentsMarksObtaineds/GetStudentResult', {
+        rollNumber,
+        sessionId: parseInt(selectedSession),
+        semesterId: parseInt(selectedSemester)
       });
 
-      // Add Result
-      const percentage = ((result.totalMarks / result.maximumMarks) * 100).toFixed(2);
-      const resultText = percentage >= 33 ? "PASS" : "FAIL";
-      
-      pdf.text(`Result: ${resultText} (${percentage}%)`, 15, pdf.autoTable.previous.finalY + 20);
-
-      // Add Signature lines
-      pdf.line(15, pageHeight - 30, 60, pageHeight - 30);
-      pdf.text("Controller of Examination", 15, pageHeight - 20);
-
-      pdf.line(pageWidth - 60, pageHeight - 30, pageWidth - 15, pageHeight - 30);
-      pdf.text("Principal", pageWidth - 60, pageHeight - 20);
-
+      const result = response.data;
+      const pdf = await generatePDF(result);
       pdf.save(`Certificate_${result.studentDetails.rollNumber}.pdf`);
+      setShowPreview(false);
     } catch (error) {
       console.error("Error generating certificate:", error);
-      setError("Failed to generate certificate. Please check the roll number and try again.");
+      setError("Failed to generate certificate. Please check the details and try again.");
     } finally {
       setLoading(false);
     }
@@ -162,97 +118,19 @@ const Certificate = () => {
     setError(null);
 
     try {
-      // Get bulk results using the new endpoint
       const response = await API.post("/StudentsMarksObtaineds/GetBulkResult", {
-        SessionId: parseInt(selectedSession),
-        SemesterId: parseInt(selectedSemester),
+        sessionId: parseInt(selectedSession),
+        semesterId: parseInt(selectedSemester),
       });
 
       const results = response.data;
-
-      // Generate certificate for each student
+      
       for (const result of results) {
-        const pdf = new jsPDF("p", "mm", "a4");
-        const pageWidth = pdf.internal.pageSize.width;
-        const pageHeight = pdf.internal.pageSize.height;
-
-        // Add border
-        pdf.setDrawColor(0);
-        pdf.setLineWidth(0.5);
-        pdf.rect(10, 10, pageWidth - 20, pageHeight - 20);
-
-        // Add Serial Number
-        pdf.setFontSize(10);
-        pdf.text(`Sr. No. ${result.studentDetails.rollNumber}`, 15, 20);
-
-        // Add Header (Hindi + English)
-        pdf.setFontSize(16);
-        pdf.text("BOARD OF SCHOOL EDUCATION UTTARAKHAND", pageWidth / 2, 35, { align: "center" });
-
-        // Add Title
-        pdf.setFontSize(14);
-        pdf.text("TWO-YEAR DIPLOMA IN ELEMENTARY EDUCATION - 2023", pageWidth / 2, 90, { align: "center" });
-        pdf.text("MARKS STATEMENT : FIRST SEMESTER", pageWidth / 2, 100, { align: "center" });
-
-        // Add Student Details
-        pdf.setFontSize(12);
-        pdf.text(`Name: ${result.studentDetails.candidateName}`, 15, 120);
-        pdf.text(`Roll No.: ${result.studentDetails.rollNumber}`, pageWidth - 80, 120);
-        pdf.text(`Group: ${result.studentDetails.group}`, pageWidth - 40, 120);
-        
-        pdf.text(`Mother's Name: ${result.studentDetails.mName}`, 15, 130);
-        pdf.text(`Father's Name: ${result.studentDetails.fName}`, pageWidth/2, 130);
-        
-        pdf.text(`Institution's Name: ${result.studentDetails.institutionName}`, 15, 140);
-
-        // Add Marks Table
-        const tableData = result.marksDetails.map(mark => [
-          mark.paperCode,
-          mark.paperName,
-          mark.maxMarks,
-          mark.theoryMarks,
-          mark.internalMarks,
-          mark.practicalMarks,
-          mark.total
-        ]);
-
-        autoTable(pdf, {
-          startY: 150,
-          head: [["Code", "Subject", "Max Marks", "Theory", "Internal", "Practical", "Total"]],
-          body: tableData,
-          theme: "grid",
-          styles: {
-            fontSize: 10,
-            cellPadding: 2,
-            overflow: "linebreak",
-          },
-          columnStyles: {
-            0: { cellWidth: 20 },
-            1: { cellWidth: 60 },
-            2: { cellWidth: 20 },
-            3: { cellWidth: 20 },
-            4: { cellWidth: 20 },
-            5: { cellWidth: 20 },
-            6: { cellWidth: 20 },
-          },
-        });
-
-        // Add Result
-        const percentage = ((result.totalMarks / result.maximumMarks) * 100).toFixed(2);
-        const resultText = percentage >= 33 ? "PASS" : "FAIL";
-        
-        pdf.text(`Result: ${resultText} (${percentage}%)`, 15, pdf.autoTable.previous.finalY + 20);
-
-        // Add Signature lines
-        pdf.line(15, pageHeight - 30, 60, pageHeight - 30);
-        pdf.text("Controller of Examination", 15, pageHeight - 20);
-
-        pdf.line(pageWidth - 60, pageHeight - 30, pageWidth - 15, pageHeight - 30);
-        pdf.text("Principal", pageWidth - 60, pageHeight - 20);
-
+        const pdf = await generatePDF(result);
         pdf.save(`Certificate_${result.studentDetails.rollNumber}.pdf`);
       }
 
+      setShowPreview(false);
       setError("All certificates generated successfully!");
     } catch (error) {
       console.error("Error generating certificates:", error);
@@ -264,55 +142,23 @@ const Certificate = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-4xl mx-auto space-y-6"
-      >
-        <h1 className={`text-3xl font-bold ${textClass} mb-8`}>
+      <div className="max-w-4xl mx-auto space-y-6">
+        <h1 className="text-3xl font-bold mb-8">
           Certificate Generation
         </h1>
 
         {/* Individual Certificate Download */}
-        <div className={`border rounded-lg p-6 ${cardClass}`}>
-          <h2 className={`text-xl font-semibold ${textClass} mb-4`}>
+        <div className="border rounded-lg p-6 bg-white shadow">
+          <h2 className="text-xl font-semibold mb-4">
             Download Individual Certificate
           </h2>
-          <div className="flex gap-4">
-            <input
-              type="text"
-              value={rollNumber}
-              onChange={(e) => setRollNumber(e.target.value)}
-              placeholder="Enter Roll Number"
-              className={`flex-1 px-4 py-2 rounded-lg border ${inputClass}`}
-            />
-            <button
-              onClick={handleSingleDownload}
-              disabled={loading}
-              className={`px-6 py-2 rounded-lg ${buttonClass} flex items-center gap-2`}
-            >
-              {loading ? (
-                <FiLoader className="animate-spin" />
-              ) : (
-                <FiDownload />
-              )}
-              Download
-            </button>
-          </div>
-        </div>
-
-        {/* Bulk Certificate Download */}
-        <div className={`border rounded-lg p-6 ${cardClass}`}>
-          <h2 className={`text-xl font-semibold ${textClass} mb-4`}>
-            Bulk Download Certificates
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div>
-              <label className={`block mb-2 ${textClass}`}>Session</label>
+              <label className="block mb-2">Session</label>
               <select
                 value={selectedSession}
                 onChange={(e) => setSelectedSession(e.target.value)}
-                className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
+                className="w-full px-4 py-2 rounded-lg border"
               >
                 <option value="">Select Session</option>
                 {sessions.map((session) => (
@@ -323,11 +169,72 @@ const Certificate = () => {
               </select>
             </div>
             <div>
-              <label className={`block mb-2 ${textClass}`}>Semester</label>
+              <label className="block mb-2">Semester</label>
               <select
                 value={selectedSemester}
                 onChange={(e) => setSelectedSemester(e.target.value)}
-                className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
+                className="w-full px-4 py-2 rounded-lg border"
+              >
+                <option value="">Select Semester</option>
+                {semesters.map((semester) => (
+                  <option key={semester.semID} value={semester.semID}>
+                    {semester.semesterName}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block mb-2">Roll Number</label>
+              <input
+                type="text"
+                value={rollNumber}
+                onChange={(e) => setRollNumber(e.target.value)}
+                placeholder="Enter Roll Number"
+                className="w-full px-4 py-2 rounded-lg border"
+              />
+            </div>
+          </div>
+          <button
+            onClick={handleSingleDownload}
+            disabled={loading}
+            className="w-full px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            {loading ? (
+              <FiLoader className="animate-spin" />
+            ) : (
+              <FiDownload />
+            )}
+            Download Certificate
+          </button>
+        </div>
+
+        {/* Bulk Certificate Download */}
+        <div className="border rounded-lg p-6 bg-white shadow">
+          <h2 className="text-xl font-semibold mb-4">
+            Bulk Download Certificates
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block mb-2">Session</label>
+              <select
+                value={selectedSession}
+                onChange={(e) => setSelectedSession(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border"
+              >
+                <option value="">Select Session</option>
+                {sessions.map((session) => (
+                  <option key={session.sesID} value={session.sesID}>
+                    {session.sessionName}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block mb-2">Semester</label>
+              <select
+                value={selectedSemester}
+                onChange={(e) => setSelectedSemester(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border"
               >
                 <option value="">Select Semester</option>
                 {semesters.map((semester) => (
@@ -341,7 +248,7 @@ const Certificate = () => {
           <button
             onClick={handleBulkDownload}
             disabled={loading}
-            className={`w-full px-6 py-2 rounded-lg ${buttonClass} flex items-center justify-center gap-2`}
+            className="w-full px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {loading ? (
               <FiLoader className="animate-spin" />
@@ -353,15 +260,18 @@ const Certificate = () => {
         </div>
 
         {error && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-red-500 text-center py-2"
-          >
+          <div className={`p-4 rounded-lg ${error.includes('success') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
             {error}
-          </motion.div>
+          </div>
         )}
-      </motion.div>
+
+        {/* Hidden certificate template for PDF generation */}
+        {showPreview && certificateData && (
+          <div className="fixed left-[-9999px]" id="certificate-template">
+            <Template data={certificateData} />
+          </div>
+        )}
+      </div>
     </div>
   );
 };
