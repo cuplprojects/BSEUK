@@ -113,7 +113,7 @@ const MarksEntryForm = () => {
                 theme === "dark" ? "text-white" : "text-blue-900"
               } mb-4`}
             >
-              Student Information
+              Candidate Information
             </h2>
             {loading ? (
               <div
