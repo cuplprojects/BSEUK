@@ -52,15 +52,14 @@ const EditMarks = ({ paperID, paperName, paperCode, paperType, theme, studentId 
 
         // Fetch existing marks for this student and paper
         const marksResponse = await axios.get(
-          `https://localhost:7133/api/StudentsMarksObtaineds/${studentId}/${paperID}`
+          `https://localhost:7133/api/StudentsMarksObtaineds/GetStudentPaperMarks/${studentId}/${paperID}`
         );
 
-        if (marksResponse.data && marksResponse.data.length > 0) {
-          const existingMarks = marksResponse.data[0];
+        if (marksResponse.data) {
           setMarks({
-            theoryMarks: existingMarks.theoryPaperMarks || "",
-            internalMarks: existingMarks.interalMarks || "",
-            practicalMarks: existingMarks.practicalMaxMarks || "",
+            theoryMarks: marksResponse.data.theoryPaperMarks || "",
+            internalMarks: marksResponse.data.interalMarks || "",
+            practicalMarks: marksResponse.data.practicalMaxMarks || "",
           });
         }
       } catch (error) {
