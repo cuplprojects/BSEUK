@@ -11,7 +11,7 @@ import {
     getSortedRowModel,
     flexRender,
 } from '@tanstack/react-table';
-import axios from 'axios';
+import API from '../../services/api';
 
 const MarksEntry = () => {
     const navigate = useNavigate();
@@ -48,8 +48,8 @@ const MarksEntry = () => {
             setLoadingDropdown(true);
             try {
                 const [sessionsResponse, semestersResponse] = await Promise.all([
-                    axios.get('https://localhost:7133/api/Sessions'),
-                    axios.get('https://localhost:7133/api/Semesters')
+                    API.get('/Sessions'),
+                    API.get('/Semesters')
                 ]);
                 setSessions(sessionsResponse.data);
                 setSemesters(semestersResponse.data);
@@ -65,17 +65,11 @@ const MarksEntry = () => {
     const fetchStudents = async () => {
         setLoadingStudents(true);
         try {
-            const response = await axios.post(
-                'https://localhost:7133/api/Candidates/GetStudents',
+            const response = await API.post(
+                '/Candidates/GetStudents',
                 {
                     sesID: parseInt(selectedSession),
                     semID: parseInt(selectedSemester)
-                },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    }
                 }
             );
 
