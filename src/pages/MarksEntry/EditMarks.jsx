@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import axios from "axios";
 import { FiSave, FiAlertCircle, FiLoader, FiX } from "react-icons/fi";
+import API from "../../services/api";
 
 const EditMarks = ({ paperID, paperName, paperCode, paperType, theme, studentId }) => {
   const [marks, setMarks] = useState({
@@ -21,9 +21,7 @@ const EditMarks = ({ paperID, paperName, paperCode, paperType, theme, studentId 
   const [success, setSuccess] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
 
-  // Reset marks and fetch data when paper changes
   useEffect(() => {
-    // Reset states when paper changes
     setMarks({
       theoryMarks: "",
       internalMarks: "",
@@ -38,9 +36,7 @@ const EditMarks = ({ paperID, paperName, paperCode, paperType, theme, studentId 
         setLoading(true);
         
         // Fetch paper details for max marks
-        const paperResponse = await axios.get(
-          `https://localhost:7133/api/Papers/${paperID}`
-        );
+        const paperResponse = await API.get(`/Papers/${paperID}`);
         
         if (paperResponse.data) {
           setMaxMarks({
@@ -51,8 +47,8 @@ const EditMarks = ({ paperID, paperName, paperCode, paperType, theme, studentId 
         }
 
         // Fetch existing marks for this student and paper
-        const marksResponse = await axios.get(
-          `https://localhost:7133/api/StudentsMarksObtaineds/GetStudentPaperMarks/${studentId}/${paperID}`
+        const marksResponse = await API.get(
+          `/StudentsMarksObtaineds/GetStudentPaperMarks/${studentId}/${paperID}`
         );
 
         if (marksResponse.data) {
@@ -117,7 +113,7 @@ const EditMarks = ({ paperID, paperName, paperCode, paperType, theme, studentId 
 
     try {
       setLoading(true);
-      await axios.post("https://localhost:7133/api/StudentsMarksObtaineds", {
+      await API.post('/StudentsMarksObtaineds', {
         candidateID: studentId,
         paperID: paperID,
         theoryPaperMarks: paperType === 1 ? Number(marks.theoryMarks) : null,

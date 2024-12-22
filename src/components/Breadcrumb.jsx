@@ -2,8 +2,8 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 import { FiChevronRight } from 'react-icons/fi';
 import { useThemeStore } from '../store/themeStore';
 import { motion } from 'framer-motion';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
+import API from '../services/api';
 
 const Breadcrumb = () => {
   const location = useLocation();
@@ -28,7 +28,7 @@ const Breadcrumb = () => {
     const fetchCandidateName = async () => {
       if (params.studentId) {
         try {
-          const response = await axios.get(`https://localhost:7133/api/Candidates/${params.studentId}`);
+          const response = await API.get(`/Candidates/${params.studentId}`);
           setCandidateName(response.data.candidateName);
         } catch (error) {
           console.error('Error fetching candidate:', error);

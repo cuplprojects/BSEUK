@@ -3,18 +3,15 @@
 
 import axios from 'axios';
 
-// Set the base URL for the API
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-// Create an Axios instance
+// Create axios instance with base configuration
 const API = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Request interceptor for adding auth token
+// Add request interceptor for any future auth tokens
 API.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('authToken');
@@ -23,71 +20,29 @@ API.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Response interceptor for handling errors
+// Add response interceptor for error handling
 API.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Handle common errors here
     if (error.response) {
       switch (error.response.status) {
         case 401:
-          // Unauthorized - Clear token and redirect to login
-          localStorage.removeItem('authToken');
-          window.location.href = '/login';
+          // Handle unauthorized
           break;
-        case 403:
-          // Forbidden
-          console.error('Access denied');
+        case 404:
+          // Handle not found
           break;
         case 500:
-          // Server error
-          console.error('Server error');
+          // Handle server error
           break;
-        default:
-          console.error('API Error:', error.response.data);
       }
     }
     return Promise.reject(error);
   }
 );
-
-// API endpoints
-export const endpoints = {
-  auth: {
-    login: '/auth/login',
-    register: '/auth/register',
-  },
-  employees: {
-    list: '/employees',
-    detail: (id) => `/employees/${id}`,
-  },
-  departments: {
-    list: '/departments',
-    detail: (id) => `/departments/${id}`,
-  },
-  roles: {
-    list: '/roles',
-    detail: (id) => `/roles/${id}`,
-  },
-  user: {
-    profile: '/user/profile',
-    updateProfile: '/user/profile/update',
-    changePassword: '/user/change-password',
-    settings: '/user/settings',
-    updateSettings: '/user/settings/update',
-  },
-  locations: {
-    list: '/locations',
-    detail: (id) => `/locations/${id}`,
-  },
-  designations: {
-    list: '/designations',
-    detail: (id) => `/designations/${id}`,
-  },
-};
 
 export default API;
