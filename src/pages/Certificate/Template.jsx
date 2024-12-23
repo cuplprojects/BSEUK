@@ -1,6 +1,6 @@
 import React from "react";
-import logo from "../assets/logo.png";
-import data from "../data.json";
+import logo from "./../../assets/logo.png";
+import data from "./data.json";
 import "./Certificate.css";
 
 const semesterHindi = {
