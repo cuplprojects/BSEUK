@@ -1,102 +1,189 @@
 import React from "react";
+import logo from "../assets/logo.png";
+import data from "../data.json";
+import "./Certificate.css";
 
-const Certificate = ({ data }) => {
+const semesterHindi = {
+  "FIRST SEMESTER": "प्रथम सेमेस्टर",
+  "SECOND SEMESTER": "द्वितीय सेमेस्टर",
+  "THIRD SEMESTER": "तृतीय सेमेस्टर",
+  "FOURTH SEMESTER": "चतुर्थ सेमेस्टर",
+};
+
+const paperType2Count = data.result.marks.filter((mark) => mark.paperType === 2).length;
+console.log("Count of paperType === 2:", paperType2Count);
+
+
+const Certificate = () => {
+  const renderTheoryRows = () => {
+    return data.result.marks
+      .filter((mark) => mark.paperType === 1) // Filter for theory papers
+      .map((mark, index) => (
+        <tr key={index}>
+          <td>{mark.paperid}</td>
+          <td>{mark.paperName}</td>
+          <td>{mark.maxMarks}</td>
+          <td>{mark.internalMarks}</td>
+          <td>{mark.internalMarksObtained}</td>
+          <td>{mark.externalMarks}</td>
+          <td>{mark.externalMarksObtained}</td>
+          <td colSpan="2">_</td>
+          <td colSpan="2">_</td>
+          <td>{mark.totalMarksObtained}</td>
+        </tr>
+      ));
+  };
+
+  const renderPracticalRows = () => {
+    const practicalMarks = data.result.marks.filter((mark) => mark.paperType === 2); // Filter for practical papers
+    return practicalMarks.map((mark, index) => (
+      <tr key={index}>
+        {index === 0 && (
+          <td rowSpan={practicalMarks.length} className="text-center">
+            अभ्यास क्रम
+          </td>
+        )}
+        <td>{mark.paperName}</td>
+        <td>{mark.maxMarks}</td>
+        <td>_</td>
+        <td>_</td>
+        <td>_</td>
+        <td>_</td>
+        <td colSpan="2">{mark.maxMarks}</td>
+        <td colSpan="2">{mark.marksObtained}</td>
+        <td>{mark.totalMarksObtained}</td>
+      </tr>
+    ));
+  };
+
+
   return (
-    <div style={{ width: "210mm", height: "297mm", margin: "0 auto", padding: "20px", border: "1px solid black" }}>
-      {/* Header */}
-      <div style={{ textAlign: "center" }}>
-        <h1>उत्तराखण्ड विद्यालयी शिक्षा परिषद्</h1>
-        <h1>BOARD OF SCHOOL EDUCATION UTTARAKHAND</h1>
-        <img src={data.headerImage} alt="Logo" style={{ width: "60px", height: "60px", margin: "10px auto" }} />
-        <h2>प्रारंभिक शिक्षा में द्विवर्षीय डिप्लोमा</h2>
-        <h2>TWO-YEAR DIPLOMA IN ELEMENTARY EDUCATION - 2023</h2>
-        <h3>MARKS STATEMENT : FIRST SEMESTER</h3>
-      </div>
+    <div className="p-4 outer-border">
+      <div className="container border border-5 p-4" style={{ width: "21cm", height: "29.7cm" }}>
+        <header className="text-center mb-4">
+          <div className="d-flex justify-content-start">
+            <b>Sr. No.<span>001</span></b>
+          </div>
+          <div>
+            <h4>उत्‍तराखण्‍ड विद्यालयी शिक्षा परिषद</h4>
+            <h4>BOARD OF SCHOOL EDUCATION UTTARAKHAND</h4>
+          </div>
+        </header>
 
-      {/* Student Info */}
-      <table style={{ width: "100%", marginTop: "20px", borderCollapse: "collapse" }}>
-        <tbody>
-          <tr>
-            <td>नाम (Name):</td>
-            <td style={{ borderBottom: "1px solid black" }}>{data.name}</td>
-            <td>अनुक्रमांक (Roll No.):</td>
-            <td style={{ borderBottom: "1px solid black" }}>{data.rollNo}</td>
-          </tr>
-          <tr>
-            <td>माता का नाम (Mother's Name):</td>
-            <td style={{ borderBottom: "1px solid black" }}>{data.mothersName}</td>
-            <td>Class:</td>
-            <td style={{ borderBottom: "1px solid black" }}>{data.class}</td>
-          </tr>
-          <tr>
-            <td>पिता का नाम (Father's Name):</td>
-            <td style={{ borderBottom: "1px solid black" }}>{data.fathersName}</td>
-            <td>Institution's Name:</td>
-            <td style={{ borderBottom: "1px solid black" }}>{data.institutionName}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      {/* Marks Table */}
-      <table
-        style={{
-          width: "100%",
-          marginTop: "20px",
-          borderCollapse: "collapse",
-          border: "1px solid black",
-        }}
-      >
-        <thead>
-          <tr>
-            <th style={{ border: "1px solid black", textAlign: "center" }}>प्रश्न पत्र कोड</th>
-            <th style={{ border: "1px solid black", textAlign: "center" }}>प्रश्न पत्र का नाम</th>
-            <th style={{ border: "1px solid black", textAlign: "center" }}>अधिकतम अंक</th>
-            <th style={{ border: "1px solid black", textAlign: "center" }}>थ्योरी</th>
-            <th style={{ border: "1px solid black", textAlign: "center" }}>प्रायोगिक</th>
-            <th style={{ border: "1px solid black", textAlign: "center" }}>आंतरिक</th>
-            <th style={{ border: "1px solid black", textAlign: "center" }}>योग</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.marks.map((subject, index) => (
-            <tr key={index}>
-              <td style={{ border: "1px solid black", textAlign: "center" }}>{subject.code}</td>
-              <td style={{ border: "1px solid black", textAlign: "center" }}>{subject.name}</td>
-              <td style={{ border: "1px solid black", textAlign: "center" }}>{subject.maxMarks}</td>
-              <td style={{ border: "1px solid black", textAlign: "center" }}>{subject.theory}</td>
-              <td style={{ border: "1px solid black", textAlign: "center" }}>{subject.practical}</td>
-              <td style={{ border: "1px solid black", textAlign: "center" }}>{subject.internal}</td>
-              <td style={{ border: "1px solid black", textAlign: "center" }}>{subject.total}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Footer */}
-      <div style={{ marginTop: "20px" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <tbody>
-            <tr>
-              <td>योग (TOTAL):</td>
-              <td>{data.totalMarks}</td>
-              <td>परीक्षा फल (Result):</td>
-              <td>{data.result}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      {/* Signature Section */}
-      <div style={{ marginTop: "30px", textAlign: "center" }}>
-        <div style={{ display: "inline-block", marginRight: "50px" }}>
-          <p>हस्ताक्षर जांचकर्ता</p>
-          <p>Signature</p>
+        <div className="text-center mb-3">
+          <img src={logo} alt="Logo" className="logo" />
         </div>
-        <div style={{ display: "inline-block" }}>
-          <p>सील / मुहर</p>
-          <p>Seal</p>
+
+        <div className="text-center mb-4">
+          <h4>उत्‍तराखण्‍ड विद्यालयी शिक्षा परिषद</h4>
+          <h4>
+            TWO-YEAR DIPLOMA IN ELEMENTARY EDUCATION - {data.session}
+          </h4>
+        </div>
+
+        <div className="text-center mb-4">
+          <h5>अंक विवरण : <span id="sem-hindi">
+            <span id="sem-hindi">{semesterHindi[data.sem.toUpperCase()]}</span>
+          </span></h5>
+          <h5>
+            <u>MARKS STATEMENT : <span id="sem-english">{data.sem}</span></u>
+          </h5>
+        </div>
+
+        <section className="mb-4">
+          <div className="row mb-3">
+            <div className="col-md-4">
+              <b>नाम / Name:</b>
+              <span className="ms-2">{data.name}</span>
+            </div>
+            <div className="col-md-4">
+              <b>अनुक्रमांक / Roll No.:</b>
+              <span className="ms-2">{data.rollNo}</span>
+            </div>
+            <div className="col-md-4">
+              <b>वर्ग / Group:</b>
+              <span className="ms-2">{data.group}</span>
+            </div>
+          </div>
+
+          <div className="row mb-3">
+            <div className="col-md-6">
+              <b>माता का नाम / Mother's Name:</b>
+              <span className="ms-2">{data.mName}</span>
+            </div>
+            <div className="col-md-6">
+              <b>पिता का नाम / Father's Name:</b>
+              <span className="ms-2">{data.fName}</span>
+            </div>
+          </div>
+
+          <div className="row">
+            <div className="col-md-12">
+              <b>संस्थान का नाम / Institution's Name:</b>
+              <span className="ms-2">{data.institutionName}</span>
+            </div>
+          </div>
+        </section>
+
+        <div className="reponsive">
+          <table border="2" cellPadding="3px" className="table-bordered">
+            <thead>
+              <tr>
+                <th rowSpan="3" className="text-center">प्रश्न पत्र कोड</th>
+                <th rowSpan="3" className="text-center">प्रश्न पत्र का नाम</th>
+                <th rowSpan="3" className="text-center">अधिकतम अंक</th>
+                <th colSpan="4" className="text-center">सैद्धांतिक</th>
+                <th colSpan="4" className="text-center">क्रियात्मक / प्रयोगात्मक</th>
+                <th rowSpan="3" className="text-center">योग</th>
+              </tr>
+              <tr>
+                <th colSpan="2" className="text-center">बाह्य</th>
+                <th colSpan="2" className="text-center">आंतरिक</th>
+                <th colSpan="2" className="text-center">पूर्णांक</th>
+                <th colSpan="2" className="text-center">प्राप्तांक</th>
+              </tr>
+            </thead>
+            <tbody>
+              {renderTheoryRows()}
+              {renderPracticalRows()}
+              <tr>
+                <td colSpan="2" className="text-start"><b>योग (Total)</b></td>
+                <td>{data.result.totalMaxMarks}</td>
+                <td>{data.result.TotalInternalMaxMarks}</td>
+                <td>{data.result.TotalInternalMarksObtained}</td>
+                <td>{data.result.TotalExternalMaxMarks}</td>
+                <td>{data.result.TotalExternalMarksObtained}</td>
+                <td colSpan="2">{data.result.TotalPracticalMaxMarks}</td>
+                <td colSpan="2">{data.result.TotalPracticalMarksObtained}</td>
+                <td><b>{data.result.totalMarksObtained}</b></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="footer">
+          <div class="d-flex justify-content-start mt-2">परीक्षाफल - <span id="re"><b>{data.result.remark}</b></span></div>
+          <div class="d-flex justify-content-between mt-5">
+            <div class="left-box">
+              <div class="signature-checker">
+                हस्ताक्षर ज़ाँचकार्ता <span></span>
+              </div>
+              <div class="date">
+                दिनांक -
+              </div>
+            </div>
+            <div class="right-box d-flex flex-column align-items-center">
+              <div class="signature-principal">
+                हस्ताक्षर प्रचार्य
+              </div>
+              <div class="seal">
+                सील/मोहर
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
+
     </div>
   );
 };

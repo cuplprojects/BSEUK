@@ -4,6 +4,7 @@ import API from "../../services/api";
 import Template from "./Template";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import logo from "./../../assets/logo.png";
 
 const Certificate = () => {
   const [sessions, setSessions] = useState([]);
@@ -39,7 +40,7 @@ const Certificate = () => {
       mothersName: result.studentDetails.mName,
       fathersName: result.studentDetails.fName,
       rollNo: result.studentDetails.rollNumber,
-      class: result.studentDetails.group,
+      group: result.studentDetails.group,
       institutionName: result.studentDetails.institutionName,
       marks: result.marksDetails.map(mark => ({
         code: mark.paperCode,
@@ -51,8 +52,8 @@ const Certificate = () => {
       })),
       totalMarks: result.totalMarks,
       result: ((result.totalMarks / result.maximumMarks) * 100).toFixed(2) >= 33 ? "PASS" : "FAIL",
-      watermarkImage: "/path/to/watermark.png",
-      headerImage: "/path/to/logo.png"
+      watermarkImage: logo,
+      headerImage: logo
     };
   };
 
