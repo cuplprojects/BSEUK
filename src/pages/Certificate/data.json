@@ -1,0 +1,73 @@
+{
+    "session": "2023-24",
+    "sem": "SECOND SEMESTER",
+    "name": "Jayant Roy Choudhury",
+    "rollNo": "2310101",
+    "group": "Ot. Science",
+    "mName": "Ranjana Roy Choudhury",
+    "fName": "Narendra Nath Roy Choudhury",
+    "institutionName": "Allahabad Degree College",
+    "result": {
+      "totalMaxMarks": 225,
+      "TotalInternalMaxMarks": 140,
+      "TotalInternalMarksObtained": 120,
+      "TotalExternalMaxMarks": 85,
+      "TotalExternalMarksObtained": 70,
+      "TotalPracticalMaxMarks": 25,
+      "TotalPracticalMarksObtained": 20,
+      "totalMarksObtained": 190,
+      "remark":"Passed",
+      "marks": [
+        {
+          "paperid": "1",
+          "paperName": "Mathematics lorem lorem ipsum",
+          "paperType": 1,
+          "maxMarks": 100,
+          "internalMarks": 70,
+          "externalMarks": 30,
+          "internalMarksObtained": 60,
+          "externalMarksObtained": 25,
+          "totalMarksObtained": 85
+        },
+        {
+          "paperid": "2",
+          "paperName": "English",
+          "paperType": 1,
+          "maxMarks": 100,
+          "internalMarks": 70,
+          "externalMarks": 30,
+          "internalMarksObtained": 60,
+          "externalMarksObtained": 25,
+          "totalMarksObtained": 85
+        },
+        {
+          "paperid": "2",
+          "paperName": "English",
+          "paperType": 1,
+          "maxMarks": 100,
+          "internalMarks": 70,
+          "externalMarks": 30,
+          "internalMarksObtained": 60,
+          "externalMarksObtained": 25,
+          "totalMarksObtained": 85
+        },
+        {
+          "paperid": "3",
+          "paperName": "Practical subject",
+          "paperType": 2,
+          "maxMarks": 25,
+          "marksObtained": 20,
+          "totalMarksObtained": 20
+        },
+        {
+          "paperid": "4",
+          "paperName": "Practical subject",
+          "paperType": 2,
+          "maxMarks": 25,
+          "marksObtained": 20,
+          "totalMarksObtained": 20
+        }
+      ]
+    }
+  }
+  

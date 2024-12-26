@@ -5,7 +5,7 @@ import StudentData from "./StudentData";
 import Papers from "./Papers";
 import EditMarks from "./EditMarks";
 import { useThemeStore } from "../../store/themeStore";
-import axios from "axios";
+import API from '../../services/api';
 
 const MarksEntryForm = () => {
   const { studentId } = useParams();
@@ -22,22 +22,22 @@ const MarksEntryForm = () => {
       if (studentId) {
         try {
           setLoading(true);
-          const studentResponse = await axios.get(
-            `https://localhost:7133/api/Candidates/${studentId}`
+          const studentResponse = await API.get(
+            `Candidates/${studentId}`
           );
           const student = studentResponse.data;
           setStudentData(student);
 
           const [sessionResponse, semesterResponse] = await Promise.all([
-            axios.get(`https://localhost:7133/api/Sessions/${student.sesID}`),
-            axios.get(`https://localhost:7133/api/Semesters/${student.semID}`),
+            API.get(`Sessions/${student.sesID}`),
+            API.get(`Semesters/${student.semID}`),
           ]);
 
           setSessionName(sessionResponse.data.sessionName);
           setSemesterName(semesterResponse.data.semesterName);
 
-          const papersResponse = await axios.get(
-            "https://localhost:7133/api/Papers"
+          const papersResponse = await API.get(
+            "Papers"
           );
           const allPapers = papersResponse.data;
 
@@ -48,8 +48,8 @@ const MarksEntryForm = () => {
           const enrichedPapers = await Promise.all(
             filteredPapers.map(async (paper) => {
               try {
-                const paperTypeResponse = await axios.get(
-                  `https://localhost:7133/api/PaperTypes/${paper.paperType}`
+                const paperTypeResponse = await API.get(
+                  `PaperTypes/${paper.paperType}`
                 );
                 return {
                   ...paper,
