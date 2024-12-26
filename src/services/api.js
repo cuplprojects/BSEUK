@@ -2,6 +2,7 @@
 // This file contains a custom Axios instance with interceptors for authentication and error handling
 
 import axios from 'axios';
+import useUserToken from '../store/useUsertoken';
 
 // Create axios instance with base configuration
 const API = axios.create({
@@ -14,7 +15,7 @@ const API = axios.create({
 // Add request interceptor for any future auth tokens
 API.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('authToken');
+    const token = useUserToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
