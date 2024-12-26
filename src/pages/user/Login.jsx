@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { useUserToken } from "../../store/useUsertoken";
+import useUserToken from "../../store/useUsertoken";
 import API from "../../services/api";
 
 const DEV_MODE = import.meta.env.VITE_SKIP_VALIDATION === 'true';
