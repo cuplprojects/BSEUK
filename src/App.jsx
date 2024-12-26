@@ -11,10 +11,12 @@ import MarksEntry from './pages/MarksEntry/MarksEntry';
 import MarksEntryForm from './pages/MarksEntry/MarksEntryForm';
 import Certificate from './pages/Certificate/Certificate';
 import Report from './pages/Report/Report';
-
+import useUserToken from './store/useUsertoken';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { token, setToken } = useUserToken();
+  
+  const isAuthenticated = !!token;
 
   return (
     <Router>

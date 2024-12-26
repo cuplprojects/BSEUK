@@ -2,11 +2,14 @@ import React, { useState, useEffect } from "react";
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
+import { useUserToken } from "../../store/useUsertoken";
+import API from "../../services/api";
 
 const DEV_MODE = import.meta.env.VITE_SKIP_VALIDATION === 'true';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { setToken } = useUserToken();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -49,11 +52,24 @@ const Login = () => {
     e.preventDefault();
     if (validateForm()) {
       setLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setLoading(false);
-      navigate('/dashboard');
+      try {
+        const response = await API.post('/auth/login', { email, password });
+        const data = await response.data;
+        if (response.status === 200) {
+          setToken(data.token);
+          navigate('/dashboard');
+        } else {
+          setErrors({ ...errors, email: data.message });
+        }
+      } catch (error) {
+        console.error(error);
+        setErrors({ ...errors, email: 'Failed to login' });
+      } finally {
+        setLoading(false);
+      }
     }
   };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-300 via-blue-100 to-blue-300 flex items-center justify-center p-4">
