@@ -116,11 +116,14 @@ const EditMarks = ({ paperID, paperName, paperCode, paperType, theme, studentId 
       setLoading(true);
       await API.post('/StudentsMarksObtaineds', {
         candidateID: studentId,
-        paperID: paperID,
-        theoryPaperMarks: paperType === 1 ? Number(marks.theoryMarks) : null,
-        interalMarks: paperType === 1 ? Number(marks.internalMarks) : null,
-        practicalMarks: paperType === 2 ? Number(marks.practicalMarks) : null,
-        practicalMarks : paperType === 3 ? Number(marks.practicalMarks) : null,
+        // paperID: paperID,
+        // theoryPaperMarks: paperType === 1 ? Number(marks.theoryMarks) : null,
+        // interalMarks: paperType === 1 ? Number(marks.internalMarks) : null,
+        // practicalMarks: paperType === 2 ? Number(marks.practicalMarks) : null,
+        // practicalMarks : paperType === 3 ? Number(marks.practicalMarks) : null,
+        paperID,
+        ...(paperType === 1 ? { theoryPaperMarks: Number(marks.theoryMarks), interalMarks: Number(marks.internalMarks) } : {}),
+        ...(paperType === 2 || paperType === 3 ? { practicalMarks: Number(marks.practicalMarks) } : {}),
       });
       setSuccess(true);
     } catch (error) {

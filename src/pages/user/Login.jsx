@@ -1,20 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import useUserToken from "../../store/useUsertoken";
+import { useUserStore } from "../../store/useUsertoken";
 import API from "../../services/api";
 
 const DEV_MODE = import.meta.env.VITE_SKIP_VALIDATION === 'true';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { setToken } = useUserToken();
+  const { login, setLoading, setError, error, isLoading } = useUserStore();
   const [userName, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [validationErrors, setValidationErrors] = useState({});
   const [skipValidation] = useState(DEV_MODE);
 
   const validateForm = () => {
@@ -30,33 +29,31 @@ const Login = () => {
     } else if (password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
     }
-    setErrors(newErrors);
+    setValidationErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null); // Clear any previous errors
     if (validateForm()) {
       setLoading(true);
       try {
         const response = await API.post('/Login', { userName, password });
         const data = response.data;
         if (response.status === 200) {
-          console.log("Token: ", data.token);
-          setToken(data.token);
+          await login(data.token, data.user);
           navigate('/dashboard');
         } else {
-          setErrors({ ...errors, userName: data.message });
+          setError({ message: data.message || 'Login failed' });
         }
       } catch (error) {
-        console.error(error);
-        setErrors({ ...errors, userName: 'Failed to login' });
+        setError({ message: error.response?.data?.message || 'An error occurred during login' });
       } finally {
         setLoading(false);
       }
     }
   };
-
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-300 via-blue-100 to-blue-300 flex items-center justify-center p-4">
@@ -99,20 +96,20 @@ const Login = () => {
                       value={userName}
                       onChange={(e) => setUsername(e.target.value)}
                       className={`w-full bg-gray-50 border ${
-                        errors.userName ? 'border-red-500' : 'border-gray-200'
+                        validationErrors.userName ? 'border-red-500' : 'border-gray-200'
                       } rounded-lg py-3 px-10 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300`}
                       placeholder="Username"
                     />
                   </div>
                   <AnimatePresence>
-                    {errors.userName && (
+                    {validationErrors.userName && (
                       <motion.p
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         className="text-red-500 text-sm"
                       >
-                        {errors.userName}
+                        {validationErrors.userName}
                       </motion.p>
                     )}
                   </AnimatePresence>
@@ -126,7 +123,7 @@ const Login = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className={`w-full bg-gray-50 border ${
-                        errors.password ? 'border-red-500' : 'border-gray-200'
+                        validationErrors.password ? 'border-red-500' : 'border-gray-200'
                       } rounded-lg py-3 px-10 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300`}
                       placeholder="Password"
                     />
@@ -139,18 +136,32 @@ const Login = () => {
                     </button>
                   </div>
                   <AnimatePresence>
-                    {errors.password && (
+                    {validationErrors.password && (
                       <motion.p
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         className="text-red-500 text-sm"
                       >
-                        {errors.password}
+                        {validationErrors.password}
                       </motion.p>
                     )}
                   </AnimatePresence>
                 </div>
+
+                {/* Display API Error */}
+                <AnimatePresence>
+                  {error?.message && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="bg-red-50 text-red-500 p-3 rounded-lg text-sm"
+                    >
+                      {error.message}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 <div className="flex justify-end text-sm">
                   <Link to="/forgot-password" className="text-blue-600 hover:text-blue-700 transition-colors duration-200">
@@ -162,10 +173,10 @@ const Login = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   type="submit"
-                  disabled={loading}
+                  disabled={isLoading}
                   className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg py-3 px-6 font-semibold transform transition-all duration-300 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
                 >
-                  {loading ? (
+                  {isLoading ? (
                     <div className="flex items-center justify-center">
                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                       <span className="ml-2">Logging in...</span>

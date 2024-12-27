@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useState } from 'react';
 import Layout from "./layout/layout";
 import Login from './pages/user/Login';
 import Forgot from './pages/user/Forgot';
@@ -11,27 +10,70 @@ import MarksEntry from './pages/MarksEntry/MarksEntry';
 import MarksEntryForm from './pages/MarksEntry/MarksEntryForm';
 import Certificate from './pages/Certificate/Certificate';
 import Report from './pages/Report/Report';
-import useUserToken from './store/useUsertoken';
+import { useUserStore } from './store/useUsertoken';
+
+// Protected Route Component
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, isLoading } = useUserStore();
+  
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return children;
+};
+
+// Public Route Component
+const PublicRoute = ({ children }) => {
+  const { isAuthenticated } = useUserStore();
+  
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  
+  return children;
+};
 
 function App() {
-  const { token, setToken } = useUserToken();
-  
-  const isAuthenticated = !!token;
+  const { isAuthenticated } = useUserStore();
 
   return (
     <Router>
       <Routes>
         {/* Public Routes - with redirect if authenticated */}
-        <Route path="/login" 
-          element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />} 
+        <Route 
+          path="/login" 
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          } 
         />
-        <Route path="/forgot-password" 
-          element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Forgot />} 
+        <Route 
+          path="/forgot-password" 
+          element={
+            <PublicRoute>
+              <Forgot />
+            </PublicRoute>
+          } 
         />
 
         {/* Protected Routes */}
         <Route
-          element={!isAuthenticated ? <Navigate to="/login" replace /> : <Layout />}
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
           path="/"
         >
           <Route index element={<Navigate to="/dashboard" replace />} />
