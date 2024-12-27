@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { FiDownload, FiLoader } from "react-icons/fi";
 import API from "../../services/api";
 import Template from "./Template";
+import Template2 from "./Template2";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import logo from "./../../assets/logo.png";
+import "./Certificate.css"
 
 const Certificate = () => {
   const [sessions, setSessions] = useState([]);
@@ -35,30 +37,80 @@ const Certificate = () => {
   }, []);
 
   const formatCertificateData = (result) => {
-    return {
-      name: result.studentDetails.candidateName,
-      mothersName: result.studentDetails.mName,
-      fathersName: result.studentDetails.fName,
-      rollNo: result.studentDetails.rollNumber,
-      group: result.studentDetails.group,
-      institutionName: result.studentDetails.institutionName,
-      marks: result.marksDetails.map(mark => ({
-        code: mark.paperCode,
-        name: mark.paperName,
-        maxMarks: mark.maxMarks,
-        theory: mark.theoryMarks,
-        practical: mark.practicalMarks,
-        total: mark.total
-      })),
-      totalMarks: result.totalMarks,
-      result: ((result.totalMarks / result.maximumMarks) * 100).toFixed(2) >= 33 ? "PASS" : "FAIL",
-      watermarkImage: logo,
-      headerImage: logo
-    };
+    const studentDetails = result.studentDetails;
+    const resultData = studentDetails.result;
+    console.log(result)
+
+    if(studentDetails.sem === "First Semester")
+    {
+      return {
+        sno: studentDetails.candidateID,
+        name: studentDetails.name,
+        mothersName: studentDetails.mName,
+        fathersName: studentDetails.fName,
+        rollNo: studentDetails.rollNo,
+        group: studentDetails.group,
+        institutionName: studentDetails.institutionName,
+        session: studentDetails.session,
+        semester: studentDetails.sem,
+        marks: resultData.marksDetails.map(mark => ({
+          code: mark.paperID,
+          type: mark.paperType,
+          name: mark.paperName,
+          maxMarks: mark.rowMaxTotal,
+          theoryMax : mark.theoryPaperMaxMarks,
+          theory: mark.theoryPaperMarks,
+          practical: mark.practicalMarks,
+          internalMax: mark.internalMaxMarks,
+          internal: mark.internalMarks,
+          total: mark.rowTotal
+        })),
+        totalMarks: resultData.totalMarksObtained,
+        maxMarks: resultData.totalMaxMarks,
+        result: resultData.remarks,
+        watermarkImage: logo,
+        headerImage: logo
+      };
+    }
+    else if(studentDetails.sem === "Second Semester")
+    {
+      return {
+        sno: studentDetails.candidateID,
+        name: studentDetails.name,
+        mothersName: studentDetails.mName,
+        fathersName: studentDetails.fName,
+        rollNo: studentDetails.rollNo,
+        group: studentDetails.group,
+        institutionName: studentDetails.institutionName,
+        session: studentDetails.session,
+        semester: studentDetails.sem,
+        marks: resultData.marksDetails.map(mark => ({
+          code: mark.paperID,
+          type: mark.paperType,
+          name: mark.paperName,
+          maxMarks: mark.rowMaxTotal,
+          theoryMax : mark.theoryPaperMaxMarks,
+          theory: mark.theoryPaperMarks,
+          practical: mark.practicalMarks,
+          internalMax: mark.internalMaxMarks,
+          internal: mark.internalMarks,
+          total: mark.rowTotal,
+          pageremark: mark.paperRemarks
+        })),
+        totalMarks: resultData.totalMarksObtained,
+        maxMarks: resultData.totalMaxMarks,
+        result: resultData.remarks,
+        watermarkImage: logo,
+        headerImage: logo
+      };
+    }
+    
+    
   };
 
   const generatePDF = async (result) => {
     const data = formatCertificateData(result);
+    console.log(data);
     setCertificateData(data);
     setShowPreview(true);
 
@@ -67,9 +119,9 @@ const Certificate = () => {
 
     const template = document.getElementById('certificate-template');
     const canvas = await html2canvas(template, {
-      scale: 2,
-      useCORS: true,
-      logging: false
+        scale: 2,
+        useCORS: true,
+        logging: false
     });
 
     const imgData = canvas.toDataURL('image/png');
@@ -269,7 +321,11 @@ const Certificate = () => {
         {/* Hidden certificate template for PDF generation */}
         {showPreview && certificateData && (
           <div className="fixed left-[-9999px]" id="certificate-template">
-            <Template data={certificateData} />
+            {certificateData.semester === "Second Semester" ? (
+              <Template2 data={certificateData} />
+            ) : (
+              <Template data={certificateData} />
+            )}
           </div>
         )}
       </div>

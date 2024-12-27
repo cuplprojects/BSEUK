@@ -30,9 +30,10 @@ const Papers = ({ papers = [], theme, onSelectPaper, selectedPaper }) => {
         );
     }
 
-    // Filter papers by paperType (1: Papers, 2: Practicals)
+    // Filter papers by paperType (1: Papers, 2: Practicals, 3: Internships)
     const papersSection = papers.filter((paper) => paper.paperType === 1);
     const practicalsSection = papers.filter((paper) => paper.paperType === 2);
+    const internshipsSection = papers.filter((paper) => paper.paperType === 3);
 
     const renderPaperCard = (paper) => {
         const paperId = paper.paperID || paper.PaperID;
@@ -82,6 +83,18 @@ const Papers = ({ papers = [], theme, onSelectPaper, selectedPaper }) => {
                     </h3>
                     <div className="flex flex-wrap gap-4">
                         {practicalsSection.map(renderPaperCard)}
+                    </div>
+                </div>
+            )}
+
+            {/* Internships Section */}
+            {internshipsSection.length > 0 && (
+                <div>
+                    <h3 className={`text-xl font-semibold ${textClass} mb-4`}>
+                        Internship Papers
+                    </h3>
+                    <div className="flex flex-wrap gap-4">
+                        {internshipsSection.map(renderPaperCard)}
                     </div>
                 </div>
             )}

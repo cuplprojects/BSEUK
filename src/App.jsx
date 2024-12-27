@@ -23,7 +23,7 @@ function App() {
       <Routes>
         {/* Public Routes - with redirect if authenticated */}
         <Route path="/login" 
-          element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login onLogin={() => setIsAuthenticated(true)} />} 
+          element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />} 
         />
         <Route path="/forgot-password" 
           element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Forgot />} 

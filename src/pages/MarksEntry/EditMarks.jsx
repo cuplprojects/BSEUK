@@ -52,10 +52,11 @@ const EditMarks = ({ paperID, paperName, paperCode, paperType, theme, studentId 
         );
 
         if (marksResponse.data) {
+          console.log(marksResponse.data)
           setMarks({
             theoryMarks: marksResponse.data.theoryPaperMarks || "",
             internalMarks: marksResponse.data.interalMarks || "",
-            practicalMarks: marksResponse.data.practicalMaxMarks || "",
+            practicalMarks: marksResponse.data.practicalMarks || "",
           });
         }
       } catch (error) {
@@ -118,7 +119,8 @@ const EditMarks = ({ paperID, paperName, paperCode, paperType, theme, studentId 
         paperID: paperID,
         theoryPaperMarks: paperType === 1 ? Number(marks.theoryMarks) : null,
         interalMarks: paperType === 1 ? Number(marks.internalMarks) : null,
-        practicalMaxMarks: paperType === 2 ? Number(marks.practicalMarks) : null,
+        practicalMarks: paperType === 2 ? Number(marks.practicalMarks) : null,
+        practicalMarks : paperType === 3 ? Number(marks.practicalMarks) : null,
       });
       setSuccess(true);
     } catch (error) {

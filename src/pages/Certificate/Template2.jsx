@@ -9,7 +9,7 @@ const semesterHindi = {
   "FOURTH SEMESTER": "चतुर्थ सेमेस्टर",
 };
 
-const Certificate = ({ data }) => {
+const Certificate2 = ({ data }) => {
   const paperType2Count = data?.marks.filter((mark) => mark.paperType === 2).length;
   console.log("Count of paperType === 2:", paperType2Count);
 
@@ -28,6 +28,7 @@ const Certificate = ({ data }) => {
           <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px' }}>-</td>
           <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px' }}>-</td>
           <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px' }}>{mark.total}</td>
+          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px' }}>{mark.pageremark === "उत्तीर्ण"?"P":"F"}</td>
         </tr>
       ));
   };
@@ -50,6 +51,7 @@ const Certificate = ({ data }) => {
         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px' }}>{mark.maxMarks}</td>
         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px' }}>{mark.practical}</td>
         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px' }}>{mark.total}</td>
+        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px' }}>{mark.pageremark === "उत्तीर्ण"?"P":"F"}</td>
       </tr>
     ));
   };
@@ -137,6 +139,7 @@ const Certificate = ({ data }) => {
                 <th colSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>सैद्धांतिक</th>
                 <th colSpan="2" rowSpan={2} className="text-center" style={{ border: '1px solid black', padding: '4px' }}>क्रियात्मक / प्रयोगात्मक</th>
                 <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>योग</th>
+                <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>परीक्षाफल</th>
               </tr>
               <tr>
                 <th colSpan="2" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>बाह्य</th>
@@ -163,6 +166,7 @@ const Certificate = ({ data }) => {
                 <td style={{ border: '1px solid black', padding: "4px" }}>{data.totalExternalMarksObtained}</td>
                 <td colSpan="2" style={{ border: '1px solid black', padding: "4px" }}>{data.totalPracticalMaxMarks}</td>
                 <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', padding: "4px" }}>{data.totalMarks}</td>
+                {console.log(data)}
               </tr>
             </tbody>
           </table>
@@ -188,4 +192,4 @@ const Certificate = ({ data }) => {
   );
 };
 
-export default Certificate;
+export default Certificate2;
