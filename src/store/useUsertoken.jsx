@@ -1,24 +1,55 @@
-import { useState } from 'react';
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
-const useUserToken = () => {
-  const getToken = () => {
-    const tokenString = localStorage.getItem('token');
-    const userToken = JSON.parse(tokenString);
-    return userToken
-  };
+const initialState = {
+  token: null,
+  user: null,
+  isAuthenticated: false,
+  isLoading: false,
+  error: null
+}
 
-  const [token, setToken] = useState(getToken());
+export const useUserStore = create(
+  persist(
+    (set) => ({
+      ...initialState,
 
-  const saveToken = userToken => {
-    console.log(userToken)
-    localStorage.setItem('token', JSON.stringify(userToken));
-    setToken(userToken);
-  };
+      // Actions
+      setLoading: (isLoading) => set({ isLoading }),
+      setError: (error) => set({ error }),
 
-  return {
-    setToken: saveToken,
-    token
-  }
-};
+      // Login action
+      login: async (token, user) => {
+        set({ 
+          token,
+          user,
+          isAuthenticated: true,
+          error: null,
+          isLoading: false
+        })
+      },
 
-export default useUserToken;
+      // Logout action
+      logout: () => {
+        localStorage.removeItem('token')
+        set(initialState)
+      },
+
+      // Clear error
+      clearError: () => set({ error: null }),
+
+      // Update user
+      updateUser: (userData) => set((state) => ({
+        user: { ...state.user, ...userData }
+      })),
+    }),
+    {
+      name: 'user-storage',
+      partialize: (state) => ({ 
+        token: state.token,
+        user: state.user,
+        isAuthenticated: state.isAuthenticated
+      })
+    }
+  )
+)
