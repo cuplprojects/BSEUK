@@ -151,7 +151,8 @@ const Certificate = () => {
 
       const result = response.data;
       const pdf = await generatePDF(result);
-      pdf.save(`Certificate_${result.studentDetails.rollNumber}.pdf`);
+      console.log(result)
+      pdf.save(`Certificate_${result.studentDetails.rollNo}_${result.studentDetails.sem}.pdf`);
       setShowPreview(false);
     } catch (error) {
       console.error("Error generating certificate:", error);
