@@ -70,7 +70,7 @@ const Dashboard = () => {
               <Link
                 key={action}
                 to={{
-                  'Add Candidate': '/dashboard/add-candidate',
+                  'Add Candidate': '/add-candidate',
                   'Create Session': '/dashboard/create-session',
                   'View Reports': '/report',
                   'Certificate': '/certificate-generation',
