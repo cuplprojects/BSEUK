@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FiUser, FiSettings, FiLogOut, FiChevronDown } from 'react-icons/fi';
+import { FiUser, FiLogOut, FiChevronDown } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useThemeStore } from '../store/themeStore';
 import { useUserStore } from '../store/useUsertoken';
@@ -18,7 +18,6 @@ const UserMenu = () => {
 
   const menuItems = [
     { icon: <FiUser className="w-4 h-4" />, label: 'Profile', path: '/profile' },
-    { icon: <FiSettings className="w-4 h-4" />, label: 'Settings', path: '/settings' },
     { icon: <FiLogOut className="w-4 h-4" />, label: 'Logout', onClick: handleLogout },
   ];
 

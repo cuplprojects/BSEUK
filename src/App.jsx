@@ -4,7 +4,6 @@ import Login from './pages/user/Login';
 import Forgot from './pages/user/Forgot';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/user/Profile';
-import Settings from './pages/user/Settings';
 import ChangePassword from './pages/user/ChangePassword';
 import MarksEntry from './pages/MarksEntry/MarksEntry';
 import MarksEntryForm from './pages/MarksEntry/MarksEntryForm';
@@ -79,7 +78,6 @@ function App() {
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="profile" element={<Profile />} />
-          <Route path="settings" element={<Settings />} />
           <Route path="change-password" element={<ChangePassword />} />
           
           {/* Pages Routes */}
