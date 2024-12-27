@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FiDownload, FiLoader } from "react-icons/fi";
 import API from "../../services/api";
 import Template from "./Template";
+import Template2 from "./Template2";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import logo from "./../../assets/logo.png";
@@ -108,7 +109,6 @@ const Certificate = () => {
   };
 
   const generatePDF = async (result) => {
-
     const data = formatCertificateData(result);
     console.log(data);
     setCertificateData(data);
@@ -119,9 +119,9 @@ const Certificate = () => {
 
     const template = document.getElementById('certificate-template');
     const canvas = await html2canvas(template, {
-      scale: 2,
-      useCORS: true,
-      logging: false
+        scale: 2,
+        useCORS: true,
+        logging: false
     });
 
     const imgData = canvas.toDataURL('image/png');
@@ -321,7 +321,11 @@ const Certificate = () => {
         {/* Hidden certificate template for PDF generation */}
         {showPreview && certificateData && (
           <div className="fixed left-[-9999px]" id="certificate-template">
-            <Template data={certificateData} />
+            {certificateData.semester === "Second Semester" ? (
+              <Template2 data={certificateData} />
+            ) : (
+              <Template data={certificateData} />
+            )}
           </div>
         )}
       </div>

@@ -28,6 +28,7 @@ const Certificate2 = ({ data }) => {
           <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px' }}>-</td>
           <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px' }}>-</td>
           <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px' }}>{mark.total}</td>
+          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px' }}>{mark.pageremark === "उत्तीर्ण"?"P":"F"}</td>
         </tr>
       ));
   };
@@ -50,6 +51,7 @@ const Certificate2 = ({ data }) => {
         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px' }}>{mark.maxMarks}</td>
         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px' }}>{mark.practical}</td>
         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px' }}>{mark.total}</td>
+        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px' }}>{mark.pageremark === "उत्तीर्ण"?"P":"F"}</td>
       </tr>
     ));
   };
@@ -164,7 +166,7 @@ const Certificate2 = ({ data }) => {
                 <td style={{ border: '1px solid black', padding: "4px" }}>{data.totalExternalMarksObtained}</td>
                 <td colSpan="2" style={{ border: '1px solid black', padding: "4px" }}>{data.totalPracticalMaxMarks}</td>
                 <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', padding: "4px" }}>{data.totalMarks}</td>
-                <td style={{ border: '1px solid black', textAlign: 'center', padding: "4px" }}>{data.paperRemarks}</td>
+                {console.log(data)}
               </tr>
             </tbody>
           </table>
