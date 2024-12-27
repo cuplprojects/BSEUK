@@ -50,4 +50,13 @@
     font-weight: 400;
     font-style: italic;
   }
+
+  .table-bordered td,
+  .table-bordered th {
+    border: 1px solid black !important;
+  }
+
+  .table-bordered {
+    border-collapse: collapse;
+  }
   

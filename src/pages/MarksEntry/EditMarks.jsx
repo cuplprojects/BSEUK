@@ -52,6 +52,7 @@ const EditMarks = ({ paperID, paperName, paperCode, paperType, theme, studentId 
         );
 
         if (marksResponse.data) {
+          console.log(marksResponse.data)
           setMarks({
             theoryMarks: marksResponse.data.theoryPaperMarks || "",
             internalMarks: marksResponse.data.interalMarks || "",

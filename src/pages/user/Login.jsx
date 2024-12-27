@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { useUserToken } from "../../store/useUsertoken";
+import useUserToken from "../../store/useUsertoken";
 import API from "../../services/api";
 
 const DEV_MODE = import.meta.env.VITE_SKIP_VALIDATION === 'true';
@@ -10,34 +10,20 @@ const DEV_MODE = import.meta.env.VITE_SKIP_VALIDATION === 'true';
 const Login = () => {
   const navigate = useNavigate();
   const { setToken } = useUserToken();
-  const [email, setEmail] = useState("");
+  const [userName, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [suggestions, setSuggestions] = useState([]);
   const [skipValidation] = useState(DEV_MODE);
-
-  const domains = ["@gmail.com", "@outlook.com", "@yahoo.com", "@hotmail.com"];
-
-  useEffect(() => {
-    if (email && !email.includes("@")) {
-      setSuggestions(domains.map((domain) => email + domain));
-    } else {
-      setSuggestions([]);
-    }
-  }, [email]);
 
   const validateForm = () => {
     if (skipValidation) return true;
     
     const newErrors = {};
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     
-    if (!email) {
-      newErrors.email = "Email is required";
-    } else if (!emailRegex.test(email)) {
-      newErrors.email = "Invalid email format";
+    if (!userName) {
+      newErrors.userName = "Username is required";
     }
     if (!password) {
       newErrors.password = "Password is required";
@@ -53,17 +39,18 @@ const Login = () => {
     if (validateForm()) {
       setLoading(true);
       try {
-        const response = await API.post('/auth/login', { email, password });
-        const data = await response.data;
+        const response = await API.post('/Login', { userName, password });
+        const data = response.data;
         if (response.status === 200) {
+          console.log("Token: ", data.token);
           setToken(data.token);
           navigate('/dashboard');
         } else {
-          setErrors({ ...errors, email: data.message });
+          setErrors({ ...errors, userName: data.message });
         }
       } catch (error) {
         console.error(error);
-        setErrors({ ...errors, email: 'Failed to login' });
+        setErrors({ ...errors, userName: 'Failed to login' });
       } finally {
         setLoading(false);
       }
@@ -108,24 +95,24 @@ const Login = () => {
                   <div className="relative">
                     <FiMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                     <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      type="text"
+                      value={userName}
+                      onChange={(e) => setUsername(e.target.value)}
                       className={`w-full bg-gray-50 border ${
-                        errors.email ? 'border-red-500' : 'border-gray-200'
+                        errors.userName ? 'border-red-500' : 'border-gray-200'
                       } rounded-lg py-3 px-10 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300`}
-                      placeholder="Email"
+                      placeholder="Username"
                     />
                   </div>
                   <AnimatePresence>
-                    {errors.email && (
+                    {errors.userName && (
                       <motion.p
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         className="text-red-500 text-sm"
                       >
-                        {errors.email}
+                        {errors.userName}
                       </motion.p>
                     )}
                   </AnimatePresence>
