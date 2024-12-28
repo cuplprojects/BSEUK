@@ -7,6 +7,9 @@ import {
   FiX,
   FiCreditCard,
   FiFileText,
+  FiUsers,
+  FiUserPlus,
+  FiUpload
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import { useThemeStore } from '../store/themeStore';
@@ -23,10 +26,27 @@ const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
 
   const menuItems = [
     { path: "/dashboard", icon: <FiHome className="w-6 h-6" />, label: "Dashboard" },
+    { 
+        path: "candidates", // parent path
+        icon: <FiUsers className="w-6 h-6" />, 
+        label: "Candidates",
+        subItems: [
+            { 
+                path: "/add-candidate", 
+                icon: <FiUserPlus className="w-5 h-5" />, 
+                label: "Add Candidate" 
+            },
+            { 
+                path: "/add-bulkcandidates", 
+                icon: <FiUpload className="w-5 h-5" />, 
+                label: "Import Candidates" 
+            }
+        ]
+    },
     { path: "/marks-entry", icon: <GiNotebook className="w-6 h-6" />, label: "Marks Entry" },
     { path: "/certificate-generation", icon: <PiCertificateBold className="w-6 h-6" />, label: "Certificate" },
     { path: "/report", icon: <TbReportSearch className="w-6 h-6" />, label: "Reports" },
-  ];
+];
 
   const toggleExpand = (path) => {
     setExpandedItems(prev =>
