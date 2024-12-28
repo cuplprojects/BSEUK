@@ -12,6 +12,7 @@ import {
     flexRender,
 } from '@tanstack/react-table';
 import API from '../../services/api';
+import EditMarksModal from './EditMarksModal';
 
 const MarksEntry = () => {
     const navigate = useNavigate();
@@ -22,9 +23,12 @@ const MarksEntry = () => {
     const [papers, setPapers] = useState([]);
     const [selectedSession, setSelectedSession] = useState('');
     const [selectedSemester, setSelectedSemester] = useState('');
-    const [selectedPaper, setSelectedPaper] = useState(); // paper
     const [loadingStudents, setLoadingStudents] = useState(false);
     const [loadingDropdown, setLoadingDropdown] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedStudent, setSelectedStudent] = useState(null);
+    const [paperDetails, setPaperDetails] = useState(null);
+    const [selectedPaper, setSelectedPaper] = useState(''); // Change initial state to empty string
 
     // New table states
     const [globalFilter, setGlobalFilter] = useState('');
@@ -52,6 +56,7 @@ const MarksEntry = () => {
         setLoadingDropdown(true);
         try {
             const response = await API.get(`/Papers/GetBySem/${semesterId}`);
+            // console.log(response.data)
             setPapers(response.data);
         } catch (error) {
             console.error('Error fetching papers:', error);
@@ -116,15 +121,49 @@ const MarksEntry = () => {
             setLoadingStudents(false);
         }
     };
-    console.log(selectedPaper)
+    // console.log(selectedPaper)
     useEffect(() => {
         if (selectedSession && selectedSemester) {
             fetchStudents();
         }
     }, [selectedSession, selectedSemester]);
 
-    const handleEdit = (studentId) => {
-        navigate(`/marks-entry/MarksEntryForm/${studentId}`);
+    // useEffect(() => {
+    //     const fetchPaperDetails = async () => {
+    //         if (selectedPaper) {
+    //             try {
+    //                 const response = await API.get(`/Papers/${selectedPaper}`);
+    //                 setPaperDetails(response.data);
+    //             } catch (error) {
+    //                 console.error('Error fetching paper details:', error);
+    //             }
+    //         }
+    //     };
+    //     fetchPaperDetails();
+    // }, [selectedPaper]);
+
+    const handleEdit = (student) => {
+        setSelectedStudent(student);
+        setIsModalOpen(true);
+    };
+
+    const handlePaperChange = (e) => {
+        const value = e.target.value;
+        setSelectedPaper(value);
+        if (value) {
+            // Fetch paper details when paper is selected
+            const fetchPaperDetails = async () => {
+                try {
+                    const response = await API.get(`/Papers/${value}`);
+                    setPaperDetails(response.data);
+                } catch (error) {
+                    console.error('Error fetching paper details:', error);
+                }
+            };
+            fetchPaperDetails();
+        } else {
+            setPaperDetails(null);
+        }
     };
 
     // Table columns definition
@@ -174,16 +213,20 @@ const MarksEntry = () => {
             header: 'Actions',
             cell: ({ row }) => (
                 <button 
-                    onClick={() => handleEdit(row.original.candidateId)}
-                    className={`px-3 py-1 rounded-lg ${theme === 'dark' 
-                        ? 'bg-purple-600 hover:bg-purple-700 text-white' 
-                        : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
+                    onClick={() => handleEdit(row.original)}
+                    disabled={selectedPaper === ''}
+                    className={`px-3 py-1 rounded-lg ${
+                        theme === 'dark' 
+                            ? 'bg-purple-600 hover:bg-purple-700 text-white' 
+                            : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                    title={selectedPaper === '' ? "Please select a paper first" : "Edit marks"}
                 >
                     <FiEdit2 className="w-4 h-4" />
                 </button>
             ),
         },
-    ], [theme]);
+    ], [theme, selectedPaper]);
 
     // Initialize table
     const table = useReactTable({
@@ -248,7 +291,7 @@ const MarksEntry = () => {
                         <label className={`block mb-2 ${textClass}`}>Papers</label>
                         <select
                             value={selectedPaper}
-                            onChange={(e) => setSelectedPaper(e.target.value)}
+                            onChange={handlePaperChange}
                             className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
                             disabled={loadingDropdown}
                         >
@@ -407,6 +450,17 @@ const MarksEntry = () => {
                     </div>
                 </div>
             </motion.div>
+            <EditMarksModal
+                isOpen={isModalOpen}
+                onClose={() => {
+                    setIsModalOpen(false);
+                    setSelectedStudent(null);
+                }}
+                student={selectedStudent}
+                paperDetails={paperDetails}
+                selectedPaper={selectedPaper}
+                theme={theme}
+            />
         </div>
     );
 };
