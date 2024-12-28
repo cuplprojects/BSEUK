@@ -52,6 +52,7 @@ const MarksEntry = () => {
         setLoadingDropdown(true);
         try {
             const response = await API.get(`/Papers/GetBySem/${semesterId}`);
+            // console.log(response.data)
             setPapers(response.data);
         } catch (error) {
             console.error('Error fetching papers:', error);
@@ -116,7 +117,7 @@ const MarksEntry = () => {
             setLoadingStudents(false);
         }
     };
-    console.log(selectedPaper)
+    // console.log(selectedPaper)
     useEffect(() => {
         if (selectedSession && selectedSemester) {
             fetchStudents();
