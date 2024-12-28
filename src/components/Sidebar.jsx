@@ -5,8 +5,6 @@ import {
   FiChevronLeft, 
   FiChevronRight, 
   FiX,
-  FiCreditCard,
-  FiFileText,
   FiUsers,
   FiUserPlus,
   FiUpload
@@ -15,7 +13,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useThemeStore } from '../store/themeStore';
 import { useState } from 'react';
 import { PiCertificateBold } from "react-icons/pi";
-import { GoReport } from "react-icons/go";
 import { TbReportSearch } from "react-icons/tb";
 import { GiNotebook } from "react-icons/gi";
 
