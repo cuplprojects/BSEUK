@@ -1,17 +1,24 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FiUser, FiSettings, FiLogOut, FiChevronDown } from 'react-icons/fi';
+import { FiUser, FiLogOut, FiChevronDown } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useThemeStore } from '../store/themeStore';
+import { useUserStore } from '../store/useUsertoken';
 import sampleUser from './../assets/sample-user/sampleUser.jpg';
 
-const UserMenu = ({ onLogout }) => {
+const UserMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
   const theme = useThemeStore((state) => state.theme);
+  const { user, logout } = useUserStore();
+
+  const handleLogout = () => {
+    logout();
+    setIsOpen(false);
+  };
 
   const menuItems = [
     { icon: <FiUser className="w-4 h-4" />, label: 'Profile', path: '/profile' },
-    { icon: <FiSettings className="w-4 h-4" />, label: 'Settings', path: '/settings' },
+    { icon: <FiLogOut className="w-4 h-4" />, label: 'Logout', onClick: handleLogout },
   ];
 
   return (
@@ -52,32 +59,33 @@ const UserMenu = ({ onLogout }) => {
                 style={{ zIndex: 500 }}
             >
               {menuItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setIsOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-2 transition-colors duration-200 ${theme === 'dark'
-                      ? 'hover:bg-purple-900/50'
-                      : 'hover:bg-blue-50'
-                    }`}
-                >
-                  {item.icon}
-                  <span>{item.label}</span>
-                </Link>
+                item.onClick ? (
+                  <button
+                    key={item.label}
+                    onClick={item.onClick}
+                    className={`flex items-center gap-3 px-4 py-2 transition-colors duration-200 ${theme === 'dark'
+                        ? 'hover:bg-purple-900/50'
+                        : 'hover:bg-blue-50'
+                      }`}
+                  >
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </button>
+                ) : (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setIsOpen(false)}
+                    className={`flex items-center gap-3 px-4 py-2 transition-colors duration-200 ${theme === 'dark'
+                        ? 'hover:bg-purple-900/50'
+                        : 'hover:bg-blue-50'
+                      }`}
+                  >
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </Link>
+                )
               ))}
-              <button
-                onClick={() => {
-                  setIsOpen(false);
-                  onLogout();
-                }}
-                className={`w-full flex items-center gap-3 px-4 py-2 transition-colors duration-200 ${theme === 'dark'
-                    ? 'hover:bg-purple-900/50'
-                    : 'hover:bg-blue-50'
-                  }`}
-              >
-                <FiLogOut className="w-4 h-4" />
-                <span>Logout</span>
-              </button>
             </motion.div>
           </>
         )}
