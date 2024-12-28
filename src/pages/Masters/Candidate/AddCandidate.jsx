@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { toast, ToastContainer } from "react-toastify"; // Ensure this line is present
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import axios from "axios"; // Import axios
+import axios from "axios";
+import { motion } from "framer-motion";
+import { useThemeStore } from '../../../store/themeStore';
 
 const AddCandidate = () => {
+  const theme = useThemeStore((state) => state.theme);
   const [formData, setFormData] = useState({
-    candidateID: 0, // Added candidateID
+    candidateID: 0,
     candidateName: "",
     group: "",
     rollNumber: "",
@@ -17,10 +20,22 @@ const AddCandidate = () => {
     sesID: "",
   });
 
-  const [semesters, setSemesters] = useState([]); // State to hold semesters
-  const [sessions, setSessions] = useState([]); // State to hold sessions
+  const [semesters, setSemesters] = useState([]);
+  const [sessions, setSessions] = useState([]);
 
-  // Fetch semesters and sessions from the API
+  // Theme classes
+  const cardClass = theme === 'dark'
+    ? 'bg-black/40 backdrop-blur-xl border-purple-500/20'
+    : 'bg-white border-blue-200 shadow-sm';
+
+  const textClass = theme === 'dark'
+    ? 'text-purple-100'
+    : 'text-blue-700';
+
+  const inputClass = theme === 'dark'
+    ? 'bg-purple-900/20 border-purple-500/20 text-purple-100 placeholder-purple-400'
+    : 'bg-blue-50 border-blue-200 text-blue-600 placeholder-blue-400';
+
   useEffect(() => {
     const fetchSemesters = async () => {
       try {
@@ -29,7 +44,7 @@ const AddCandidate = () => {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        setSemesters(data); // Set the fetched semesters
+        setSemesters(data);
       } catch (error) {
         console.error("Error fetching semesters:", error);
       }
@@ -42,14 +57,14 @@ const AddCandidate = () => {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        setSessions(data); // Set the fetched sessions
+        setSessions(data);
       } catch (error) {
         console.error("Error fetching sessions:", error);
       }
     };
 
     fetchSemesters();
-    fetchSessions(); // Call to fetch sessions
+    fetchSessions();
   }, []);
 
   const handleChange = (e) => {
@@ -61,7 +76,7 @@ const AddCandidate = () => {
     e.preventDefault();
     try {
       const response = await axios.post("https://localhost:7133/api/Candidates", {
-        candidateID: formData.candidateID, // Include candidateID
+        candidateID: formData.candidateID,
         candidateName: formData.candidateName,
         group: formData.group,
         rollNumber: formData.rollNumber,
@@ -73,171 +88,178 @@ const AddCandidate = () => {
         sesID: formData.sesID,
       });
       console.log("Success:", response.data);
-      // Optionally reset the form or handle success
+      toast.success("Candidate added successfully!");
     } catch (error) {
       console.error("Error:", error);
+      toast.error("Failed to add candidate");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <div className="bg-white shadow-lg rounded-lg px-8 py-6">
-          <h2 className="text-2xl font-bold text-gray-900 text-center mb-8">
-            Add Candidate
-          </h2>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="p-6"
+    >
+      <div className={`rounded-lg ${cardClass} p-6`}>
+        <h2 className={`text-2xl font-bold mb-8 ${textClass}`}>
+          Add Candidate
+        </h2>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Candidate Name
-                </label>
-                <input
-                  type="text"
-                  name="candidateName"
-                  value={formData.candidateName}
-                  onChange={handleChange}
-                  className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="Enter candidate name"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Group
-                </label>
-                <input
-                  type="text"
-                  name="group"
-                  value={formData.group}
-                  onChange={handleChange}
-                  className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="Enter group"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Roll Number
-                </label>
-                <input
-                  type="text"
-                  name="rollNumber"
-                  value={formData.rollNumber}
-                  onChange={handleChange}
-                  className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="Enter roll number"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Father's Name
-                </label>
-                <input
-                  type="text"
-                  name="fName"
-                  value={formData.fName}
-                  onChange={handleChange}
-                  className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="Enter father's name"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Mother's Name
-                </label>
-                <input
-                  type="text"
-                  name="mName"
-                  value={formData.mName}
-                  onChange={handleChange}
-                  className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="Enter mother's name"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Date of Birth
-                </label>
-                <input
-                  type="date"
-                  name="dob"
-                  value={formData.dob}
-                  onChange={handleChange}
-                  className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Institution Name
-                </label>
-                <input
-                  type="text"
-                  name="institutionName"
-                  value={formData.institutionName}
-                  onChange={handleChange}
-                  className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="Enter institution name"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Semester
-                </label>
-                <select
-                  name="semID"
-                  value={formData.semID}
-                  onChange={handleChange}
-                  className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                >
-                  <option value="">Select Semester</option>
-                  {semesters.map((sem) => (
-                    <option key={sem.semID} value={sem.semID}>
-                      {sem.semesterName}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Session
-                </label>
-                <select
-                  name="sesID"
-                  value={formData.sesID}
-                  onChange={handleChange}
-                  className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                >
-                  <option value="">Select Session</option>
-                  {sessions.map((session) => (
-                    <option key={session.sesID} value={session.sesID}>
-                      {session.sessionName}
-                    </option>
-                  ))}
-                </select>
-              </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className={`block text-sm font-medium mb-2 ${textClass}`}>
+                Candidate Name
+              </label>
+              <input
+                type="text"
+                name="candidateName"
+                value={formData.candidateName}
+                onChange={handleChange}
+                className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
+                placeholder="Enter candidate name"
+              />
             </div>
 
-            <div className="flex justify-end">
-              <button
-                type="submit"
-                className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md shadow-sm transition duration-150 ease-in-out"
+            <div>
+              <label className={`block text-sm font-medium mb-2 ${textClass}`}>
+                Group
+              </label>
+              <input
+                type="text"
+                name="group"
+                value={formData.group}
+                onChange={handleChange}
+                className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
+                placeholder="Enter group"
+              />
+            </div>
+
+            <div>
+              <label className={`block text-sm font-medium mb-2 ${textClass}`}>
+                Roll Number
+              </label>
+              <input
+                type="text"
+                name="rollNumber"
+                value={formData.rollNumber}
+                onChange={handleChange}
+                className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
+                placeholder="Enter roll number"
+              />
+            </div>
+
+            <div>
+              <label className={`block text-sm font-medium mb-2 ${textClass}`}>
+                Father's Name
+              </label>
+              <input
+                type="text"
+                name="fName"
+                value={formData.fName}
+                onChange={handleChange}
+                className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
+                placeholder="Enter father's name"
+              />
+            </div>
+
+            <div>
+              <label className={`block text-sm font-medium mb-2 ${textClass}`}>
+                Mother's Name
+              </label>
+              <input
+                type="text"
+                name="mName"
+                value={formData.mName}
+                onChange={handleChange}
+                className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
+                placeholder="Enter mother's name"
+              />
+            </div>
+
+            <div>
+              <label className={`block text-sm font-medium mb-2 ${textClass}`}>
+                Date of Birth
+              </label>
+              <input
+                type="date"
+                name="dob"
+                value={formData.dob}
+                onChange={handleChange}
+                className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
+              />
+            </div>
+
+            <div>
+              <label className={`block text-sm font-medium mb-2 ${textClass}`}>
+                Institution Name
+              </label>
+              <input
+                type="text"
+                name="institutionName"
+                value={formData.institutionName}
+                onChange={handleChange}
+                className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
+                placeholder="Enter institution name"
+              />
+            </div>
+
+            <div>
+              <label className={`block text-sm font-medium mb-2 ${textClass}`}>
+                Semester
+              </label>
+              <select
+                name="semID"
+                value={formData.semID}
+                onChange={handleChange}
+                className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
               >
-                Add Candidate
-              </button>
+                <option value="">Select Semester</option>
+                {semesters.map((sem) => (
+                  <option key={sem.semID} value={sem.semID}>
+                    {sem.semesterName}
+                  </option>
+                ))}
+              </select>
             </div>
-          </form>
-        </div>
+
+            <div>
+              <label className={`block text-sm font-medium mb-2 ${textClass}`}>
+                Session
+              </label>
+              <select
+                name="sesID"
+                value={formData.sesID}
+                onChange={handleChange}
+                className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
+              >
+                <option value="">Select Session</option>
+                {sessions.map((session) => (
+                  <option key={session.sesID} value={session.sesID}>
+                    {session.sessionName}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              className={`px-6 py-2 rounded-lg ${
+                theme === 'dark'
+                  ? 'bg-purple-600 hover:bg-purple-700 text-white'
+                  : 'bg-blue-600 hover:bg-blue-700 text-white'
+              }`}
+            >
+              Add Candidate
+            </button>
+          </div>
+        </form>
       </div>
-      <ToastContainer position="top-right" autoClose={3000} />
-    </div>
+      <ToastContainer position="top-right" autoClose={3000} theme={theme} />
+    </motion.div>
   );
 };
 
