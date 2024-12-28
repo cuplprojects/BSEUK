@@ -19,8 +19,10 @@ const MarksEntry = () => {
     const [students, setStudents] = useState([]);
     const [sessions, setSessions] = useState([]);
     const [semesters, setSemesters] = useState([]);
+    const [papers, setPapers] = useState([]);
     const [selectedSession, setSelectedSession] = useState('');
     const [selectedSemester, setSelectedSemester] = useState('');
+    const [selectedPaper, setSelectedPaper] = useState(); // paper
     const [loadingStudents, setLoadingStudents] = useState(false);
     const [loadingDropdown, setLoadingDropdown] = useState(true);
 
@@ -42,7 +44,22 @@ const MarksEntry = () => {
         ? 'bg-purple-900/20 border-purple-500/20 text-purple-100 placeholder-purple-400'
         : 'bg-blue-50 border-blue-200 text-blue-600 placeholder-blue-400';
 
-    // Keep your original data fetching functions
+    const fetchPapers = async (semesterId) => {
+        if (!semesterId) {
+            setPapers([]);
+            return;
+        }
+        setLoadingDropdown(true);
+        try {
+            const response = await API.get(`/Papers/GetBySem/${semesterId}`);
+            setPapers(response.data);
+        } catch (error) {
+            console.error('Error fetching papers:', error);
+            setPapers([]);
+        } finally {
+            setLoadingDropdown(false);
+        }
+    };
     useEffect(() => {
         const fetchData = async () => {
             setLoadingDropdown(true);
@@ -61,6 +78,10 @@ const MarksEntry = () => {
         };
         fetchData();
     }, []);
+
+    useEffect(() => {
+        fetchPapers(selectedSemester);
+    }, [selectedSemester]);
 
     const fetchStudents = async () => {
         setLoadingStudents(true);
@@ -95,7 +116,7 @@ const MarksEntry = () => {
             setLoadingStudents(false);
         }
     };
-
+    console.log(selectedPaper)
     useEffect(() => {
         if (selectedSession && selectedSemester) {
             fetchStudents();
@@ -190,8 +211,7 @@ const MarksEntry = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className={`border rounded-lg p-6 ${cardClass}`}
             >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Your existing session and semester dropdowns */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label className={`block mb-2 ${textClass}`}>Session</label>
                         <select
@@ -220,6 +240,22 @@ const MarksEntry = () => {
                             {semesters.map((semester) => (
                                 <option key={semester.semID} value={semester.semID}>
                                     {semester.semesterName}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div>
+                        <label className={`block mb-2 ${textClass}`}>Papers</label>
+                        <select
+                            value={selectedPaper}
+                            onChange={(e) => setSelectedPaper(e.target.value)}
+                            className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
+                            disabled={loadingDropdown}
+                        >
+                            <option value="">Select Paper</option>
+                            {papers.map((paper) => (
+                                <option key={paper.paperID} value={paper.paperID}>
+                                    {paper.paperName}
                                 </option>
                             ))}
                         </select>
