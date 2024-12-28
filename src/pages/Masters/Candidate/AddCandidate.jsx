@@ -18,6 +18,7 @@ const AddCandidate = () => {
     institutionName: "",
     semID: "",
     sesID: "",
+    category: ""
   });
 
   const [semesters, setSemesters] = useState([]);
@@ -86,6 +87,7 @@ const AddCandidate = () => {
         institutionName: formData.institutionName,
         semID: formData.semID,
         sesID: formData.sesID,
+        category: formData.category
       });
       console.log("Success:", response.data);
       toast.success("Candidate added successfully!");
@@ -242,16 +244,29 @@ const AddCandidate = () => {
                 ))}
               </select>
             </div>
+            <div>
+              <label className={`block text-sm font-medium mb-2 ${textClass}`}>
+                Category
+              </label>
+              <input
+                type="text"
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
+                placeholder="Enter Category"
+              />
+            </div>
           </div>
+
 
           <div className="flex justify-end">
             <button
               type="submit"
-              className={`px-6 py-2 rounded-lg ${
-                theme === 'dark'
-                  ? 'bg-purple-600 hover:bg-purple-700 text-white'
-                  : 'bg-blue-600 hover:bg-blue-700 text-white'
-              }`}
+              className={`px-6 py-2 rounded-lg ${theme === 'dark'
+                ? 'bg-purple-600 hover:bg-purple-700 text-white'
+                : 'bg-blue-600 hover:bg-blue-700 text-white'
+                }`}
             >
               Add Candidate
             </button>
