@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { jwtDecode } from "jwt-decode";
 
 const initialState = {
   token: null,
@@ -20,13 +21,22 @@ export const useUserStore = create(
 
       // Login action
       login: async (token, user) => {
-        set({ 
-          token,
-          user,
-          isAuthenticated: true,
-          error: null,
-          isLoading: false
-        })
+        try {
+          const decodedToken = jwtDecode(token);
+          const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
+          // console.log('User ID from token:', userId);
+          
+          set({ 
+            token,
+            user,
+            userId,
+            isAuthenticated: true,
+            error: null,
+            isLoading: false
+          })
+        } catch (error) {
+          console.error('Token decode error:', error);
+        }
       },
 
       // Logout action
@@ -48,6 +58,7 @@ export const useUserStore = create(
       partialize: (state) => ({ 
         token: state.token,
         user: state.user,
+        userId: state.userId,
         isAuthenticated: state.isAuthenticated
       })
     }

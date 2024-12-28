@@ -9,7 +9,6 @@ import MarksEntry from './pages/MarksEntry/MarksEntry';
 import MarksEntryForm from './pages/MarksEntry/MarksEntryForm';
 import Certificate from './pages/Certificate/Certificate';
 import Report from './pages/Report/Report';
-import useUserToken from './store/useUsertoken';
 import AddCandidate from './pages/Masters/Candidate/AddCandidate';
 import BulkCandidates from './pages/Masters/Candidate/bulkCandidates';
 import { useUserStore } from './store/useUsertoken';

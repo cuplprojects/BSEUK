@@ -3,11 +3,46 @@ import { FiMenu, FiSun, FiMoon } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useThemeStore } from '../store/themeStore';
 import UserMenu from './UserMenu';
+import { useUserStore } from '../store/useUsertoken';
+import { useEffect, useState, useRef } from 'react';
+import API from '../services/api';
 
 const Navbar = ({ onMenuClick }) => {
   const navigate = useNavigate();
   const theme = useThemeStore(state => state.theme);
   const toggleTheme = useThemeStore(state => state.toggleTheme);
+  const userId = useUserStore(state => state.userId);
+  const [userDetails, setUserDetails] = useState(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      if (userId) {
+        try {
+          const response = await API.get(`/Users/${userId}`);
+          setUserDetails(response.data);
+        } catch (error) {
+          console.error('Error fetching user details:', error);
+        }
+      }
+    };
+
+    fetchUserDetails();
+  }, [userId]);
 
   const handleLogout = () => {
     navigate('/login');
@@ -26,13 +61,11 @@ const Navbar = ({ onMenuClick }) => {
             <FiMenu className="w-6 h-6" />
           </motion.button>
           <Link to="/dashboard" className={`text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${theme === 'dark' ? 'from-purple-400 to-pink-400' : 'text-white'}`}>
-          BSEUK
+            BSEUK
           </Link>
         </div>
 
         <div className="flex items-center space-x-4">
-          {/* themes toggle */}
-          
           <AnimatePresence mode="wait">
             <motion.button
               key={theme}
@@ -44,15 +77,22 @@ const Navbar = ({ onMenuClick }) => {
               whileTap={{ scale: 0.9 }}
               onClick={toggleTheme}
               className={`relative p-3 rounded-xl ${theme === 'dark'
-                  ? 'bg-gradient-to-r from-purple-900/50 to-purple-600/50 text-yellow-300'
-                  : 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-600'
+                ? 'bg-gradient-to-r from-purple-900/50 to-purple-600/50 text-yellow-300'
+                : 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-600'
                 }`}
             >
               {theme === 'dark' ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5" />}
             </motion.button>
           </AnimatePresence>
 
-          <UserMenu onLogout={handleLogout} />
+          <div ref={menuRef}>
+            <UserMenu 
+              userDetails={userDetails} 
+              onLogout={handleLogout} 
+              isOpen={isMenuOpen}
+              setIsOpen={setIsMenuOpen}
+            />
+          </div>
         </div>
       </div>
     </nav>
