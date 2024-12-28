@@ -1,12 +1,33 @@
-import { useState } from 'react';
+import { useState , useEffect} from 'react';
 import { FiMail } from 'react-icons/fi';
 import { useThemeStore } from '../../store/themeStore';
+import API from './../../services/api';
+import { useUserStore } from '../../store/useUsertoken';
 
 const SimpleProfile = () => {
   const theme = useThemeStore((state) => state.theme);
+  const { userId, userDetails, setUserDetails } = useUserStore();
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      if (userId && !userDetails) {
+        try {
+          const response = await API.get(`/Users/${userId}`);
+          console.log(response.data);
+          setUserDetails(response.data);
+        } catch (error) {
+          console.error('Error fetching user details:', error);
+        }
+      }
+    };
+
+    fetchUserDetails();
+  }, [userId, userDetails, setUserDetails]);
+
+
   const [profile] = useState({
-    name: 'Jayant Roy',
-    email: 'jayanta@chandrakala.co.in',
+    name: userDetails?.name,
+    email: userDetails?.email,
   });
 
   const cardClass = theme === 'dark' 
