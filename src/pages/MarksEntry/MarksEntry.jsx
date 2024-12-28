@@ -23,12 +23,12 @@ const MarksEntry = () => {
     const [papers, setPapers] = useState([]);
     const [selectedSession, setSelectedSession] = useState('');
     const [selectedSemester, setSelectedSemester] = useState('');
-    const [selectedPaper, setSelectedPaper] = useState(); // paper
     const [loadingStudents, setLoadingStudents] = useState(false);
     const [loadingDropdown, setLoadingDropdown] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [paperDetails, setPaperDetails] = useState(null);
+    const [selectedPaper, setSelectedPaper] = useState(''); // Change initial state to empty string
 
     // New table states
     const [globalFilter, setGlobalFilter] = useState('');
@@ -128,23 +128,42 @@ const MarksEntry = () => {
         }
     }, [selectedSession, selectedSemester]);
 
-    useEffect(() => {
-        const fetchPaperDetails = async () => {
-            if (selectedPaper) {
-                try {
-                    const response = await API.get(`/Papers/${selectedPaper}`);
-                    setPaperDetails(response.data);
-                } catch (error) {
-                    console.error('Error fetching paper details:', error);
-                }
-            }
-        };
-        fetchPaperDetails();
-    }, [selectedPaper]);
+    // useEffect(() => {
+    //     const fetchPaperDetails = async () => {
+    //         if (selectedPaper) {
+    //             try {
+    //                 const response = await API.get(`/Papers/${selectedPaper}`);
+    //                 setPaperDetails(response.data);
+    //             } catch (error) {
+    //                 console.error('Error fetching paper details:', error);
+    //             }
+    //         }
+    //     };
+    //     fetchPaperDetails();
+    // }, [selectedPaper]);
 
     const handleEdit = (student) => {
         setSelectedStudent(student);
         setIsModalOpen(true);
+    };
+
+    const handlePaperChange = (e) => {
+        const value = e.target.value;
+        setSelectedPaper(value);
+        if (value) {
+            // Fetch paper details when paper is selected
+            const fetchPaperDetails = async () => {
+                try {
+                    const response = await API.get(`/Papers/${value}`);
+                    setPaperDetails(response.data);
+                } catch (error) {
+                    console.error('Error fetching paper details:', error);
+                }
+            };
+            fetchPaperDetails();
+        } else {
+            setPaperDetails(null);
+        }
     };
 
     // Table columns definition
@@ -193,19 +212,21 @@ const MarksEntry = () => {
             id: 'actions',
             header: 'Actions',
             cell: ({ row }) => (
-                <button
+                <button 
                     onClick={() => handleEdit(row.original)}
-                    disabled={!selectedPaper}
-                    className={`px-3 py-1 rounded-lg ${theme === 'dark'
-                        ? 'bg-purple-600 hover:bg-purple-700 text-white'
-                        : 'bg-blue-600 hover:bg-blue-700 text-white'}
-                        disabled:opacity-50`}
+                    disabled={selectedPaper === ''}
+                    className={`px-3 py-1 rounded-lg ${
+                        theme === 'dark' 
+                            ? 'bg-purple-600 hover:bg-purple-700 text-white' 
+                            : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                    title={selectedPaper === '' ? "Please select a paper first" : "Edit marks"}
                 >
                     <FiEdit2 className="w-4 h-4" />
                 </button>
             ),
         },
-    ], [theme]);
+    ], [theme, selectedPaper]);
 
     // Initialize table
     const table = useReactTable({
@@ -270,7 +291,7 @@ const MarksEntry = () => {
                         <label className={`block mb-2 ${textClass}`}>Papers</label>
                         <select
                             value={selectedPaper}
-                            onChange={(e) => setSelectedPaper(e.target.value)}
+                            onChange={handlePaperChange}
                             className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
                             disabled={loadingDropdown}
                         >
