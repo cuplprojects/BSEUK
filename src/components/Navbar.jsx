@@ -11,27 +11,13 @@ const Navbar = ({ onMenuClick }) => {
   const navigate = useNavigate();
   const theme = useThemeStore(state => state.theme);
   const toggleTheme = useThemeStore(state => state.toggleTheme);
-  const userId = useUserStore(state => state.userId);
-  const [userDetails, setUserDetails] = useState(null);
+  const { userId, userDetails, setUserDetails } = useUserStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setIsMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  useEffect(() => {
     const fetchUserDetails = async () => {
-      if (userId) {
+      if (userId && !userDetails) {
         try {
           const response = await API.get(`/Users/${userId}`);
           setUserDetails(response.data);
@@ -42,9 +28,23 @@ const Navbar = ({ onMenuClick }) => {
     };
 
     fetchUserDetails();
-  }, [userId]);
+  }, [userId, userDetails, setUserDetails]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    if (isMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isMenuOpen]);
 
   const handleLogout = () => {
+    setIsMenuOpen(false);
     navigate('/login');
   };
 

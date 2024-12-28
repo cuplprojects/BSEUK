@@ -6,11 +6,11 @@ import { useUserStore } from '../store/useUsertoken';
 
 const UserMenu = ({ userDetails, onLogout, isOpen, setIsOpen }) => {
   const theme = useThemeStore((state) => state.theme);
-  const { user, logout } = useUserStore();
+  const { logout } = useUserStore();
 
   const handleLogout = () => {
     logout();
-    setIsOpen(false);
+    onLogout();
   };
   const menuItems = [
     {
@@ -66,7 +66,7 @@ const UserMenu = ({ userDetails, onLogout, isOpen, setIsOpen }) => {
 
       <AnimatePresence>
         {isOpen && (
-          <motion.div
+            <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
@@ -75,33 +75,33 @@ const UserMenu = ({ userDetails, onLogout, isOpen, setIsOpen }) => {
               : 'bg-white border-blue-200 text-blue-700'
               }`}
             style={{ zIndex: 500 }}
-          >
+            >
             {menuItems.map((item) => (
               item.onClick ? (
-                <button
-                  key={item.label}
-                  onClick={item.onClick}
-                  className={`flex items-center gap-3 px-4 py-2 transition-colors duration-200 ${theme === 'dark'
-                    ? 'hover:bg-purple-900/50'
-                    : 'hover:bg-blue-50'
-                    }`}
-                >
-                  {item.icon}
-                  <span>{item.label}</span>
-                </button>
+              <button
+                key={item.label}
+                onClick={item.onClick}
+                className={`flex items-center gap-3 px-4 py-2 transition-colors duration-200 ${theme === 'dark'
+                ? 'hover:bg-purple-900/50'
+                : 'hover:bg-blue-50'
+                }`}
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </button>
               ) : (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setIsOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-2 transition-colors duration-200 ${theme === 'dark'
-                    ? 'hover:bg-purple-900/50'
-                    : 'hover:bg-blue-50'
-                    }`}
-                >
-                  {item.icon}
-                  <span>{item.label}</span>
-                </Link>
+              <Link
+                key={item.path}
+                to={item.path}
+                onClick={() => setIsOpen(false)}
+                className={`flex items-center gap-3 px-4 py-2 transition-colors duration-200 ${theme === 'dark'
+                ? 'hover:bg-purple-900/50'
+                : 'hover:bg-blue-50'
+                }`}
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </Link>
               )
             ))}
           </motion.div>
