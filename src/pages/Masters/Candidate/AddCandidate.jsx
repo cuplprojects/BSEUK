@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { useThemeStore } from '../../../store/themeStore';
+import API from '../../../services/api';
 
 const AddCandidate = () => {
   const theme = useThemeStore((state) => state.theme);
@@ -40,29 +41,23 @@ const AddCandidate = () => {
   useEffect(() => {
     const fetchSemesters = async () => {
       try {
-        const response = await fetch("https://localhost:7133/api/Semesters");
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        setSemesters(data);
+        const response = await API.get('Semesters');
+        setSemesters(response.data);
       } catch (error) {
         console.error("Error fetching semesters:", error);
       }
     };
+    
 
     const fetchSessions = async () => {
       try {
-        const response = await fetch("https://localhost:7133/api/Sessions");
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        setSessions(data);
+        const response = await API.get('Sessions');
+        setSessions(response.data);
       } catch (error) {
         console.error("Error fetching sessions:", error);
       }
     };
+    
 
     fetchSemesters();
     fetchSessions();
@@ -76,7 +71,7 @@ const AddCandidate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("https://localhost:7133/api/Candidates", {
+      const response = await API.post('Candidates', {
         candidateID: formData.candidateID,
         candidateName: formData.candidateName,
         group: formData.group,
@@ -87,7 +82,7 @@ const AddCandidate = () => {
         institutionName: formData.institutionName,
         semID: formData.semID,
         sesID: formData.sesID,
-        category: formData.category
+        category: formData.category,
       });
       console.log("Success:", response.data);
       toast.success("Candidate added successfully!");
@@ -96,6 +91,7 @@ const AddCandidate = () => {
       toast.error("Failed to add candidate");
     }
   };
+  
 
   return (
     <motion.div
