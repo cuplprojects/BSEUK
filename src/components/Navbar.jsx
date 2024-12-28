@@ -3,12 +3,34 @@ import { FiMenu, FiSun, FiMoon } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useThemeStore } from '../store/themeStore';
 import UserMenu from './UserMenu';
+import { useUserStore } from '../store/useUsertoken';
+import { useEffect, useState } from 'react';
+import API from '../services/api';
+
 
 const Navbar = ({ onMenuClick }) => {
   const navigate = useNavigate();
   const theme = useThemeStore(state => state.theme);
   const toggleTheme = useThemeStore(state => state.toggleTheme);
+  const userId = useUserStore(state => state.userId);
+  const [userDetails, setUserDetails] = useState(null);
 
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      if (userId) {
+        try {
+          const response = await API.get(`/Users/${userId}`);
+          setUserDetails(response.data);
+          // console.log('User details:', response.data);
+        } catch (error) {
+          console.error('Error fetching user details:', error);
+        }
+      }
+    };
+
+    fetchUserDetails();
+  }, [userId]);
+  // console.log(userId,"in navbar")
   const handleLogout = () => {
     navigate('/login');
   };
@@ -52,7 +74,7 @@ const Navbar = ({ onMenuClick }) => {
             </motion.button>
           </AnimatePresence>
 
-          <UserMenu onLogout={handleLogout} />
+          <UserMenu userDetails={userDetails} onLogout={handleLogout} />
         </div>
       </div>
     </nav>

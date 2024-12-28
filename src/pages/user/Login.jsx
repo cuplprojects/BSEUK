@@ -5,8 +5,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useUserStore } from "../../store/useUsertoken";
 import API from "../../services/api";
 
-const DEV_MODE = import.meta.env.VITE_SKIP_VALIDATION === 'true';
-
 const Login = () => {
   const navigate = useNavigate();
   const { login, setLoading, setError, error, isLoading } = useUserStore();
@@ -14,10 +12,8 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
-  const [skipValidation] = useState(DEV_MODE);
 
   const validateForm = () => {
-    if (skipValidation) return true;
     
     const newErrors = {};
     
