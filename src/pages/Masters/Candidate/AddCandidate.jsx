@@ -22,8 +22,27 @@ const AddCandidate = () => {
     category: ""
   });
 
+  const clearFormData = () => {
+    setFormData({
+      candidateID: 0,
+      candidateName: "",
+      group: "",
+      rollNumber: "",
+      fName: "",
+      mName: "",
+      dob: "",
+      institutionName: "",
+      semID: "",
+      sesID: "",
+      category: "",
+    });
+  };
+
+
   const [semesters, setSemesters] = useState([]);
   const [sessions, setSessions] = useState([]);
+
+
 
   // Theme classes
   const cardClass = theme === 'dark'
@@ -47,7 +66,6 @@ const AddCandidate = () => {
         console.error("Error fetching semesters:", error);
       }
     };
-    
 
     const fetchSessions = async () => {
       try {
@@ -57,7 +75,6 @@ const AddCandidate = () => {
         console.error("Error fetching sessions:", error);
       }
     };
-    
 
     fetchSemesters();
     fetchSessions();
@@ -86,20 +103,21 @@ const AddCandidate = () => {
       });
       console.log("Success:", response.data);
       toast.success("Candidate added successfully!");
+      clearFormData();
     } catch (error) {
       console.error("Error:", error);
       toast.error("Failed to add candidate");
     }
   };
-  
+
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="p-6"
+      className="p-6 shadow-lg rounded-lg"
     >
-      <div className={`rounded-lg ${cardClass} p-6`}>
+      <div className={`rounded-lg ${cardClass} p-6 `}>
         <h2 className={`text-2xl font-bold mb-8 ${textClass}`}>
           Add Candidate
         </h2>
@@ -254,19 +272,28 @@ const AddCandidate = () => {
               />
             </div>
           </div>
-
-
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-4">
+            <button
+              type="button"
+              onClick={clearFormData}
+              className={`px-6 py-2 rounded-lg ${theme === 'dark'
+                  ? 'bg-gray-600 hover:bg-gray-700 text-white'
+                  : 'bg-gray-300 hover:bg-gray-400 text-black'
+                }`}
+            >
+              Reset
+            </button>
             <button
               type="submit"
               className={`px-6 py-2 rounded-lg ${theme === 'dark'
-                ? 'bg-purple-600 hover:bg-purple-700 text-white'
-                : 'bg-blue-600 hover:bg-blue-700 text-white'
+                  ? 'bg-purple-600 hover:bg-purple-700 text-white'
+                  : 'bg-blue-600 hover:bg-blue-700 text-white'
                 }`}
             >
               Add Candidate
             </button>
           </div>
+
         </form>
       </div>
       <ToastContainer position="top-right" autoClose={3000} theme={theme} />
