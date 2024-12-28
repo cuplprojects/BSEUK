@@ -12,6 +12,7 @@ import {
     flexRender,
 } from '@tanstack/react-table';
 import API from '../../services/api';
+import EditMarksModal from './EditMarksModal';
 
 const MarksEntry = () => {
     const navigate = useNavigate();
@@ -25,6 +26,9 @@ const MarksEntry = () => {
     const [selectedPaper, setSelectedPaper] = useState(); // paper
     const [loadingStudents, setLoadingStudents] = useState(false);
     const [loadingDropdown, setLoadingDropdown] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedStudent, setSelectedStudent] = useState(null);
+    const [paperDetails, setPaperDetails] = useState(null);
 
     // New table states
     const [globalFilter, setGlobalFilter] = useState('');
@@ -124,8 +128,23 @@ const MarksEntry = () => {
         }
     }, [selectedSession, selectedSemester]);
 
-    const handleEdit = (studentId) => {
-        navigate(`/marks-entry/MarksEntryForm/${studentId}`);
+    useEffect(() => {
+        const fetchPaperDetails = async () => {
+            if (selectedPaper) {
+                try {
+                    const response = await API.get(`/Papers/${selectedPaper}`);
+                    setPaperDetails(response.data);
+                } catch (error) {
+                    console.error('Error fetching paper details:', error);
+                }
+            }
+        };
+        fetchPaperDetails();
+    }, [selectedPaper]);
+
+    const handleEdit = (student) => {
+        setSelectedStudent(student);
+        setIsModalOpen(true);
     };
 
     // Table columns definition
@@ -174,11 +193,13 @@ const MarksEntry = () => {
             id: 'actions',
             header: 'Actions',
             cell: ({ row }) => (
-                <button 
-                    onClick={() => handleEdit(row.original.candidateId)}
-                    className={`px-3 py-1 rounded-lg ${theme === 'dark' 
-                        ? 'bg-purple-600 hover:bg-purple-700 text-white' 
-                        : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
+                <button
+                    onClick={() => handleEdit(row.original)}
+                    disabled={!selectedPaper}
+                    className={`px-3 py-1 rounded-lg ${theme === 'dark'
+                        ? 'bg-purple-600 hover:bg-purple-700 text-white'
+                        : 'bg-blue-600 hover:bg-blue-700 text-white'}
+                        disabled:opacity-50`}
                 >
                     <FiEdit2 className="w-4 h-4" />
                 </button>
@@ -408,6 +429,17 @@ const MarksEntry = () => {
                     </div>
                 </div>
             </motion.div>
+            <EditMarksModal
+                isOpen={isModalOpen}
+                onClose={() => {
+                    setIsModalOpen(false);
+                    setSelectedStudent(null);
+                }}
+                student={selectedStudent}
+                paperDetails={paperDetails}
+                selectedPaper={selectedPaper}
+                theme={theme}
+            />
         </div>
     );
 };
