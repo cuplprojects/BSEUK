@@ -1,10 +1,12 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from "jwt-decode"
 
 const initialState = {
   token: null,
   user: null,
+  userId: null,
+  userDetails: null,
   isAuthenticated: false,
   isLoading: false,
   error: null
@@ -24,7 +26,8 @@ export const useUserStore = create(
         try {
           const decodedToken = jwtDecode(token);
           const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
-          // console.log('User ID from token:', userId);
+          
+          localStorage.setItem('userToken', token);
           
           set({ 
             token,
@@ -33,25 +36,24 @@ export const useUserStore = create(
             isAuthenticated: true,
             error: null,
             isLoading: false
-          })
+          });
         } catch (error) {
           console.error('Token decode error:', error);
+          set({ error: 'Invalid token format' });
         }
       },
 
+      // Set user details
+      setUserDetails: (details) => set({ userDetails: details }),
+
       // Logout action
       logout: () => {
-        localStorage.removeItem('token')
-        set(initialState)
+        localStorage.removeItem('userToken');
+        set(initialState);
       },
 
       // Clear error
       clearError: () => set({ error: null }),
-
-      // Update user
-      updateUser: (userData) => set((state) => ({
-        user: { ...state.user, ...userData }
-      })),
     }),
     {
       name: 'user-storage',
@@ -59,6 +61,7 @@ export const useUserStore = create(
         token: state.token,
         user: state.user,
         userId: state.userId,
+        userDetails: state.userDetails,
         isAuthenticated: state.isAuthenticated
       })
     }
