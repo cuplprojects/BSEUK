@@ -147,19 +147,32 @@ const MarksEntry = () => {
                 }
             );
 
-            const mappedStudents = response.data.map(candidate => ({
-                id: candidate.candidateID.toString(),
-                candidateId: candidate.candidateID,
-                name: candidate.candidateName,
-                rollNo: candidate.rollNumber,
-                group: candidate.group,
-                fName: candidate.fName,
-                mName: candidate.mName,
-                dob: candidate.dob,
-                institutionName: candidate.institutionName,
-                semID: candidate.semID,
-                sesID: candidate.sesID
-            }));
+            const response2 = await API.get(
+                `Papers/${selectedPaper}`
+            );
+            const paperDetails2 = response2.data
+            const papercode2 = response2.data.paperCode;
+
+            const mappedStudents = response.data
+                .filter(candidate => 
+                    paperDetails2?.paperType === 1 
+                    ? candidate.papersOpted.split(',').includes(papercode2.toString())
+                    : true
+                )
+                .map(candidate => ({
+                    id: candidate.candidateID.toString(),
+                    candidateId: candidate.candidateID,
+                    name: candidate.candidateName,
+                    rollNo: candidate.rollNumber,
+                    group: candidate.group,
+                    fName: candidate.fName,
+                    mName: candidate.mName,
+                    dob: candidate.dob,
+                    institutionName: candidate.institutionName,
+                    semID: candidate.semID,
+                    sesID: candidate.sesID,
+                    papersOpted: candidate.papersOpted
+                }));
 
             setStudents(mappedStudents);
         } catch (error) {
@@ -171,10 +184,10 @@ const MarksEntry = () => {
     };
 
     useEffect(() => {
-        if (selectedSession && selectedSemester) {
+        if (selectedSession && selectedSemester && selectedPaper) {
             fetchStudents();
         }
-    }, [selectedSession, selectedSemester]);
+    }, [selectedSession, selectedSemester,selectedPaper]);
 
     const handleEdit = (student) => {
         setSelectedStudent(student);
@@ -278,6 +291,16 @@ const MarksEntry = () => {
             cell: ({ row }) => (
                 <div className="text-center">
                     {row.original.name}
+                </div>
+            )
+        },
+        {
+            accessorKey: 'papersOpted',
+            header: 'Papers',
+            enableSorting: true,
+            cell: ({ row }) => (
+                <div className="text-center">
+                    {row.original.papersOpted}
                 </div>
             )
         },
