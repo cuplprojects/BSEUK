@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useThemeStore } from '../../store/themeStore';
-import { FiEdit2, FiSearch, FiChevronUp, FiChevronDown } from 'react-icons/fi';
+import { FiEdit2, FiSearch, FiChevronUp, FiChevronDown, FiSave, FiTrash2 } from 'react-icons/fi';
 import {
     useReactTable,
     getCoreRowModel,
@@ -26,7 +26,9 @@ const MarksEntry = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [paperDetails, setPaperDetails] = useState(null);
-    const [selectedPaper, setSelectedPaper] = useState(''); // Change initial state to empty string
+    const [selectedPaper, setSelectedPaper] = useState('');
+    const [studentsMarks, setStudentsMarks] = useState({});
+    const [editableRows, setEditableRows] = useState({});
 
     // New table states
     const [globalFilter, setGlobalFilter] = useState('');
@@ -63,6 +65,7 @@ const MarksEntry = () => {
             setLoadingDropdown(false);
         }
     };
+
     useEffect(() => {
         const fetchData = async () => {
             setLoadingDropdown(true);
@@ -85,6 +88,52 @@ const MarksEntry = () => {
     useEffect(() => {
         fetchPapers(selectedSemester);
     }, [selectedSemester]);
+
+    useEffect(() => {
+        if (students.length > 0) {
+            const initialMarks = {};
+            students.forEach(student => {
+                initialMarks[student.id] = {
+                    theoryMarks: '',
+                    internalMarks: '',
+                    practicalMarks: ''
+                };
+            });
+            setStudentsMarks(initialMarks);
+        }
+    }, [students]);
+
+    useEffect(() => {
+        const fetchExistingMarks = async () => {
+            if (!selectedPaper || !students.length) return;
+
+            try {
+                const promises = students.map(student => 
+                    API.get(`/StudentsMarksObtaineds/GetStudentPaperMarks/${student.candidateId}/${selectedPaper}`)
+                );
+                
+                const responses = await Promise.allSettled(promises);
+                
+                const newMarks = { ...studentsMarks };
+                responses.forEach((response, index) => {
+                    if (response.status === 'fulfilled' && response.value.data) {
+                        const studentId = students[index].id;
+                        newMarks[studentId] = {
+                            theoryMarks: response.value.data.theoryPaperMarks || '',
+                            internalMarks: response.value.data.interalMarks || '',
+                            practicalMarks: response.value.data.practicalMarks || ''
+                        };
+                    }
+                });
+                
+                setStudentsMarks(newMarks);
+            } catch (error) {
+                console.error('Error fetching existing marks:', error);
+            }
+        };
+
+        fetchExistingMarks();
+    }, [selectedPaper, students]);
 
     const fetchStudents = async () => {
         setLoadingStudents(true);
@@ -119,7 +168,7 @@ const MarksEntry = () => {
             setLoadingStudents(false);
         }
     };
-    // console.log(selectedPaper)
+
     useEffect(() => {
         if (selectedSession && selectedSemester) {
             fetchStudents();
@@ -150,6 +199,58 @@ const MarksEntry = () => {
         }
     };
 
+    const handleSave = async (studentId) => {
+        try {
+            const marks = studentsMarks[studentId];
+            await API.post('/StudentsMarksObtaineds', {
+                candidateID: studentId,
+                paperID: selectedPaper,
+                ...(paperDetails?.paperType === 1 ? {
+                    theoryPaperMarks: Number(marks.theoryMarks),
+                    interalMarks: Number(marks.internalMarks)
+                } : {}),
+                ...(paperDetails?.paperType === 2 ? {
+                    practicalMarks: Number(marks.practicalMarks)
+                } : {})
+            });
+            
+            setEditableRows(prev => ({
+                ...prev,
+                [studentId]: false
+            }));
+        } catch (error) {
+            console.error('Error saving marks:', error);
+        }
+    };
+
+    const handleClear = (studentId) => {
+        setStudentsMarks(prev => ({
+            ...prev,
+            [studentId]: {
+                theoryMarks: '',
+                internalMarks: '',
+                practicalMarks: ''
+            }
+        }));
+    };
+
+    const handleMarksChange = (studentId, marksType, value) => {
+        setStudentsMarks(prev => ({
+            ...prev,
+            [studentId]: {
+                ...prev[studentId],
+                [marksType]: value
+            }
+        }));
+    };
+
+    const handleEditRow = (studentId) => {
+        setEditableRows(prev => ({
+            ...prev,
+            [studentId]: true
+        }));
+    };
+
     // Table columns definition
     const columns = useMemo(() => [
         {
@@ -162,25 +263,123 @@ const MarksEntry = () => {
             header: 'Roll No',
             enableSorting: true,
         },
+        ...(paperDetails?.paperType === 1 ? [
+            {
+                id: 'theoryMarks',
+                header: `External Marks (Maximum: ${paperDetails?.theoryPaperMaxMarks || 0})`,
+                cell: ({ row }) => {
+                    const isEditable = editableRows[row.original.id];
+                    const marks = studentsMarks[row.original.id]?.theoryMarks || '';
+                    
+                    return isEditable ? (
+                        <input
+                            type="number"
+                            value={marks}
+                            onChange={(e) => handleMarksChange(row.original.id, 'theoryMarks', e.target.value)}
+                            className={`w-20 px-2 py-1 rounded ${inputClass}`}
+                            min="0"
+                            max={paperDetails?.theoryPaperMaxMarks || 100}
+                        />
+                    ) : (
+                        <span className={textClass}>{marks}</span>
+                    );
+                }
+            },
+            {
+                id: 'internalMarks',
+                header: `Internal Marks (Maximum: ${paperDetails?.interalMaxMarks || 0})`,
+                cell: ({ row }) => {
+                    const isEditable = editableRows[row.original.id];
+                    const marks = studentsMarks[row.original.id]?.internalMarks || '';
+                    
+                    return isEditable ? (
+                        <input
+                            type="number"
+                            value={marks}
+                            onChange={(e) => handleMarksChange(row.original.id, 'internalMarks', e.target.value)}
+                            className={`w-20 px-2 py-1 rounded ${inputClass}`}
+                            min="0"
+                            max={paperDetails?.interalMaxMarks || 100}
+                        />
+                    ) : (
+                        <span className={textClass}>{marks}</span>
+                    );
+                }
+            }
+        ] : []),
+        ...(paperDetails?.paperType === 2 ? [
+            {
+                id: 'practicalMarks',
+                header: `Practical Marks (Maximum: ${paperDetails?.practicalMaxMarks || 0})`,
+                cell: ({ row }) => {
+                    const isEditable = editableRows[row.original.id];
+                    const marks = studentsMarks[row.original.id]?.practicalMarks || '';
+                    
+                    return isEditable ? (
+                        <input
+                            type="number"
+                            value={marks}
+                            onChange={(e) => handleMarksChange(row.original.id, 'practicalMarks', e.target.value)}
+                            className={`w-20 px-2 py-1 rounded ${inputClass}`}
+                            min="0"
+                            max={paperDetails?.practicalMaxMarks || 100}
+                        />
+                    ) : (
+                        <span className={textClass}>{marks}</span>
+                    );
+                }
+            }
+        ] : []),
         {
             id: 'actions',
             header: 'Actions',
-            cell: ({ row }) => (
-                <button 
-                    onClick={() => handleEdit(row.original)}
-                    disabled={selectedPaper === ''}
-                    className={`px-3 py-1 rounded-lg ${
-                        theme === 'dark' 
-                            ? 'bg-purple-600 hover:bg-purple-700 text-white' 
-                            : 'bg-blue-600 hover:bg-blue-700 text-white'
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
-                    title={selectedPaper === '' ? "Please select a paper first" : "Edit marks"}
-                >
-                    <FiEdit2 className="w-4 h-4" />
-                </button>
-            ),
+            cell: ({ row }) => {
+                const isEditable = editableRows[row.original.id];
+                
+                return (
+                    <div className="flex gap-2">
+                        {isEditable ? (
+                            <button 
+                                onClick={() => handleSave(row.original.id)}
+                                className={`px-3 py-1 rounded-lg ${
+                                    theme === 'dark' 
+                                        ? 'bg-green-600 hover:bg-green-700 text-white' 
+                                        : 'bg-green-600 hover:bg-green-700 text-white'
+                                }`}
+                                title="Save marks"
+                            >
+                                <FiSave className="w-4 h-4" />
+                            </button>
+                        ) : (
+                            <button 
+                                onClick={() => handleEditRow(row.original.id)}
+                                disabled={selectedPaper === ''}
+                                className={`px-3 py-1 rounded-lg ${
+                                    theme === 'dark' 
+                                        ? 'bg-purple-600 hover:bg-purple-700 text-white' 
+                                        : 'bg-blue-600 hover:bg-blue-700 text-white'
+                                } disabled:opacity-50 disabled:cursor-not-allowed`}
+                                title={selectedPaper === '' ? "Please select a paper first" : "Edit marks"}
+                            >
+                                <FiEdit2 className="w-4 h-4" />
+                            </button>
+                        )}
+                        <button 
+                            onClick={() => handleClear(row.original.id)}
+                            className={`px-3 py-1 rounded-lg ${
+                                theme === 'dark' 
+                                    ? 'bg-red-600 hover:bg-red-700 text-white' 
+                                    : 'bg-red-600 hover:bg-red-700 text-white'
+                            }`}
+                            title="Clear marks"
+                        >
+                            <FiTrash2 className="w-4 h-4" />
+                        </button>
+                    </div>
+                );
+            },
         },
-    ], [theme, selectedPaper]);
+    ], [theme, selectedPaper, editableRows, studentsMarks, paperDetails, inputClass, textClass]);
 
     // Initialize table
     const table = useReactTable({
@@ -336,8 +535,7 @@ const MarksEntry = () => {
                                 table.getRowModel().rows.map((row, index) => (
                                     <tr
                                         key={row.id}
-                                        className={`
-                                            border-b last:border-b-0 
+                                        className={`border-b last:border-b-0 
                                             ${index % 2 === 0
                                                 ? theme === 'dark'
                                                     ? 'bg-purple-900/10'
