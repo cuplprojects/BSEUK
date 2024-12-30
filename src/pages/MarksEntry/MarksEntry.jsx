@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useThemeStore } from '../../store/themeStore';
-import { FiEdit2, FiSearch, FiChevronUp, FiChevronDown, FiSave, FiTrash2 } from 'react-icons/fi';
+import { FiEdit2, FiSearch, FiChevronUp, FiChevronDown, FiSave, FiTrash2, FiX } from 'react-icons/fi';
 import {
     useReactTable,
     getCoreRowModel,
@@ -29,6 +29,7 @@ const MarksEntry = () => {
     const [selectedPaper, setSelectedPaper] = useState('');
     const [studentsMarks, setStudentsMarks] = useState({});
     const [editableRows, setEditableRows] = useState({});
+    const [originalMarks, setOriginalMarks] = useState({});
 
     // New table states
     const [globalFilter, setGlobalFilter] = useState('');
@@ -245,9 +246,26 @@ const MarksEntry = () => {
     };
 
     const handleEditRow = (studentId) => {
+        // Store original marks before editing
+        setOriginalMarks(prev => ({
+            ...prev,
+            [studentId]: { ...studentsMarks[studentId] }
+        }));
         setEditableRows(prev => ({
             ...prev,
             [studentId]: true
+        }));
+    };
+
+    const handleCancel = (studentId) => {
+        // Revert to original marks
+        setStudentsMarks(prev => ({
+            ...prev,
+            [studentId]: { ...originalMarks[studentId] }
+        }));
+        setEditableRows(prev => ({
+            ...prev,
+            [studentId]: false
         }));
     };
 
@@ -257,11 +275,21 @@ const MarksEntry = () => {
             accessorKey: 'name',
             header: 'Name',
             enableSorting: true,
+            cell: ({ row }) => (
+                <div className="text-center">
+                    {row.original.name}
+                </div>
+            )
         },
         {   
             accessorKey: 'rollNo',
             header: 'Roll No',
             enableSorting: true,
+            cell: ({ row }) => (
+                <div className="text-center">
+                    {row.original.rollNo}
+                </div>
+            )
         },
         ...(paperDetails?.paperType === 1 ? [
             {
@@ -271,17 +299,25 @@ const MarksEntry = () => {
                     const isEditable = editableRows[row.original.id];
                     const marks = studentsMarks[row.original.id]?.theoryMarks || '';
                     
-                    return isEditable ? (
-                        <input
-                            type="number"
-                            value={marks}
-                            onChange={(e) => handleMarksChange(row.original.id, 'theoryMarks', e.target.value)}
-                            className={`w-20 px-2 py-1 rounded ${inputClass}`}
-                            min="0"
-                            max={paperDetails?.theoryPaperMaxMarks || 100}
-                        />
-                    ) : (
-                        <span className={textClass}>{marks}</span>
+                    return (
+                        <div className="text-center">
+                            {isEditable ? (
+                                <input
+                                    type="number"
+                                    value={marks}
+                                    onChange={(e) => handleMarksChange(row.original.id, 'theoryMarks', e.target.value)}
+                                    className={`w-20 px-2 py-1 rounded border-2 ${
+                                        theme === 'dark' 
+                                            ? 'border-purple-500 bg-purple-900/20 text-purple-100 focus:border-purple-400' 
+                                            : 'border-blue-300 bg-blue-50 text-blue-900 focus:border-blue-400'
+                                    } focus:outline-none`}
+                                    min="0"
+                                    max={paperDetails?.theoryPaperMaxMarks || 100}
+                                />
+                            ) : (
+                                <span className={textClass}>{marks}</span>
+                            )}
+                        </div>
                     );
                 }
             },
@@ -292,17 +328,25 @@ const MarksEntry = () => {
                     const isEditable = editableRows[row.original.id];
                     const marks = studentsMarks[row.original.id]?.internalMarks || '';
                     
-                    return isEditable ? (
-                        <input
-                            type="number"
-                            value={marks}
-                            onChange={(e) => handleMarksChange(row.original.id, 'internalMarks', e.target.value)}
-                            className={`w-20 px-2 py-1 rounded ${inputClass}`}
-                            min="0"
-                            max={paperDetails?.interalMaxMarks || 100}
-                        />
-                    ) : (
-                        <span className={textClass}>{marks}</span>
+                    return (
+                        <div className="text-center">
+                            {isEditable ? (
+                                <input
+                                    type="number"
+                                    value={marks}
+                                    onChange={(e) => handleMarksChange(row.original.id, 'internalMarks', e.target.value)}
+                                    className={`w-20 px-2 py-1 rounded border-2 ${
+                                        theme === 'dark' 
+                                            ? 'border-purple-500 bg-purple-900/20 text-purple-100 focus:border-purple-400' 
+                                            : 'border-blue-300 bg-blue-50 text-blue-900 focus:border-blue-400'
+                                    } focus:outline-none`}
+                                    min="0"
+                                    max={paperDetails?.interalMaxMarks || 100}
+                                />
+                            ) : (
+                                <span className={textClass}>{marks}</span>
+                            )}
+                        </div>
                     );
                 }
             }
@@ -315,17 +359,25 @@ const MarksEntry = () => {
                     const isEditable = editableRows[row.original.id];
                     const marks = studentsMarks[row.original.id]?.practicalMarks || '';
                     
-                    return isEditable ? (
-                        <input
-                            type="number"
-                            value={marks}
-                            onChange={(e) => handleMarksChange(row.original.id, 'practicalMarks', e.target.value)}
-                            className={`w-20 px-2 py-1 rounded ${inputClass}`}
-                            min="0"
-                            max={paperDetails?.practicalMaxMarks || 100}
-                        />
-                    ) : (
-                        <span className={textClass}>{marks}</span>
+                    return (
+                        <div className="text-center">
+                            {isEditable ? (
+                                <input
+                                    type="number"
+                                    value={marks}
+                                    onChange={(e) => handleMarksChange(row.original.id, 'practicalMarks', e.target.value)}
+                                    className={`w-20 px-2 py-1 rounded border-2 ${
+                                        theme === 'dark' 
+                                            ? 'border-purple-500 bg-purple-900/20 text-purple-100 focus:border-purple-400' 
+                                            : 'border-blue-300 bg-blue-50 text-blue-900 focus:border-blue-400'
+                                    } focus:outline-none`}
+                                    min="0"
+                                    max={paperDetails?.practicalMaxMarks || 100}
+                                />
+                            ) : (
+                                <span className={textClass}>{marks}</span>
+                            )}
+                        </div>
                     );
                 }
             }
@@ -337,44 +389,59 @@ const MarksEntry = () => {
                 const isEditable = editableRows[row.original.id];
                 
                 return (
-                    <div className="flex gap-2">
+                    <div className="flex justify-center gap-2">
                         {isEditable ? (
-                            <button 
-                                onClick={() => handleSave(row.original.id)}
-                                className={`px-3 py-1 rounded-lg ${
-                                    theme === 'dark' 
-                                        ? 'bg-green-600 hover:bg-green-700 text-white' 
-                                        : 'bg-green-600 hover:bg-green-700 text-white'
-                                }`}
-                                title="Save marks"
-                            >
-                                <FiSave className="w-4 h-4" />
-                            </button>
+                            <>
+                                <button 
+                                    onClick={() => handleSave(row.original.id)}
+                                    className={`px-3 py-1 rounded-lg ${
+                                        theme === 'dark' 
+                                            ? 'bg-green-600 hover:bg-green-700 text-white' 
+                                            : 'bg-green-600 hover:bg-green-700 text-white'
+                                    }`}
+                                    title="Save marks"
+                                >
+                                    <FiSave className="w-4 h-4" />
+                                </button>
+                                <button 
+                                    onClick={() => handleCancel(row.original.id)}
+                                    className={`px-3 py-1 rounded-lg ${
+                                        theme === 'dark' 
+                                            ? 'bg-red-600 hover:bg-red-700 text-white' 
+                                            : 'bg-red-600 hover:bg-red-700 text-white'
+                                    }`}
+                                    title="Cancel changes"
+                                >
+                                    <FiX className="w-4 h-4" />
+                                </button>
+                            </>
                         ) : (
-                            <button 
-                                onClick={() => handleEditRow(row.original.id)}
-                                disabled={selectedPaper === ''}
-                                className={`px-3 py-1 rounded-lg ${
-                                    theme === 'dark' 
-                                        ? 'bg-purple-600 hover:bg-purple-700 text-white' 
-                                        : 'bg-blue-600 hover:bg-blue-700 text-white'
-                                } disabled:opacity-50 disabled:cursor-not-allowed`}
-                                title={selectedPaper === '' ? "Please select a paper first" : "Edit marks"}
-                            >
-                                <FiEdit2 className="w-4 h-4" />
-                            </button>
+                            <>
+                                <button 
+                                    onClick={() => handleEditRow(row.original.id)}
+                                    disabled={selectedPaper === ''}
+                                    className={`px-3 py-1 rounded-lg ${
+                                        theme === 'dark' 
+                                            ? 'bg-purple-600 hover:bg-purple-700 text-white' 
+                                            : 'bg-blue-600 hover:bg-blue-700 text-white'
+                                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                                    title={selectedPaper === '' ? "Please select a paper first" : "Edit marks"}
+                                >
+                                    <FiEdit2 className="w-4 h-4" />
+                                </button>
+                                <button 
+                                    onClick={() => handleClear(row.original.id)}
+                                    className={`px-3 py-1 rounded-lg ${
+                                        theme === 'dark' 
+                                            ? 'bg-red-600 hover:bg-red-700 text-white' 
+                                            : 'bg-red-600 hover:bg-red-700 text-white'
+                                    }`}
+                                    title="Clear marks"
+                                >
+                                    <FiTrash2 className="w-4 h-4" />
+                                </button>
+                            </>
                         )}
-                        <button 
-                            onClick={() => handleClear(row.original.id)}
-                            className={`px-3 py-1 rounded-lg ${
-                                theme === 'dark' 
-                                    ? 'bg-red-600 hover:bg-red-700 text-white' 
-                                    : 'bg-red-600 hover:bg-red-700 text-white'
-                            }`}
-                            title="Clear marks"
-                        >
-                            <FiTrash2 className="w-4 h-4" />
-                        </button>
                     </div>
                 );
             },
@@ -487,10 +554,10 @@ const MarksEntry = () => {
                                     headerGroup.headers.map(header => (
                                         <th
                                             key={header.id}
-                                            className={`px-6 py-4 text-left ${textClass} ${header.column.getCanSort() ? 'cursor-pointer select-none' : ''}`}
+                                            className={`px-6 py-4 text-center ${textClass} ${header.column.getCanSort() ? 'cursor-pointer select-none' : ''}`}
                                             onClick={header.column.getToggleSortingHandler()}
                                         >
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex items-center justify-center gap-2">
                                                 {flexRender(
                                                     header.column.columnDef.header,
                                                     header.getContext()
