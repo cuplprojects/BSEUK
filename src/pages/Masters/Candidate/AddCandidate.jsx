@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
 import { motion } from "framer-motion";
 import { useThemeStore } from '../../../store/themeStore';
 import API from '../../../services/api';
@@ -66,8 +65,8 @@ const AddCandidate = () => {
         : 'text-blue-700';
 
     const inputClass = theme === 'dark'
-        ? 'bg-purple-900/20 border-purple-500/20 text-purple-100 placeholder-purple-400'
-        : 'bg-blue-50 border-blue-200 text-blue-600 placeholder-blue-400';
+        ? 'bg-purple-900/20 border-purple-500/20 text-purple-100 placeholder-purple-400 [&>option]:bg-purple-900 [&>option]:text-purple-100'
+        : 'bg-blue-50 border-blue-200 text-blue-600 placeholder-blue-400 [&>option]:bg-white [&>option]:text-blue-600';
 
     useEffect(() => {
         const fetchSemesters = async () => {
