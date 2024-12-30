@@ -11,6 +11,7 @@ import Certificate from './pages/Certificate/Certificate';
 import Report from './pages/Report/Report';
 import AddCandidate from './pages/Masters/Candidate/AddCandidate';
 import BulkCandidates from './pages/Masters/Candidate/bulkCandidates';
+import Groups from './pages/Masters/Groups/Groups';
 import { useUserStore } from './store/useUsertoken';
 
 // Protected Route Component
@@ -92,6 +93,7 @@ function App() {
           <Route path="report" element={<Report />} />
           <Route path ="add-candidate" element = {<AddCandidate/>} />
           <Route path ="add-bulkcandidates" element = {<BulkCandidates/>} />
+          <Route path ="add-groups" element = {<Groups/>} />
 
           {/* Catch all route for authenticated users */}
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
