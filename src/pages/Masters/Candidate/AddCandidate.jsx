@@ -19,7 +19,8 @@ const AddCandidate = () => {
     institutionName: "",
     semID: "",
     sesID: "",
-    category: ""
+    category: "",
+    papersOpted: ""
   });
 
   const clearFormData = () => {
@@ -35,6 +36,7 @@ const AddCandidate = () => {
       semID: "",
       sesID: "",
       category: "",
+      papersOpted: ""
     });
   };
 
@@ -100,6 +102,7 @@ const AddCandidate = () => {
         semID: formData.semID,
         sesID: formData.sesID,
         category: formData.category,
+        papersOpted : formData.papersOpted
       });
       console.log("Success:", response.data);
       toast.success("Candidate added successfully!");
@@ -269,6 +272,20 @@ const AddCandidate = () => {
                 onChange={handleChange}
                 className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
                 placeholder="Enter Category"
+              />
+            </div>
+
+            <div>
+              <label className={`block text-sm font-medium mb-2 ${textClass}`}>
+                Papers Opted
+              </label>
+              <input
+                type="text"
+                name="papersOpted"
+                value={formData.papersOpted}
+                onChange={handleChange}
+                className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
+                placeholder="Enter paper codes separated by commas"
               />
             </div>
           </div>
