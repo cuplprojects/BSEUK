@@ -128,20 +128,6 @@ const MarksEntry = () => {
         }
     }, [selectedSession, selectedSemester]);
 
-    // useEffect(() => {
-    //     const fetchPaperDetails = async () => {
-    //         if (selectedPaper) {
-    //             try {
-    //                 const response = await API.get(`/Papers/${selectedPaper}`);
-    //                 setPaperDetails(response.data);
-    //             } catch (error) {
-    //                 console.error('Error fetching paper details:', error);
-    //             }
-    //         }
-    //     };
-    //     fetchPaperDetails();
-    // }, [selectedPaper]);
-
     const handleEdit = (student) => {
         setSelectedStudent(student);
         setIsModalOpen(true);
@@ -169,43 +155,13 @@ const MarksEntry = () => {
     // Table columns definition
     const columns = useMemo(() => [
         {
-            accessorKey: 'candidateId',
-            header: 'ID',
-            enableSorting: true,
-        },
-        {
             accessorKey: 'name',
             header: 'Name',
             enableSorting: true,
         },
-        {
+        {   
             accessorKey: 'rollNo',
             header: 'Roll No',
-            enableSorting: true,
-        },
-        {
-            accessorKey: 'group',
-            header: 'Group',
-            enableSorting: true,
-        },
-        {
-            accessorKey: 'fName',
-            header: "Father's Name",
-            enableSorting: true,
-        },
-        {
-            accessorKey: 'mName',
-            header: "Mother's Name",
-            enableSorting: true,
-        },
-        {
-            accessorKey: 'dob',
-            header: 'Date of Birth',
-            enableSorting: true,
-        },
-        {
-            accessorKey: 'institutionName',
-            header: 'Institution',
             enableSorting: true,
         },
         {
