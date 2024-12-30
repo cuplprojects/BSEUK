@@ -5,17 +5,6 @@ import { motion } from "framer-motion";
 import { useThemeStore } from '../../../store/themeStore';
 import API from '../../../services/api';
 
-const groups = [
-    {
-        groupId: 1,
-        groupName: 'GROUP 1',
-    },
-    {
-        groupId: 2,
-        groupName: 'GROUP 2',
-    }
-];
-
 const AddCandidate = () => {
     const theme = useThemeStore((state) => state.theme);
     const [formData, setFormData] = useState({
@@ -54,7 +43,7 @@ const AddCandidate = () => {
 
     const [semesters, setSemesters] = useState([]);
     const [sessions, setSessions] = useState([]);
-
+    const [groups, setGroups] = useState([]);
     // Theme classes
     const cardClass = theme === 'dark'
         ? 'bg-black/40 backdrop-blur-xl border-purple-500/20'
@@ -86,9 +75,18 @@ const AddCandidate = () => {
                 console.error("Error fetching sessions:", error);
             }
         };
+        const fetchGroups = async () => {
+            try {
+                const response = await API.get('Groups');
+                setGroups(response.data);
+            } catch (error) {
+                console.error("Error fetching groups:", error);
+            }
+        };
 
         fetchSemesters();
         fetchSessions();
+        fetchGroups();
     }, []);
 
     const handleChange = (e) => {
