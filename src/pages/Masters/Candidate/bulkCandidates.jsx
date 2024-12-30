@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import * as XLSX from 'xlsx';
+import API from './../../../services/api';
 
 const NewFormComponent = () => {
   const [semesters, setSemesters] = useState([]);
@@ -27,15 +28,21 @@ const NewFormComponent = () => {
 
   useEffect(() => {
     const fetchSemesters = async () => {
-      const response = await fetch("https://localhost:7133/api/Semesters");
-      const data = await response.json();
-      setSemesters(data);
+      try {
+        const response = await API.get('Semesters');
+        setSemesters(response.data);
+      } catch (error) {
+        console.error("Error fetching semesters:", error);
+      }
     };
 
     const fetchSessions = async () => {
-      const response = await fetch("https://localhost:7133/api/Sessions");
-      const data = await response.json();
-      setSessions(data);
+      try {
+        const response = await API.get('Sessions');
+        setSessions(response.data);
+      } catch (error) {
+        console.error("Error fetching sessions:", error);
+      }
     };
 
     fetchSemesters();
@@ -112,18 +119,12 @@ const NewFormComponent = () => {
       for (const candidateData of dataToSubmit) {
         console.log(JSON.stringify(candidateData, null, 2)); // Log payload for debugging
   
-        const response = await fetch("https://localhost:7133/api/Candidates", {
-          method: 'POST',
-          body: JSON.stringify(candidateData),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+        // Using the API service to post the candidate data
+        const response = await API.post("Candidates", candidateData);
   
-        if (!response.ok) {
-          const errorDetail = await response.json();
-          console.error("Error details:", errorDetail);
-          throw new Error(`Failed to submit: ${errorDetail.title || response.statusText}`);
+        if (response.status !== 200 && response.status !== 201) {
+          console.error("Error details:", response.data);
+          throw new Error(`Failed to submit: ${response.data.title || response.statusText}`);
         }
       }
   
@@ -133,6 +134,7 @@ const NewFormComponent = () => {
     }
   };
   
+
 
   return (
     <div>
