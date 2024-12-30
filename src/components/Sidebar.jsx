@@ -16,6 +16,7 @@ import { PiCertificateBold } from "react-icons/pi";
 import { TbReportSearch } from "react-icons/tb";
 import { GiNotebook } from "react-icons/gi";
 import { MdGroups } from "react-icons/md";
+import { SlCalender } from "react-icons/sl";
 
 const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
   const location = useLocation();
@@ -44,7 +45,8 @@ const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
     { path: "/marks-entry", icon: <GiNotebook className="w-6 h-6" />, label: "Marks Entry" },
     { path: "/certificate-generation", icon: <PiCertificateBold className="w-6 h-6" />, label: "Certificate" },
     { path: "/report", icon: <TbReportSearch className="w-6 h-6" />, label: "Reports" },
-    { path: "/add-groups", icon: <MdGroups className="w-6 h-6" />, label: "Groups" }
+    { path: "/add-groups", icon: <MdGroups className="w-6 h-6" />, label: "Groups" },
+    { path: "/add-session", icon: <SlCalender className="w-6 h-6" />, label: "Sessions" }
 ];
 
   const toggleExpand = (path) => {
