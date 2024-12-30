@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useThemeStore } from '../../store/themeStore';
 import { FiEdit2, FiSearch, FiChevronUp, FiChevronDown } from 'react-icons/fi';
@@ -15,7 +14,6 @@ import API from '../../services/api';
 import EditMarksModal from './EditMarksModal';
 
 const MarksEntry = () => {
-    const navigate = useNavigate();
     const theme = useThemeStore((state) => state.theme);
     const [students, setStudents] = useState([]);
     const [sessions, setSessions] = useState([]);
