@@ -91,7 +91,6 @@ function App() {
           <Route path="marks-entry" element={<MarksEntry />} />
           <Route path="marks-entry/MarksEntryForm/:studentId" element={<MarksEntryForm />} title="Marks Entry" />
           <Route path="certificate-generation" element={<Certificate />} />
-          <Route path="report" element={<Report />} />
           <Route path ="add-candidate" element = {<AddCandidate/>} />
           <Route path ="add-bulkcandidates" element = {<BulkCandidates/>} />
           <Route path ="add-groups" element = {<Groups/>} />
