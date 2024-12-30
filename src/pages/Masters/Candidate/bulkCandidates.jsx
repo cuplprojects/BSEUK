@@ -24,6 +24,7 @@ const NewFormComponent = () => {
     { key: "dob", label: "Date of Birth" },
     { key: "institutionName", label: "Institution Name" },
     { key: "category", label: "Category" },
+    { key: "papersOpted", label: "Papers"}
   ];
 
   useEffect(() => {
@@ -206,11 +207,13 @@ const NewFormComponent = () => {
                       onChange={(e) => handleHeaderChange(field.key, e.target.value)}
                     >
                       <option value="">Select Header</option>
-                      {headers.map((header, index) => (
-                        <option key={index} value={header}>
-                          {header}
-                        </option>
-                      ))}
+                      {headers
+                        .filter(header => !Object.values(fieldHeaderMapping).includes(header) || fieldHeaderMapping[field.key] === header)
+                        .map((header, index) => (
+                          <option key={index} value={header}>
+                            {header}
+                          </option>
+                        ))}
                     </select>
                   </td>
                 </tr>
