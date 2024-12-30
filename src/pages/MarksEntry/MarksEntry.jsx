@@ -309,8 +309,8 @@ const MarksEntry = () => {
                                     className={`w-20 px-2 py-1 rounded border-2 ${
                                         theme === 'dark' 
                                             ? 'border-purple-500 bg-purple-900/20 text-purple-100 focus:border-purple-400' 
-                                            : 'border-blue-300 bg-blue-50 text-blue-900 focus:border-blue-400'
-                                    } focus:outline-none`}
+                                            : 'border-gray-300 bg-white text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 hover:border-blue-400'
+                                    } focus:outline-none transition-colors duration-200`}
                                     min="0"
                                     max={paperDetails?.theoryPaperMaxMarks || 100}
                                 />
@@ -338,8 +338,8 @@ const MarksEntry = () => {
                                     className={`w-20 px-2 py-1 rounded border-2 ${
                                         theme === 'dark' 
                                             ? 'border-purple-500 bg-purple-900/20 text-purple-100 focus:border-purple-400' 
-                                            : 'border-blue-300 bg-blue-50 text-blue-900 focus:border-blue-400'
-                                    } focus:outline-none`}
+                                            : 'border-gray-300 bg-white text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 hover:border-blue-400'
+                                    } focus:outline-none transition-colors duration-200`}
                                     min="0"
                                     max={paperDetails?.interalMaxMarks || 100}
                                 />
@@ -369,8 +369,8 @@ const MarksEntry = () => {
                                     className={`w-20 px-2 py-1 rounded border-2 ${
                                         theme === 'dark' 
                                             ? 'border-purple-500 bg-purple-900/20 text-purple-100 focus:border-purple-400' 
-                                            : 'border-blue-300 bg-blue-50 text-blue-900 focus:border-blue-400'
-                                    } focus:outline-none`}
+                                            : 'border-gray-300 bg-white text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 hover:border-blue-400'
+                                    } focus:outline-none transition-colors duration-200`}
                                     min="0"
                                     max={paperDetails?.practicalMaxMarks || 100}
                                 />
