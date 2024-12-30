@@ -15,6 +15,7 @@ const AddCandidate = () => {
     institutionName: "",
     semID: "",
     sesID: "",
+    papersOpted: ""
   });
 
   const [semesters, setSemesters] = useState([]); // State to hold semesters
@@ -71,6 +72,7 @@ const AddCandidate = () => {
         institutionName: formData.institutionName,
         semID: formData.semID,
         sesID: formData.sesID,
+        papersOpted: formData.papersOpted
       });
       console.log("Success:", response.data);
       // Optionally reset the form or handle success
@@ -222,6 +224,20 @@ const AddCandidate = () => {
                     </option>
                   ))}
                 </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Papers Opted
+                </label>
+                <input
+                  type="text"
+                  name="papersOpted"
+                  value={formData.papersOpted}
+                  onChange={handleChange}
+                  className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="Enter paper codes separated by commas"
+                />
               </div>
             </div>
 
