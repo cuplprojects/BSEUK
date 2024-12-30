@@ -53,6 +53,7 @@ const Dashboard = () => {
           { label: 'View Reports', link: '/report' },
           { label: 'Certificate', link: '/certificate-generation' },
           { label: 'Marks Entry', link: '/marks-entry' },
+          { label: 'Add Groups', link: '/add-groups' },
         ].map((action) => (
           <motion.div
             key={action.label}
