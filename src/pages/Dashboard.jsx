@@ -1,92 +1,79 @@
-import { useState } from 'react';
-import { FiUsers, FiCalendar, FiDollarSign, FiTrendingUp } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 import { useThemeStore } from '../store/themeStore';
 import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
   const theme = useThemeStore((state) => state.theme);
-  const [stats] = useState([
-    { title: 'Total Candidates', value: '156', icon: <FiUsers />, color: 'from-blue-500 to-blue-700' },
-    { title: 'Active Session', value: '12', icon: <FiCalendar />, color: 'from-blue-500 to-blue-700' },
-    // { title: 'Revenue', value: '$52,000', icon: <FiDollarSign />, color: 'from-blue-500 to-blue-700' },
-    // { title: 'Growth', value: '+12%', icon: <FiTrendingUp />, color: 'from-blue-500 to-blue-700' }
-  ]);
-
-  const cardClass = theme === 'dark' 
-    ? 'bg-black/40 backdrop-blur-xl border-purple-500/20' 
+  const cardClass = theme === 'dark'
+    ? 'bg-black/40 backdrop-blur-xl border-purple-500/20'
     : 'bg-white border-slate-200 shadow-lg';
 
-  return (
-    <div className="space-y-6">
-      <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-800' : 'text-blue-700'}`}>
-        Welcome Back
-      </h1>
+  // Variants for Framer Motion
+  const containerVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, staggerChildren: 0.2 },
+    },
+  };
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat, index) => (
+  const itemVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.3 } },
+  };
+
+  return (
+    <div className="space-y-8">
+      {/* Welcome Heading */}
+      <motion.h1
+        className={`text-3xl font-bold ${
+          theme === 'dark'
+            ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-800'
+            : 'text-blue-700'
+        }`}
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        Welcome Back!
+      </motion.h1>
+
+      {/* Quick Actions Section */}
+      <motion.div
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        {[
+          { label: 'Add Candidate', link: '/add-candidate' },
+          { label: 'Import Candidates', link: '/add-bulkcandidates' },
+          { label: 'Create Session', link: '/dashboard/create-session' },
+          { label: 'View Reports', link: '/report' },
+          { label: 'Certificate', link: '/certificate-generation' },
+          { label: 'Marks Entry', link: '/marks-entry' },
+        ].map((action) => (
           <motion.div
-            key={stat.title}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className={`border rounded-lg p-6 ${cardClass}`}
+            key={action.label}
+            className={`p-6 border rounded-lg ${cardClass} flex items-center justify-center transition-all duration-200`}
+            variants={itemVariants}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className={`${theme === 'dark' ? 'text-purple-300' : 'text-slate-600'} text-sm`}>
-                  {stat.title}
-                </p>
-                <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'} mt-2`}>
-                  {stat.value}
-                </p>
-              </div>
-              <div className={`text-2xl bg-gradient-to-r ${stat.color} text-transparent bg-clip-text`}>
-                {stat.icon}
-              </div>
-            </div>
+            <Link
+              to={action.link}
+              className={`text-lg font-medium ${
+                theme === 'dark'
+                  ? 'text-purple-300'
+                  : 'text-blue-700'
+              } hover:underline`}
+            >
+              {action.label}
+            </Link>
           </motion.div>
         ))}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className={`border rounded-lg p-6 ${cardClass}`}>
-          <h2 className={`text-xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400' : 'text-blue-700'} mb-4`}>
-            Recent Activity
-          </h2>
-          <div className="space-y-4">
-            <div className={theme === 'dark' ? 'text-purple-300' : 'text-slate-600'}>
-              No recent activity to display
-            </div>
-          </div>
-        </div>
-
-        <div className={`border rounded-lg p-6 ${cardClass}`}>
-          <h2 className={`text-xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400' : 'text-blue-700'} mb-4`}>
-            Quick Actions
-          </h2>
-          <div className="grid grid-cols-2 gap-4">
-            {['Add Candidate', 'Create Session', 'View Reports', 'Certificate'].map((action, index) => (
-              <Link
-                key={action}
-                to={{
-                  'Add Candidate': '/add-candidate',
-                  'Create Session': '/dashboard/create-session',
-                  'View Reports': '/report',
-                  'Certificate': '/certificate-generation',
-                }[action]}
-                className={`p-4 rounded-lg transition-colors duration-200 ${
-                  theme === 'dark'
-                    ? 'bg-purple-600/20 hover:bg-purple-600/30 text-purple-300'
-                    : 'bg-blue-100 hover:bg-blue-200 text-blue-700'
-                }`}
-              >
-                {action}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
