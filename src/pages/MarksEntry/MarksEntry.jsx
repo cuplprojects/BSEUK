@@ -74,21 +74,21 @@ const MarksEntry = () => {
   return (
     <div className='max-w-6xl mx-auto p-5'>
       <h1 className='text-3xl font-bold mb-5'>Marks Entry</h1>
-      <div className='flex justify-between mb-4'>
-        <div className='flex gap-2'>
-          <select className='border rounded p-2' onChange={(e) => setSelectedFilters({ ...selectedFilters, sesID: e.target.value })}>
+      <div className='flex flex-col md:flex-row justify-between mb-4'>
+        <div className='flex flex-row gap-2 w-full'>
+          <select className='border rounded p-2 flex-1' onChange={(e) => setSelectedFilters({ ...selectedFilters, sesID: e.target.value })}>
             <option value="">Select Session</option>
             {sessions.map((session) => (
               <option key={session.sesID} value={session.sesID}>{session.sessionName}</option>
             ))}
           </select>
-          <select className='border rounded p-2' onChange={(e) => setSelectedFilters({ ...selectedFilters, semID: e.target.value })} disabled={!selectedFilters.sesID}>
+          <select className='border rounded p-2 flex-1' onChange={(e) => setSelectedFilters({ ...selectedFilters, semID: e.target.value })} disabled={!selectedFilters.sesID}>
             <option value="">Select Semester</option>
             {semesters.map((semester) => (
               <option key={semester.semID} value={semester.semID}>{semester.semesterName}</option>
             ))}
           </select>
-          <select className='border rounded p-2' onChange={(e) => setSelectedFilters({ ...selectedFilters, paperID: e.target.value })} disabled={!selectedFilters.semID}>
+          <select className='border rounded p-2 flex-1' onChange={(e) => setSelectedFilters({ ...selectedFilters, paperID: e.target.value })} disabled={!selectedFilters.semID}>
             <option value="">Select Paper</option>
             {papers.map((paper) => (
               <option key={paper.paperID} value={paper.paperID}>{paper.paperName}</option>
@@ -100,7 +100,7 @@ const MarksEntry = () => {
           placeholder='Search...'
           value={globalFilter}
           onChange={(e) => setGlobalFilter(e.target.value)}
-          className='border rounded p-2 w-64'
+          className='border rounded p-2 mb-4 md:mb-0 md:ml-4 w-full md:w-64'
         />
       </div>
       <div className='overflow-x-auto'>
