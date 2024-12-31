@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
-import { useThemeStore } from "../../store/themeStore";
 import API from "../../services/api";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 
 const MarksEntry = () => {
-  const theme = useThemeStore((state) => state.theme);
   const [sessions, setSessions] = useState([]);
   const [semesters, setSemesters] = useState([]);
   const [papers, setPapers] = useState([]);
@@ -13,19 +11,6 @@ const MarksEntry = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [globalFilter, setGlobalFilter] = useState("");
-
-  // Theme classes
-  const cardClass =
-    theme === "dark"
-      ? "bg-black/40 backdrop-blur-xl border-purple-500/20"
-      : "bg-white border-blue-200 shadow-sm";
-
-  const textClass = theme === "dark" ? "text-purple-100" : "text-blue-700";
-
-  const inputClass =
-    theme === "dark"
-      ? "bg-purple-900/20 border-purple-500/20 text-purple-100 placeholder-purple-400"
-      : "bg-blue-50 border-blue-200 text-blue-600 placeholder-blue-400";
 
   // Table Columns
   const columns = [
