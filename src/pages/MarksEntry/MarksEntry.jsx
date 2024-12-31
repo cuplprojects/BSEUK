@@ -72,59 +72,66 @@ const MarksEntry = () => {
   }, []);
 
   return (
-    <div>
-      <select onChange={(e) => setSelectedFilters({ ...selectedFilters, sesID: e.target.value })}>
-        <option value="">Select Session</option>
-        {sessions.map((session) => (
-          <option key={session.sesID} value={session.sesID}>{session.sessionName}</option>
-        ))}
-      </select>
-      <select onChange={(e) => setSelectedFilters({ ...selectedFilters, semID: e.target.value })} disabled={!selectedFilters.sesID}>
-        <option value="">Select Semester</option>
-        {semesters.map((semester) => (
-          <option key={semester.semID} value={semester.semID}>{semester.semesterName}</option>
-        ))}
-      </select>
-      <select onChange={(e) => setSelectedFilters({ ...selectedFilters, paperID: e.target.value })} disabled={!selectedFilters.semID}>
-        <option value="">Select Paper</option>
-        {papers.map((paper) => (
-          <option key={paper.paperID} value={paper.paperID}>{paper.paperName}</option>
-        ))}
-      </select>
-      <input
-        type='text'
-        placeholder='Search...'
-        value={globalFilter}
-        onChange={(e) => setGlobalFilter(e.target.value)}
-        className='border p-2 mb-4'
-      />
-      <table className='min-w-full border-collapse border border-gray-300'>
-        <thead>
-          <tr>
-            {table.getHeaderGroups().map(headerGroup => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map(column => (
-                  <th key={column.id} className='border border-gray-300 p-2'>{column.header}</th>
+    <div className='max-w-6xl mx-auto p-5'>
+      <h1 className='text-3xl font-bold mb-5'>Marks Entry</h1>
+      <div className='flex justify-between mb-4'>
+        <div className='flex gap-2'>
+          <select className='border rounded p-2' onChange={(e) => setSelectedFilters({ ...selectedFilters, sesID: e.target.value })}>
+            <option value="">Select Session</option>
+            {sessions.map((session) => (
+              <option key={session.sesID} value={session.sesID}>{session.sessionName}</option>
+            ))}
+          </select>
+          <select className='border rounded p-2' onChange={(e) => setSelectedFilters({ ...selectedFilters, semID: e.target.value })} disabled={!selectedFilters.sesID}>
+            <option value="">Select Semester</option>
+            {semesters.map((semester) => (
+              <option key={semester.semID} value={semester.semID}>{semester.semesterName}</option>
+            ))}
+          </select>
+          <select className='border rounded p-2' onChange={(e) => setSelectedFilters({ ...selectedFilters, paperID: e.target.value })} disabled={!selectedFilters.semID}>
+            <option value="">Select Paper</option>
+            {papers.map((paper) => (
+              <option key={paper.paperID} value={paper.paperID}>{paper.paperName}</option>
+            ))}
+          </select>
+        </div>
+        <input
+          type='text'
+          placeholder='Search...'
+          value={globalFilter}
+          onChange={(e) => setGlobalFilter(e.target.value)}
+          className='border rounded p-2 w-64'
+        />
+      </div>
+      <div className='overflow-x-auto'>
+        <table className='min-w-full border-collapse border border-gray-300'>
+          <thead className='bg-gray-200'>
+            <tr>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((column) => (
+                    <th key={column.id} className='border border-gray-300 p-2'>{column.header}</th>
+                  ))}
+                </tr>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row) => (
+              <tr key={row.id} className='border-b hover:bg-gray-100'>
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id} className='border border-gray-300 p-2'>{cell.getValue()}</td>
                 ))}
               </tr>
             ))}
-          </tr>
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map(row => (
-            <tr key={row.id} className='border-b'>
-              {row.getVisibleCells().map(cell => (
-                <td key={cell.id} className='border border-gray-300 p-2'>{cell.getValue()}</td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
       <div className='flex justify-between mt-4'>
-        <button onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()} className='border p-2'>First</button>
-        <button onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()} className='border p-2'>Previous</button>
-        <button onClick={() => table.nextPage()} disabled={!table.getCanNextPage()} className='border p-2'>Next</button>
-        <button onClick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()} className='border p-2'>Last</button>
+        <button onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()} className='border rounded p-2 bg-blue-500 text-white'>First</button>
+        <button onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()} className='border rounded p-2 bg-blue-500 text-white'>Previous</button>
+        <button onClick={() => table.nextPage()} disabled={!table.getCanNextPage()} className='border rounded p-2 bg-blue-500 text-white'>Next</button>
+        <button onClick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()} className='border rounded p-2 bg-blue-500 text-white'>Last</button>
       </div>
     </div>
   );
