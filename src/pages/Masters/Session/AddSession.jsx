@@ -26,64 +26,62 @@ const AddSession = () => {
     const response = await API.get("/Sessions");
     setSessions(response.data);
   };
+  const cardClass =
+    theme === "dark"
+      ? "bg-black/40 backdrop-blur-xl border-purple-500/20"
+      : "bg-white border-blue-200 shadow-sm";
 
+  const textClass = theme === "dark" ? "text-purple-100" : "text-blue-700";
+
+  const inputClass =
+    theme === "dark"
+      ? "bg-purple-900/20 border-purple-500/20 text-purple-100 placeholder-purple-400 [&>option]:bg-purple-900 [&>option]:text-purple-100"
+      : "bg-blue-50 border-blue-200 text-blue-600 placeholder-blue-400 [&>option]:bg-white [&>option]:text-blue-600";
   return (
     <div>
-      <div
-        className={`flex ${
-          theme === "dark" ? "bg-black/40" : "bg-white"
-        } p-4 rounded-lg`}
-      >
+      <div className={cardClass}>
         <div className="flex-1 border border-gray-300 rounded-lg m-2 p-4">
-          <h2
-            className={`text-lg font-bold ${
-              theme === "dark" ? "text-white" : "text-black"
-            }`}
-          >
+          <h2 className={`text-lg font-bold ${textClass}`}>Add New Session</h2>
+          <div className="flex flex-col">
+            <input
+              type="text"
+              value={newSession}
+              onChange={(e) => setNewSession(e.target.value)}
+              placeholder="Add new session"
+              className={`border ${
+                theme === "dark" ? "border-gray-600" : "border-gray-300"
+              } rounded-lg p-2 ${inputClass}`}
+            />
+            <button
+              onClick={handleAddSession}
+              className={`mt-2 p-2 rounded-lg ${
+                theme === "dark"
+                  ? "bg-purple-600 text-white"
+                  : "bg-blue-600 text-white"
+              }`}
+            >
+              Add Session
+            </button>
+          </div>
+        </div>
+        <div className="flex-1 border border-gray-300 rounded-lg m-2 p-4">
+          <h2 className={`text-lg font-bold ${textClass}`}>
             Existing Sessions
           </h2>
           <table>
             <thead>
               <tr>
-                <th>Session Name</th>
+                <th className={textClass}>Session Name</th>
               </tr>
             </thead>
             <tbody>
               {sessions.map((session) => (
                 <tr key={session.sesID}>
-                  <td>{session.sessionName}</td>
+                  <td className={textClass}>{session.sessionName}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
-        <div className="flex-1 border border-gray-300 rounded-lg m-2 p-4">
-          <h2
-            className={`text-lg font-bold ${
-              theme === "dark" ? "text-white" : "text-black"
-            }`}
-          >
-            Add New Session
-          </h2>
-          <input
-            type="text"
-            value={newSession}
-            onChange={(e) => setNewSession(e.target.value)}
-            placeholder="Add new session"
-            className={`border ${
-              theme === "dark" ? "border-gray-600" : "border-gray-300"
-            } rounded-lg p-2`}
-          />
-          <button
-            onClick={handleAddSession}
-            className={`mt-2 p-2 rounded-lg ${
-              theme === "dark"
-                ? "bg-purple-600 text-white"
-                : "bg-blue-600 text-white"
-            }`}
-          >
-            Add Session
-          </button>
         </div>
       </div>
     </div>
