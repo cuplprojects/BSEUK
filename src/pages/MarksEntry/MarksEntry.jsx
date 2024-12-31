@@ -106,11 +106,12 @@ const MarksEntry = () => {
 
     useEffect(() => {
         const fetchExistingMarks = async () => {
+            setStudentsMarks({});
             if (!selectedPaper || !students.length) return;
 
             try {
                 const promises = students.map(student => 
-                    API.get(`/StudentsMarksObtaineds/GetStudentPaperMarks/${student.candidateId}/${selectedPaper}`)
+                    API.get(`/StudentsMarksObtaineds/GetStudentPaperMarks/${selectedPaper}`)
                 );
                 
                 const responses = await Promise.allSettled(promises);
@@ -197,6 +198,7 @@ const MarksEntry = () => {
     const handlePaperChange = (e) => {
         const value = e.target.value;
         setSelectedPaper(value);
+
         if (value) {
             // Fetch paper details when paper is selected
             const fetchPaperDetails = async () => {

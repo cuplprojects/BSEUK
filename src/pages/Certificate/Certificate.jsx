@@ -3,6 +3,7 @@ import { FiDownload, FiLoader } from "react-icons/fi";
 import API from "../../services/api";
 import Template from "./Template";
 import Template2 from "./Template2";
+import Template3 from "./Template3";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import logo from "./../../assets/logo.png";
@@ -54,7 +55,7 @@ const Certificate = () => {
         session: studentDetails.session,
         semester: studentDetails.sem,
         marks: resultData.marksDetails.map(mark => ({
-          code: mark.paperID,
+          code: mark.paperCode,
           type: mark.paperType,
           name: mark.paperName,
           maxMarks: mark.rowMaxTotal,
@@ -85,7 +86,39 @@ const Certificate = () => {
         session: studentDetails.session,
         semester: studentDetails.sem,
         marks: resultData.marksDetails.map(mark => ({
-          code: mark.paperID,
+          code: mark.paperCode,
+          type: mark.paperType,
+          name: mark.paperName,
+          maxMarks: mark.rowMaxTotal,
+          theoryMax : mark.theoryPaperMaxMarks,
+          theory: mark.theoryPaperMarks,
+          practical: mark.practicalMarks,
+          internalMax: mark.internalMaxMarks,
+          internal: mark.internalMarks,
+          total: mark.rowTotal,
+          pageremark: mark.paperRemarks
+        })),
+        totalMarks: resultData.totalMarksObtained,
+        maxMarks: resultData.totalMaxMarks,
+        result: resultData.remarks,
+        watermarkImage: logo,
+        headerImage: logo
+      }; 
+    }
+    else if(studentDetails.sem === "Third Semester")
+    {
+      return{
+        sno: studentDetails.candidateID,
+        name: studentDetails.name,
+        mothersName: studentDetails.mName,
+        fathersName: studentDetails.fName,
+        rollNo: studentDetails.rollNo,
+        group: studentDetails.group,
+        institutionName: studentDetails.institutionName,
+        session: studentDetails.session,
+        semester: studentDetails.sem,
+        marks: resultData.marksDetails.map(mark => ({
+          code: mark.paperCode,
           type: mark.paperType,
           name: mark.paperName,
           maxMarks: mark.rowMaxTotal,
@@ -324,6 +357,8 @@ const Certificate = () => {
           <div className="fixed left-[-9999px]" id="certificate-template">
             {certificateData.semester === "Second Semester" ? (
               <Template2 data={certificateData} />
+            ) : certificateData.semester === "Third Semester" ? (
+              <Template3 data={certificateData} />
             ) : (
               <Template data={certificateData} />
             )}
