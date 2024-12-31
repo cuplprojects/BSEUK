@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useThemeStore } from "../../store/themeStore";
 import API from "../../services/api";
+import { useReactTable, getCoreRowModel, getFilteredRowModel, getPaginationRowModel } from '@tanstack/react-table';
 
 const MarksEntry = () => {
   const theme = useThemeStore((state) => state.theme);
@@ -20,6 +21,7 @@ const MarksEntry = () => {
   const [globalFilter, setGlobalFilter] = useState("");
   const [sorting, setSorting] = useState([]);
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
+  const [data, setData] = useState([]); // This will hold the data for the table
 
   // Theme classes
   const cardClass =
@@ -33,6 +35,25 @@ const MarksEntry = () => {
     theme === "dark"
       ? "bg-purple-900/20 border-purple-500/20 text-purple-100 placeholder-purple-400"
       : "bg-blue-50 border-blue-200 text-blue-600 placeholder-blue-400";
+
+  const columns = [
+    { accessorKey: 'rollNumber', header: 'Roll Number' },
+    { accessorKey: 'studentName', header: 'Student Name' },
+    { accessorKey: 'marks', header: 'Marks' },
+  ];
+
+  const table = useReactTable({
+    data,
+    columns,
+    globalFilterFn: 'includes',
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    state: {
+      globalFilter,
+    },
+    onGlobalFilterChange: setGlobalFilter,
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -70,6 +91,41 @@ const MarksEntry = () => {
           <option key={paper.paperID} value={paper.paperID}>{paper.paperName}</option>
         ))}
       </select>
+      <input
+        type='text'
+        placeholder='Search...'
+        value={globalFilter}
+        onChange={(e) => setGlobalFilter(e.target.value)}
+        className='border p-2 mb-4'
+      />
+      <table className='min-w-full border-collapse border border-gray-300'>
+        <thead>
+          <tr>
+            {table.getHeaderGroups().map(headerGroup => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map(column => (
+                  <th key={column.id} className='border border-gray-300 p-2'>{column.header}</th>
+                ))}
+              </tr>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map(row => (
+            <tr key={row.id} className='border-b'>
+              {row.getVisibleCells().map(cell => (
+                <td key={cell.id} className='border border-gray-300 p-2'>{cell.getValue()}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div className='flex justify-between mt-4'>
+        <button onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()} className='border p-2'>First</button>
+        <button onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()} className='border p-2'>Previous</button>
+        <button onClick={() => table.nextPage()} disabled={!table.getCanNextPage()} className='border p-2'>Next</button>
+        <button onClick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()} className='border p-2'>Last</button>
+      </div>
     </div>
   );
 };
