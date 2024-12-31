@@ -8,13 +8,11 @@ const MarksEntry = () => {
   const [sessions, setSessions] = useState([]);
   const [semesters, setSemesters] = useState([]);
   const [papers, setPapers] = useState([]);
-  const [selectedSession, setSelectedSession] = useState("");
-  const [selectedSemester, setSelectedSemester] = useState("");
+  const [selectedFilters, setSelectedFilters] = useState({ sesID: '', semID: '', paperID: '' });
   const [loadingStudents, setLoadingStudents] = useState(false);
   const [loadingDropdown, setLoadingDropdown] = useState(true);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [paperDetails, setPaperDetails] = useState(null);
-  const [selectedPaper, setSelectedPaper] = useState("");
   const [studentsMarks, setStudentsMarks] = useState({});
   const [editableRows, setEditableRows] = useState({});
   const [originalMarks, setOriginalMarks] = useState({});
@@ -54,28 +52,22 @@ const MarksEntry = () => {
 
   return (
     <div>
-      <select onChange={(e) => setSelectedSession(e.target.value)}>
+      <select onChange={(e) => setSelectedFilters({ ...selectedFilters, sesID: e.target.value })}>
         <option value="">Select Session</option>
         {sessions.map((session) => (
-          <option key={session.sesID} value={session.sesID}>
-            {session.sessionName}
-          </option>
+          <option key={session.sesID} value={session.sesID}>{session.sessionName}</option>
         ))}
       </select>
-      <select onChange={(e) => setSelectedSemester(e.target.value)} disabled={!selectedSession}>
+      <select onChange={(e) => setSelectedFilters({ ...selectedFilters, semID: e.target.value })} disabled={!selectedFilters.sesID}>
         <option value="">Select Semester</option>
         {semesters.map((semester) => (
-          <option key={semester.semID} value={semester.semID}>
-            {semester.semesterName}
-          </option>
+          <option key={semester.semID} value={semester.semID}>{semester.semesterName}</option>
         ))}
       </select>
-      <select onChange={(e) => setSelectedPaper(e.target.value)} disabled={!selectedSemester}>
+      <select onChange={(e) => setSelectedFilters({ ...selectedFilters, paperID: e.target.value })} disabled={!selectedFilters.semID}>
         <option value="">Select Paper</option>
         {papers.map((paper) => (
-          <option key={paper.paperID} value={paper.paperID}>
-            {paper.paperName}
-          </option>
+          <option key={paper.paperID} value={paper.paperID}>{paper.paperName}</option>
         ))}
       </select>
     </div>
