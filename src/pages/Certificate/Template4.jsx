@@ -19,7 +19,7 @@ const Certificate2 = ({ data }) => {
       .map((mark, index) => (
         <tr key={index}>
           
-          <td colSpan={mark.code === 47 ? 2 : 0} style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.code === 47 ? "" : mark.code} {mark.code === 47 ? "" : "-"} {mark.name}</td>
+          <td colSpan={mark.code === 47 ? 2 : 0} style={{ border: '1px solid black', textAlign: 'left', padding: '4px  0px 12px 0px' }}>{mark.code === 47 ? "" : mark.code} {mark.code === 47 ? "" : "-"} {mark.name}</td>
           <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.theoryMax}</td>
           <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.theory}</td>
           <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.internalMax}</td>
@@ -163,39 +163,37 @@ const Certificate2 = ({ data }) => {
               </tr>
             </thead>
             <tbody>
-            <td rowSpan="7"  style={{border: '1px solid black',padding:'0'
-            ,font:'20px',
-            textDecoration:'bold',}}> 
-            <span
-            style={{
-              // width: '100%', // Ensure the span takes the full width
-              display: 'flex',
-              alignItems:'start',
-              margin:0,
-              transform: 'rotate(-90deg)',
-              whiteSpace: 'nowrap', // Prevents wrapping of text
-              // border:'2px solid '
-            }}
-          >
-            शिक्षण योजना निर्माण एवं शिक्षण
-          </span>
-          </td>
-              {renderTheoryRows()}
-              {renderPracticalRows()}
-              {/* {renderInternshipRows()} */}
-              {/* <tr>
-                <td colSpan="2" style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', padding: "4px 4px 12px 4px" }}><b>योग (Total)</b></td>
-                <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.maxMarks}</td>
-                <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.totalInternalMaxMarks}</td>
-                <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.totalInternalMarksObtained}</td>
-                <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.totalExternalMaxMarks}</td>
-                <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.totalExternalMarksObtained}</td>
-                <td colSpan="2" style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.totalPracticalMaxMarks}</td>
-                <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', padding: "4px  0px 12px 0px" }}>{data.totalMarks}</td>
-                <td></td>
-                {console.log(data)}
-              </tr> */}
-            </tbody>
+  <td
+    rowSpan="7"
+    style={{
+      border: '1px solid black',
+      padding: '25px',
+      textAlign: 'center',
+      verticalAlign: 'middle', // Ensures proper alignment of content
+      position: 'relative', // Allows for better placement of rotated text
+    }}
+  >
+    <span
+      style={{
+        display: 'inline-block',
+        transform: 'rotate(-90deg)',
+        transformOrigin: 'center',
+        whiteSpace: 'nowrap',
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%) rotate(-90deg)',
+      }}
+    >
+      शिक्षण योजना निर्माण एवं <br/> शिक्षण
+    </span>
+  </td>
+  {renderTheoryRows()}
+  {renderPracticalRows()}
+  {/* {renderInternshipRows()} */}
+  {/* Uncommented rows */}
+</tbody>
+
           </table>
         </div>
 
