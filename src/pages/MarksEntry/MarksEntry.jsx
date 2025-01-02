@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import API from "../../services/api";
-import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
+import { useReactTable, getCoreRowModel, selectRowsFn } from "@tanstack/react-table";
 
 const MarksEntry = () => {
   const [sessions, setSessions] = useState([]);
@@ -11,26 +11,63 @@ const MarksEntry = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [columns, setColumns] = useState([]);
 
   // Table Columns
-  const columns = [
-    { accessorKey: "candidateRollNumber", header: "Roll No" },
-    { accessorKey: "candidateName", header: "Candidate Name" },
-    {
-      header: "Marks",
-      accessorFn: (row) =>
-        row?.marks
-          ? row.paperType === 1
-            ? `${row.marks.theoryPaperMarks || 0} (Internal: ${row.marks.internalMarks || 0})`
-            : `${row.marks.practicalMarks || 0}`
-          : "No Marks Available",
-      id: "marks",
-    },
-  ];
+  const getColumns = async (paperID) => {
+    if (candidates.length === 0) return []; // No candidates, return empty columns
+
+    console.log(paperID)
+    const response = await API.get(`/Papers/${paperID}`);
+    console.log(response.data)
+    const paperType = response.data.paperType;
+
+    if (paperType === 1) {
+      return [
+        {
+          accessorFn: (row) => row?.marks?.theoryPaperMarks || 0,
+          id: "theoryMarks",
+          header: "Theory Marks",
+        },
+        {
+          accessorFn: (row) => row?.marks?.interalMarks || 0,
+          id: "internalMarks",
+          header: "Internal Marks",
+        },
+      ];
+    } else if (paperType === 2) {
+      return [
+        {
+          accessorFn: (row) => row?.marks?.practicalMarks || 0,
+          id: "practicalMarks",
+          header: "Practical Marks",
+        },
+      ];
+    }
+
+    return []; // Default case if paperType is neither 1 nor 2
+  };
+
+  useEffect(() => {
+
+    console.log(selectedFilters.paperID)
+    const fetchColumns = async () => {
+      const cols = await getColumns(selectedFilters.paperID);
+      setColumns(cols);
+    };
+
+    fetchColumns();
+  }, [candidates, selectedFilters.paperID]);
+
+  
 
   const table = useReactTable({
     data: candidates,
-    columns,
+    columns: [
+      { accessorKey: "candidateRollNumber", header: "Roll No" },
+      { accessorKey: "candidateName", header: "Candidate Name" },
+      ...columns,
+    ],
     globalFilterFn: "includes",
     getCoreRowModel: getCoreRowModel(),
     state: {
@@ -59,6 +96,7 @@ const MarksEntry = () => {
       const fetchPapers = async () => {
         try {
           const response = await API.get(`Papers/GetBySem/${selectedFilters.semID}`);
+          console.log(response.data)
           setPapers(response.data);
         } catch (error) {
           console.error("Error fetching papers:", error);
