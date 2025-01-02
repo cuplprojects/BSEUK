@@ -95,7 +95,8 @@ const Certificate = ({ data }) => {
         <div className="text-center mb-3">
           <h4 style={{ fontSize: "1.1rem", marginBottom: "0.3rem", fontWeight: 'bold' }}>प्रारम्भिक शिक्षा में द्विवर्षीय डिप्लोमा</h4>
           <h4 style={{ fontSize: "1.1rem", marginBottom: "0.3rem", fontWeight: 'bold' }}>
-            TWO-YEAR DIPLOMA IN ELEMENTARY EDUCATION - {data.session.split('-')[0]}
+            TWO-YEAR DIPLOMA IN ELEMENTARY EDUCATION - {data.entersession}
+            {/* {data.session.split('-')[0]} */}
           </h4>
         </div>
 

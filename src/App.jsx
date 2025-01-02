@@ -6,9 +6,7 @@ import Dashboard from './pages/Dashboard';
 import Profile from './pages/user/Profile';
 import ChangePassword from './pages/user/ChangePassword';
 import MarksEntry from './pages/MarksEntry/MarksEntry';
-import MarksEntryForm from './pages/MarksEntry/MarksEntryForm';
 import Certificate from './pages/Certificate/Certificate';
-import Report from './pages/Report/Report';
 import AddCandidate from './pages/Masters/Candidate/AddCandidate';
 import BulkCandidates from './pages/Masters/Candidate/bulkCandidates';
 import Groups from './pages/Masters/Groups/Groups';
@@ -89,7 +87,6 @@ function App() {
           
           {/* Pages Routes */}
           <Route path="marks-entry" element={<MarksEntry />} />
-          <Route path="marks-entry/MarksEntryForm/:studentId" element={<MarksEntryForm />} title="Marks Entry" />
           <Route path="certificate-generation" element={<Certificate />} />
           <Route path ="add-candidate" element = {<AddCandidate/>} />
           <Route path ="add-bulkcandidates" element = {<BulkCandidates/>} />

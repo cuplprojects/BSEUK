@@ -9,7 +9,7 @@ const semesterHindi = {
   "FOURTH SEMESTER": "चतुर्थ सेमेस्टर",
 };
 
-const Certificate3 = ({ data }) => {
+const Certificate2 = ({ data }) => {
   const paperType2Count = data?.marks.filter((mark) => mark.paperType === 2).length;
   console.log("Count of paperType === 2:", paperType2Count);
 
@@ -72,7 +72,7 @@ const Certificate3 = ({ data }) => {
           <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.maxMarks}</td>
           <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.practical}</td>
           <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.total}</td>
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.pageremark === "Pass" ? "P" : "F"}</td>
+          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.pageremark === "उत्तीर्ण" ? "P" : "F"}</td>
         </tr>
       ));
   };
@@ -119,7 +119,7 @@ const Certificate3 = ({ data }) => {
           <h4 style={{ fontSize: "1.1rem", marginBottom: "0.3rem", fontWeight: 'bold' }}>प्रारम्भिक शिक्षा में द्विवर्षीय डिप्लोमा</h4>
           <h4 style={{ fontSize: "1.1rem", marginBottom: "0.3rem", fontWeight: 'bold' }}>
             TWO-YEAR DIPLOMA IN ELEMENTARY EDUCATION - {data.entersession}
-            {/* {data.session.split('-')[0]} */}
+             {/* {data.session.split('-')[0]} */}
           </h4>
         </div>
 
@@ -179,7 +179,7 @@ const Certificate3 = ({ data }) => {
             <tbody>
               {renderTheoryRows()}
               {renderPracticalRows()}
-              {/* {renderInternshipRows()} */}
+              {renderInternshipRows()}
               <tr>
                 <td colSpan="2" style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', padding: "4px 4px 12px 4px" }}><b>योग (Total)</b></td>
                 <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.maxMarks}</td>
@@ -216,4 +216,4 @@ const Certificate3 = ({ data }) => {
   );
 };
 
-export default Certificate3;
+export default Certificate2;
