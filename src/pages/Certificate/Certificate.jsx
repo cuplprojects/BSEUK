@@ -246,7 +246,7 @@ const Certificate = () => {
     }
 
     setLoading(true);
-    setError(null);
+    setError(null); 
 
     try {
       // Fetch the list of candidates first
