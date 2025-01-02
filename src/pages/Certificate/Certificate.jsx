@@ -6,7 +6,7 @@ import Template2 from "./Template2";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import logo from "./../../assets/logo.png";
-import "./Certificate.css"
+import "./Certificate.css";
 
 const Certificate = () => {
   const [sessions, setSessions] = useState([]);
@@ -18,6 +18,7 @@ const Certificate = () => {
   const [error, setError] = useState(null);
   const [certificateData, setCertificateData] = useState(null);
   const [showPreview, setShowPreview] = useState(false);
+  const [entersession, setEntersession] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,10 +40,9 @@ const Certificate = () => {
   const formatCertificateData = (result) => {
     const studentDetails = result.studentDetails;
     const resultData = studentDetails.result;
-    console.log(result)
+    console.log(result);
 
-    if(studentDetails.sem === "First Semester")
-    {
+    if (studentDetails.sem === "First Semester") {
       return {
         sno: studentDetails.candidateID,
         name: studentDetails.name,
@@ -53,59 +53,56 @@ const Certificate = () => {
         institutionName: studentDetails.institutionName,
         session: studentDetails.session,
         semester: studentDetails.sem,
-        marks: resultData.marksDetails.map(mark => ({
+        marks: resultData.marksDetails.map((mark) => ({
           code: mark.paperID,
           type: mark.paperType,
           name: mark.paperName,
           maxMarks: mark.rowMaxTotal,
-          theoryMax : mark.theoryPaperMaxMarks,
-          theory: mark.theoryPaperMarks,
-          practical: mark.practicalMarks,
-          internalMax: mark.internalMaxMarks,
-          internal: mark.internalMarks,
-          total: mark.rowTotal
-        })),
-        totalMarks: resultData.totalMarksObtained,
-        maxMarks: resultData.totalMaxMarks,
-        result: resultData.remarks,
-        watermarkImage: logo,
-        headerImage: logo
-      };
-    }
-    else if(studentDetails.sem === "Second Semester")
-    {
-      return {
-        sno: studentDetails.candidateID,
-        name: studentDetails.name,
-        mothersName: studentDetails.mName,
-        fathersName: studentDetails.fName,
-        rollNo: studentDetails.rollNo,
-        group: studentDetails.group,
-        institutionName: studentDetails.institutionName,
-        session: studentDetails.session,
-        semester: studentDetails.sem,
-        marks: resultData.marksDetails.map(mark => ({
-          code: mark.paperID,
-          type: mark.paperType,
-          name: mark.paperName,
-          maxMarks: mark.rowMaxTotal,
-          theoryMax : mark.theoryPaperMaxMarks,
+          theoryMax: mark.theoryPaperMaxMarks,
           theory: mark.theoryPaperMarks,
           practical: mark.practicalMarks,
           internalMax: mark.internalMaxMarks,
           internal: mark.internalMarks,
           total: mark.rowTotal,
-          pageremark: mark.paperRemarks
         })),
         totalMarks: resultData.totalMarksObtained,
         maxMarks: resultData.totalMaxMarks,
         result: resultData.remarks,
         watermarkImage: logo,
-        headerImage: logo
+        headerImage: logo,
+        entersession: entersession,
+      };
+    } else if (studentDetails.sem === "Second Semester") {
+      return {
+        sno: studentDetails.candidateID,
+        name: studentDetails.name,
+        mothersName: studentDetails.mName,
+        fathersName: studentDetails.fName,
+        rollNo: studentDetails.rollNo,
+        group: studentDetails.group,
+        institutionName: studentDetails.institutionName,
+        session: studentDetails.session,
+        semester: studentDetails.sem,
+        marks: resultData.marksDetails.map((mark) => ({
+          code: mark.paperID,
+          type: mark.paperType,
+          name: mark.paperName,
+          maxMarks: mark.rowMaxTotal,
+          theoryMax: mark.theoryPaperMaxMarks,
+          theory: mark.theoryPaperMarks,
+          practical: mark.practicalMarks,
+          internalMax: mark.internalMaxMarks,
+          internal: mark.internalMarks,
+          total: mark.rowTotal,
+          pageremark: mark.paperRemarks,
+        })),
+        totalMarks: resultData.totalMarksObtained,
+        maxMarks: resultData.totalMaxMarks,
+        result: resultData.remarks,
+        watermarkImage: logo,
+        headerImage: logo,
       };
     }
-    
-    
   };
 
   const generatePDF = async (result) => {
@@ -115,20 +112,20 @@ const Certificate = () => {
     setShowPreview(true);
 
     // Wait for the template to render
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
-    const template = document.getElementById('certificate-template');
+    const template = document.getElementById("certificate-template");
     const canvas = await html2canvas(template, {
-        scale: 2,
-        useCORS: true,
-        logging: false
+      scale: 2,
+      useCORS: true,
+      logging: false,
     });
 
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF('p', 'mm', 'a4');
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
     const pageWidth = pdf.internal.pageSize.width;
     const pageHeight = pdf.internal.pageSize.height;
-    pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
+    pdf.addImage(imgData, "PNG", 0, 0, pageWidth, pageHeight);
 
     return pdf;
   };
@@ -143,20 +140,27 @@ const Certificate = () => {
     setError(null);
 
     try {
-      const response = await API.post('/StudentsMarksObtaineds/GetStudentResult', {
-        rollNumber,
-        sessionId: parseInt(selectedSession),
-        semesterId: parseInt(selectedSemester)
-      });
+      const response = await API.post(
+        "/StudentsMarksObtaineds/GetStudentResult",
+        {
+          rollNumber,
+          sessionId: parseInt(selectedSession),
+          semesterId: parseInt(selectedSemester),
+        }
+      );
 
       const result = response.data;
       const pdf = await generatePDF(result);
-      console.log(result)
-      pdf.save(`Certificate_${result.studentDetails.rollNo}_${result.studentDetails.sem}.pdf`);
+      console.log(result);
+      pdf.save(
+        `Certificate_${result.studentDetails.rollNo}_${result.studentDetails.sem}.pdf`
+      );
       setShowPreview(false);
     } catch (error) {
       console.error("Error generating certificate:", error);
-      setError("Failed to generate certificate. Please check the details and try again.");
+      setError(
+        "Failed to generate certificate. Please check the details and try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -178,7 +182,7 @@ const Certificate = () => {
       });
 
       const results = response.data;
-      
+
       for (const result of results) {
         const pdf = await generatePDF(result);
         pdf.save(`Certificate_${result.studentDetails.rollNumber}.pdf`);
@@ -197,9 +201,7 @@ const Certificate = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto space-y-6">
-        <h1 className="text-3xl font-bold mb-8">
-          Certificate Generation
-        </h1>
+        <h1 className="text-3xl font-bold mb-8">Certificate Generation</h1>
 
         {/* Individual Certificate Download */}
         <div className="border rounded-lg p-6 bg-white shadow">
@@ -247,17 +249,26 @@ const Certificate = () => {
                 className="w-full px-4 py-2 rounded-lg border"
               />
             </div>
+            
           </div>
+          <div>
+              <label className="block mb-2">
+                Enter Session For Certificate
+              </label>
+              <input
+                type="text"
+                value={entersession}
+                onChange={(e) => setEntersession(e.target.value)}
+                placeholder="Enter Your Session "
+                className="w-full px-4 py-2 rounded-lg border"
+              />
+            </div>
           <button
             onClick={handleSingleDownload}
             disabled={loading}
-            className="w-full px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2 mt-5"
           >
-            {loading ? (
-              <FiLoader className="animate-spin" />
-            ) : (
-              <FiDownload />
-            )}
+            {loading ? <FiLoader className="animate-spin" /> : <FiDownload />}
             Download Certificate
           </button>
         </div>
@@ -304,17 +315,19 @@ const Certificate = () => {
             disabled={loading}
             className="w-full px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center justify-center gap-2"
           >
-            {loading ? (
-              <FiLoader className="animate-spin" />
-            ) : (
-              <FiDownload />
-            )}
+            {loading ? <FiLoader className="animate-spin" /> : <FiDownload />}
             Download All Certificates
           </button>
         </div>
 
         {error && (
-          <div className={`p-4 rounded-lg ${error.includes('success') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+          <div
+            className={`p-4 rounded-lg ${
+              error.includes("success")
+                ? "bg-green-100 text-green-700"
+                : "bg-red-100 text-red-700"
+            }`}
+          >
             {error}
           </div>
         )}
