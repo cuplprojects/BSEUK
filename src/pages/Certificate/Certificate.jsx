@@ -3,10 +3,13 @@ import { FiDownload, FiLoader } from "react-icons/fi";
 import API from "../../services/api";
 import Template from "./Template";
 import Template2 from "./Template2";
+import Template3 from "./Template3";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import logo from "./../../assets/logo.png";
-import "./Certificate.css";
+import "./Certificate.css"
+import JSZip from "jszip";
+
 
 const Certificate = () => {
   const [sessions, setSessions] = useState([]);
@@ -53,12 +56,76 @@ const Certificate = () => {
         institutionName: studentDetails.institutionName,
         session: studentDetails.session,
         semester: studentDetails.sem,
-        marks: resultData.marksDetails.map((mark) => ({
-          code: mark.paperID,
+
+        marks: resultData.marksDetails.map(mark => ({
+          code: mark.paperCode,
           type: mark.paperType,
           name: mark.paperName,
           maxMarks: mark.rowMaxTotal,
-          theoryMax: mark.theoryPaperMaxMarks,
+          theoryMax : mark.theoryPaperMaxMarks,
+          theory: mark.theoryPaperMarks,
+          practical: mark.practicalMarks,
+          internalMax: mark.internalMaxMarks,
+          internal: mark.internalMarks,
+          total: mark.rowTotal
+        })),
+        totalMarks: resultData.totalMarksObtained,
+        maxMarks: resultData.totalMaxMarks,
+        result: resultData.remarks,
+        watermarkImage: logo,
+        headerImage: logo
+      };
+    }
+    else if(studentDetails.sem === "Second Semester")
+    {
+      return {
+        sno: studentDetails.candidateID,
+        name: studentDetails.name,
+        mothersName: studentDetails.mName,
+        fathersName: studentDetails.fName,
+        rollNo: studentDetails.rollNo,
+        group: studentDetails.group,
+        institutionName: studentDetails.institutionName,
+        session: studentDetails.session,
+        semester: studentDetails.sem,
+        marks: resultData.marksDetails.map(mark => ({
+          code: mark.paperCode,
+          type: mark.paperType,
+          name: mark.paperName,
+          maxMarks: mark.rowMaxTotal,
+          theoryMax : mark.theoryPaperMaxMarks,
+          theory: mark.theoryPaperMarks,
+          practical: mark.practicalMarks,
+          internalMax: mark.internalMaxMarks,
+          internal: mark.internalMarks,
+          total: mark.rowTotal,
+          pageremark: mark.paperRemarks
+        })),
+        totalMarks: resultData.totalMarksObtained,
+        maxMarks: resultData.totalMaxMarks,
+        result: resultData.remarks,
+        watermarkImage: logo,
+        headerImage: logo
+      }; 
+    }
+    else if(studentDetails.sem === "Third Semester")
+    {
+      return{
+        sno: studentDetails.candidateID,
+        name: studentDetails.name,
+        mothersName: studentDetails.mName,
+        fathersName: studentDetails.fName,
+        rollNo: studentDetails.rollNo,
+        group: studentDetails.group,
+        institutionName: studentDetails.institutionName,
+        session: studentDetails.session,
+        semester: studentDetails.sem,
+        marks: resultData.marksDetails.map(mark => ({
+          code: mark.paperCode,
+          type: mark.paperType,
+          name: mark.paperName,
+          maxMarks: mark.rowMaxTotal,
+          theoryMax : mark.theoryPaperMaxMarks,
           theory: mark.theoryPaperMarks,
           practical: mark.practicalMarks,
           internalMax: mark.internalMaxMarks,
@@ -176,17 +243,63 @@ const Certificate = () => {
     setError(null);
 
     try {
-      const response = await API.post("/StudentsMarksObtaineds/GetBulkResult", {
-        sessionId: parseInt(selectedSession),
-        semesterId: parseInt(selectedSemester),
+      // Fetch the list of candidates first
+      const candidatesResponse = await API.post("/Candidates/GetStudents", {
+        sesID: parseInt(selectedSession),
+        semID: parseInt(selectedSemester),
       });
 
-      const results = response.data;
 
-      for (const result of results) {
-        const pdf = await generatePDF(result);
-        pdf.save(`Certificate_${result.studentDetails.rollNumber}.pdf`);
-      }
+      const candidates = candidatesResponse.data;
+      const pdfPromises = candidates.map(async (candidate) => {
+        try {
+          console.log(`Processing candidate: ${candidate.rollNumber}`); // Log candidate processing
+          const resultResponse = await API.post('/StudentsMarksObtaineds/GetStudentResult', {
+            rollNumber: candidate.rollNumber,
+            sessionId: parseInt(selectedSession),
+            semesterId: parseInt(selectedSemester),
+          });
+
+          // Check if the result contains a message indicating no scores found
+          if (resultResponse.data.message && resultResponse.data.message === "No scores found for the student.") {
+            console.warn(`Skipping candidate ${candidate.rollNumber}: No scores found.`);
+            return null; // Skip this candidate
+          }
+
+          const result = resultResponse.data;
+          console.log("printing result" + result)
+          const pdf = await generatePDF(result);
+          console.log(`Generated PDF for candidate: ${candidate.rollNumber}`); // Log successful PDF generation
+          return { pdf, rollNumber: candidate.rollNumber };
+        } catch (error) {
+          // Check for 404 error and skip the candidate
+          if (error.response && error.response.status === 404) {
+            console.warn(`Skipping candidate ${candidate.rollNumber}: Data not found.`);
+            return null; // Skip this candidate
+          }
+          console.error(`Error processing candidate ${candidate.rollNumber}:`, error); // Log error details
+          throw error; // Rethrow other errors
+        }
+      });
+
+      // Wait for all PDFs to be generated and filter out any null values
+      const pdfs = (await Promise.all(pdfPromises)).filter(pdf => pdf !== null);
+
+      // Create a ZIP file
+      const zip = new JSZip();
+      pdfs.forEach(({ pdf, rollNumber }) => {
+        zip.file(`Certificate_${rollNumber}.pdf`, pdf.output('blob'), { binary: true });
+      });
+
+      // Generate the ZIP file and trigger download
+      const zipBlob = await zip.generateAsync({ type: "blob" });
+      const zipUrl = URL.createObjectURL(zipBlob);
+      const a = document.createElement("a");
+      a.href = zipUrl;
+      a.download = `Certificates_${selectedSession}_${selectedSemester}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
 
       setShowPreview(false);
       setError("All certificates generated successfully!");
@@ -337,6 +450,8 @@ const Certificate = () => {
           <div className="fixed left-[-9999px]" id="certificate-template">
             {certificateData.semester === "Second Semester" ? (
               <Template2 data={certificateData} />
+            ) : certificateData.semester === "Third Semester" ? (
+              <Template3 data={certificateData} />
             ) : (
               <Template data={certificateData} />
             )}
