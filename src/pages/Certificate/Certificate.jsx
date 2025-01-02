@@ -4,6 +4,7 @@ import API from "../../services/api";
 import Template from "./Template";
 import Template2 from "./Template2";
 import Template3 from "./Template3";
+import Template4 from "./Template4";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import logo from "./../../assets/logo.png";
@@ -134,15 +135,15 @@ const Certificate = () => {
         headerImage: logo,
         entersession: entersession,
       };
-    } else if (studentDetails.sem === "Second Semester") {
+    } else if (studentDetails.sem === "Fourth Semester") {
       return {
         sno: studentDetails.candidateID,
         name: studentDetails.name,
-        mothersName: studentDetails.mName,
-        fathersName: studentDetails.fName,
         rollNo: studentDetails.rollNo,
-        group: studentDetails.group,
+        fathersName: studentDetails.fName,
+        mothersName: studentDetails.mName,
         institutionName: studentDetails.institutionName,
+        group: studentDetails.group,
         session: studentDetails.session,
         semester: studentDetails.sem,
         marks: resultData.marksDetails.map((mark) => ({
@@ -336,7 +337,6 @@ const Certificate = () => {
               onChange={(e) => setEntersession(e.target.value)}
               placeholder="Enter Your Session "
               className="w-full px-4 py-2 rounded-lg border"
-              required
             />
           </div>
         </div>
@@ -463,6 +463,8 @@ const Certificate = () => {
               <Template2 data={certificateData} />
             ) : certificateData.semester === "Third Semester" ? (
               <Template3 data={certificateData} />
+            ) : certificateData.semester === "Fourth Semester" ? (
+              <Template4 data={certificateData} />
             ) : (
               <Template data={certificateData} />
             )}
