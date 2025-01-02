@@ -1,36 +1,47 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import API from "../../services/api";
-import { useReactTable, getCoreRowModel, selectRowsFn } from "@tanstack/react-table";
+import {
+  useReactTable,
+  getCoreRowModel,
+  selectRowsFn,
+} from "@tanstack/react-table";
 
 const MarksEntry = () => {
   const [sessions, setSessions] = useState([]);
   const [semesters, setSemesters] = useState([]);
   const [papers, setPapers] = useState([]);
-  const [selectedFilters, setSelectedFilters] = useState({ sesID: "", semID: "", paperID: "" });
+  const [selectedFilters, setSelectedFilters] = useState({
+    sesID: "",
+    semID: "",
+    paperID: "",
+  });
   const [candidates, setCandidates] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [globalFilter, setGlobalFilter] = useState("");
   const [columns, setColumns] = useState([]);
+  const [editingCell, setEditingCell] = useState(null);
+  const [updatedMarks, setUpdatedMarks] = useState({});
+  const inputRef = useRef(null);
 
   // Table Columns
   const getColumns = async (paperID) => {
     if (candidates.length === 0) return []; // No candidates, return empty columns
 
-    console.log(paperID)
+    console.log(paperID);
     const response = await API.get(`/Papers/${paperID}`);
-    console.log(response.data)
+    console.log(response.data);
     const paperType = response.data.paperType;
 
     if (paperType === 1) {
       return [
         {
-          accessorFn: (row) => row?.marks?.theoryPaperMarks || 0,
+          accessorFn: (row) => row?.marks?.theoryPaperMarks || "",
           id: "theoryMarks",
           header: "Theory Marks",
         },
         {
-          accessorFn: (row) => row?.marks?.interalMarks || 0,
+          accessorFn: (row) => row?.marks?.interalMarks || "",
           id: "internalMarks",
           header: "Internal Marks",
         },
@@ -38,7 +49,7 @@ const MarksEntry = () => {
     } else if (paperType === 2) {
       return [
         {
-          accessorFn: (row) => row?.marks?.practicalMarks || 0,
+          accessorFn: (row) => row?.marks?.practicalMarks || "",
           id: "practicalMarks",
           header: "Practical Marks",
         },
@@ -49,8 +60,7 @@ const MarksEntry = () => {
   };
 
   useEffect(() => {
-
-    console.log(selectedFilters.paperID)
+    console.log(selectedFilters.paperID);
     const fetchColumns = async () => {
       const cols = await getColumns(selectedFilters.paperID);
       setColumns(cols);
@@ -59,11 +69,10 @@ const MarksEntry = () => {
     fetchColumns();
   }, [candidates, selectedFilters.paperID]);
 
-  
-
   const table = useReactTable({
     data: candidates,
     columns: [
+      { accessorKey: "candidateID", header: "CandidateID"},
       { accessorKey: "candidateRollNumber", header: "Roll No" },
       { accessorKey: "candidateName", header: "Candidate Name" },
       ...columns,
@@ -95,9 +104,12 @@ const MarksEntry = () => {
     if (selectedFilters.semID) {
       const fetchPapers = async () => {
         try {
-          const response = await API.get(`Papers/GetBySem/${selectedFilters.semID}`);
-          console.log(response.data)
+          const response = await API.get(
+            `Papers/GetBySem/${selectedFilters.semID}`
+          );
+          console.log(response.data);
           setPapers(response.data);
+          setUpdatedMarks({}); // Reset updatedMarks when semester changes
         } catch (error) {
           console.error("Error fetching papers:", error);
           setError("Failed to fetch papers.");
@@ -106,6 +118,7 @@ const MarksEntry = () => {
       fetchPapers();
     } else {
       setPapers([]); // Clear papers if semester changes to an invalid state
+      setUpdatedMarks({}); // Reset updatedMarks when semester changes
     }
   }, [selectedFilters.semID]);
 
@@ -114,7 +127,9 @@ const MarksEntry = () => {
     setError(null);
     setCandidates([]); // Clear previous data while fetching new data
     try {
-      const response = await API.get(`StudentsMarksObtaineds/GetStudentPaperMarks/${paperID}`);
+      const response = await API.get(
+        `StudentsMarksObtaineds/GetStudentPaperMarks/${paperID}`
+      );
       setCandidates(response.data);
     } catch (error) {
       console.error("Error fetching candidates:", error);
@@ -124,6 +139,69 @@ const MarksEntry = () => {
     }
   };
 
+  const handleCellClick = (rowId, columnId) => {
+    if (editingCell?.rowId === rowId && editingCell?.columnId === columnId) {
+      setEditingCell(null); // Exit editing mode if clicking the same cell
+    } else {
+      setEditingCell({ rowId, columnId });
+      setTimeout(() => {
+        inputRef.current?.select(); // Select the input content after rendering
+      }, 0);
+    }
+  };
+
+  const handleInputChange = (e, rowId, columnId, candidateId) => {
+    console.log(`Editing Row ID: ${rowId}, Column ID: ${columnId}, New Value: ${e.target.value}, Candidate ID: ${candidateId}`);
+    setUpdatedMarks({
+      ...updatedMarks,
+      [rowId]: {
+        ...updatedMarks[rowId],
+        [columnId]: e.target.value,
+        candidateId: candidateId,
+      },
+    });
+  };
+
+  useEffect(() => {
+    console.log(updatedMarks)
+  }, [updatedMarks]);
+  
+
+  const handleSubmit = async () => {
+    const marksToSubmit = Object.keys(updatedMarks).map((rowId) => {
+      const { candidateId, theoryMarks, internalMarks, practicalMarks } = updatedMarks[rowId];
+      const candidateData = candidates.find((candidate) => candidate.candidateID === candidateId);
+      if (!candidateData) return null;
+    
+      return {
+        smoID: candidateData.smoID || 0, // Adjust based on your backend structure
+        candidateID: candidateData.candidateID,
+        paperID: selectedFilters.paperID,
+        theoryPaperMarks: theoryMarks || 0,
+        interalMarks: internalMarks || 0,
+        practicalMarks: practicalMarks || 0,
+      };
+    }).filter(Boolean);
+    
+    console.log("Marks to Submit:", marksToSubmit);
+    
+    try {
+      for (const mark of marksToSubmit) {
+        await API.post('/StudentsMarksObtaineds', mark);
+      }
+      alert("Marks updated successfully!");
+      // Optionally refetch candidates to reflect changes
+      fetchCandidates(selectedFilters.paperID);
+    } catch (error) {
+      console.error("Error updating marks:", error);
+      setError("Failed to update marks.");
+    }
+  };
+  
+  
+  
+  
+
   return (
     <div className="max-w-6xl mx-auto p-5">
       <h1 className="text-3xl font-bold mb-5">Marks Entry</h1>
@@ -132,7 +210,9 @@ const MarksEntry = () => {
           {/* Session Dropdown */}
           <select
             className="border rounded p-2 flex-1"
-            onChange={(e) => setSelectedFilters({ ...selectedFilters, sesID: e.target.value })}
+            onChange={(e) =>
+              setSelectedFilters({ ...selectedFilters, sesID: e.target.value })
+            }
           >
             <option value="">Select Session</option>
             {sessions.map((session) => (
@@ -145,7 +225,9 @@ const MarksEntry = () => {
           {/* Semester Dropdown */}
           <select
             className="border rounded p-2 flex-1"
-            onChange={(e) => setSelectedFilters({ ...selectedFilters, semID: e.target.value })}
+            onChange={(e) =>
+              setSelectedFilters({ ...selectedFilters, semID: e.target.value })
+            }
             disabled={!selectedFilters.sesID}
           >
             <option value="">Select Semester</option>
@@ -162,6 +244,7 @@ const MarksEntry = () => {
             onChange={(e) => {
               const paperID = e.target.value;
               setSelectedFilters({ ...selectedFilters, paperID });
+              setUpdatedMarks({}); // Reset updatedMarks when paper changes
               if (paperID) fetchCandidates(paperID);
             }}
             disabled={!selectedFilters.semID}
@@ -193,30 +276,68 @@ const MarksEntry = () => {
         ) : candidates.length === 0 ? (
           <p>No candidates found for the selected paper.</p>
         ) : (
-          <table className="min-w-full border-collapse border border-gray-300">
-            <thead className="bg-gray-200">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th key={header.id} className="border border-gray-300 p-2">
-                      {header.column.columnDef.header}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody>
-              {table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="border-b hover:bg-gray-100">
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="border border-gray-300 p-2">
-                      {cell.getValue()}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <>
+            <table className="min-w-full border-collapse border border-gray-300">
+              <thead className="bg-gray-200">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <th
+                        key={header.id}
+                        className="border border-gray-300 p-2"
+                      >
+                        {header.column.columnDef.header}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              <tbody>
+                {table.getRowModel().rows.map((row) => (
+                  <tr key={row.id} className="border-b hover:bg-gray-100">
+                    {row.getVisibleCells().map((cell) => {
+                      const isEditing =
+                        editingCell?.rowId === row.id &&
+                        editingCell?.columnId === cell.column.id;
+                      const isNonEditable = cell.column.id === "candidateRollNumber" || cell.column.id === "candidateName"; // Check for non-editable columns
+                      return (
+                        <td
+                          key={cell.id}
+                          className="border border-gray-300 p-2"
+                          onClick={() => !isNonEditable && handleCellClick(row.id, cell.column.id)} // Only allow click if not non-editable
+                        >
+                          {isEditing && !isNonEditable ? ( // Render input only if not non-editable
+                            <input
+                              ref={inputRef}
+                              type="text"
+                              value={
+                                updatedMarks[row.id]?.[cell.column.id] ||
+                                cell.getValue()
+                              }
+                              onChange={(e) =>
+                                handleInputChange(e, row.id, cell.column.id, row.original.candidateID)
+                              }
+                              className="border rounded p-1"
+                              onBlur={() => setEditingCell(null)}
+                            />
+                          ) : (
+                            updatedMarks[row.id]?.[cell.column.id] ||
+                            cell.getValue()
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <button
+              onClick={handleSubmit}
+              className="mt-4 bg-blue-500 text-white p-2 rounded"
+            >
+              Submit
+            </button>
+          </>
         )}
       </div>
     </div>
