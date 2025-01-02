@@ -48,7 +48,7 @@ const Certificate2 = ({ data }) => {
       </tr>
     ));
   }
-    const renderInternshipRows = () => {
+    const renderTotalResultRows = () => {
       const practicalMarks = data.marks.filter((mark) => mark.type === 3);
       return practicalMarks.map((mark, index) => (
         <tr key={index}>
@@ -189,10 +189,31 @@ const Certificate2 = ({ data }) => {
             </td>
               {renderTheoryRows()}
               {renderPracticalRows()}
-              {/* {renderInternshipRows()} */}
-              {/* Uncommented rows */}
             </tbody>
           </table>
+          <table border="2" className="table-bordered" style={{ borderCollapse: 'collapse', fontSize: "0.8rem", padding: "4px" }} width="100%">
+            <thead>
+              <tr>
+                <th rowSpan="2" colSpan="2" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>सेमेस्टर</th>
+                <th colSpan="2" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>सैद्धांतिक </th>
+                <th colSpan="2" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>क्रियात्मक / प्रयोगात्मक </th>
+                <th colSpan="2" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>योग </th>
+                <th rowSpan="2" colSpan="2" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>परीक्षाफल </th>
+                <th rowSpan="2" colSpan="2" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>सम्पूर्ण  परीक्षाफल / श्रेणी </th>
+              </tr>
+              <tr>
+                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>पूर्णांक</th>
+                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>प्रप्तांक</th>
+                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>पूर्णांक</th>
+                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>प्रप्तांक</th>
+                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>पूर्णांक</th>
+                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>प्रप्तांक</th>
+              </tr>
+            </thead>
+            <tbody>
+            {renderTotalResultRows()}
+            </tbody>
+            </table>
         </div>
 
         <div className="footer mt-3" style={{ fontSize: "0.9rem" }}>
