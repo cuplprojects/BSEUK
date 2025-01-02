@@ -40,9 +40,14 @@ const Certificate = () => {
     fetchData();
   }, []);
 
-  const formatCertificateData = (result) => {
+  useEffect(()=>{
+    
+  })
+
+  const formatCertificateData = (result, result2) => {
     const studentDetails = result.studentDetails;
     const resultData = studentDetails.result;
+    const OverAllDetails = result2
     console.log(result);
 
     if (studentDetails.sem === "First Semester") {
@@ -164,12 +169,13 @@ const Certificate = () => {
         result: resultData.remarks,
         watermarkImage: logo,
         headerImage: logo,
+        OverAllDetails
       };
     }
   };
 
-  const generatePDF = async (result) => {
-    const data = formatCertificateData(result);
+  const generatePDF = async (result, result2) => {
+    const data = formatCertificateData(result, result2);
     console.log(data);
     setCertificateData(data);
     setShowPreview(true);
@@ -211,9 +217,13 @@ const Certificate = () => {
           semesterId: parseInt(selectedSemester),
         }
       );
+      const response2 = await API.get(`/StudentsMarksObtaineds/GetAllYearsResult/${rollNumber}`);
+      console.log(response2.data)
 
       const result = response.data;
-      const pdf = await generatePDF(result);
+      const result2 = response2.data;
+
+      const pdf = await generatePDF(result, result2);
       console.log(result);
       pdf.save(
         `Certificate_${result.studentDetails.rollNo}_${result.studentDetails.sem}.pdf`
