@@ -163,37 +163,35 @@ const Certificate2 = ({ data }) => {
               </tr>
             </thead>
             <tbody>
-  <td
-    rowSpan="7"
-    style={{
-      border: '1px solid black',
-      padding: '25px',
-      textAlign: 'center',
-      verticalAlign: 'middle', // Ensures proper alignment of content
-      position: 'relative', // Allows for better placement of rotated text
-    }}
-  >
-    <span
-      style={{
-        display: 'inline-block',
-        transform: 'rotate(-90deg)',
-        transformOrigin: 'center',
-        whiteSpace: 'nowrap',
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%) rotate(-90deg)',
-      }}
-    >
-      शिक्षण योजना निर्माण एवं <br/> शिक्षण
-    </span>
-  </td>
-  {renderTheoryRows()}
-  {renderPracticalRows()}
-  {/* {renderInternshipRows()} */}
-  {/* Uncommented rows */}
-</tbody>
-
+          <td
+            rowSpan="7"
+            style={{
+              border: '1px solid black',
+              padding: '25px',
+              textAlign: 'center',
+              verticalAlign: 'middle', // Ensures proper alignment of content
+              position: 'relative', // Allows for better placement of rotated text
+            }}
+          >
+          <span
+            style={{
+            display: 'inline-block',
+            transform: 'rotate(-90deg)',
+            transformOrigin: 'center',
+            whiteSpace: 'nowrap',
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%) rotate(-90deg)',
+          }}>
+          शिक्षण योजना निर्माण एवं <br/> शिक्षण
+          </span>
+            </td>
+              {renderTheoryRows()}
+              {renderPracticalRows()}
+              {/* {renderInternshipRows()} */}
+              {/* Uncommented rows */}
+            </tbody>
           </table>
         </div>
 
