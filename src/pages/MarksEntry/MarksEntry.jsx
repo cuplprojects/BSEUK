@@ -46,13 +46,13 @@ const MarksEntry = () => {
         {
           accessorFn: (row) => row?.marks?.theoryPaperMarks || "",
           id: "theoryMarks",
-          header: "Theory Marks",
+          header: `Theory Marks (Max: ${response.data.theoryPaperMaxMarks})`,
           enableSorting: true,
         },
         {
           accessorFn: (row) => row?.marks?.interalMarks || "",
           id: "internalMarks",
-          header: "Internal Marks",
+          header: `Internal Marks (Max: ${response.data.interalMaxMarks})`,
           enableSorting: true,
         },
       ];
@@ -61,7 +61,7 @@ const MarksEntry = () => {
         {
           accessorFn: (row) => row?.marks?.practicalMarks || "",
           id: "practicalMarks",
-          header: "Practical Marks",
+          header: `Practical Marks (Max: ${response.data.practicalMaxMarks})`,
           enableSorting: true,
         },
       ];
