@@ -28,6 +28,7 @@ const MarksEntry = () => {
   const [sorting, setSorting] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const inputRef = useRef(null);
+  const [paper,setPaper] = useState({});
 
   // Table Columns
   const getColumns = async (paperID) => {
@@ -35,7 +36,8 @@ const MarksEntry = () => {
 
     console.log(paperID);
     const response = await API.get(`/Papers/${paperID}`);
-    console.log(response.data);
+    setPaper(response.data);
+    
     const paperType = response.data.paperType;
 
     if (paperType === 1) {
@@ -66,7 +68,7 @@ const MarksEntry = () => {
 
     return [];
   };
-
+  console.log(paper);
   useEffect(() => {
     console.log(selectedFilters.paperID);
     const fetchColumns = async () => {
@@ -178,17 +180,42 @@ const MarksEntry = () => {
     }
   };
 
-  const handleInputChange = (e, rowId, columnId, candidateId) => {
-    console.log(`Editing Row ID: ${rowId}, Column ID: ${columnId}, New Value: ${e.target.value}, Candidate ID: ${candidateId}`);
-    setUpdatedMarks({
-      ...updatedMarks,
-      [rowId]: {
-        ...updatedMarks[rowId],
-        [columnId]: e.target.value,
-        candidateId: candidateId,
-      },
-    });
-  };
+  console.log(updatedMarks)
+
+const handleInputChange = (e, rowId, columnId, candidateId) => {
+  const value = e.target.value;
+
+  // Ensure only numeric values are allowed
+  if (!/^\d*$/.test(value)) return;
+
+  // Get max marks for the column
+  const maxMarks =
+    columnId === "theoryMarks"
+      ? paper.theoryPaperMaxMarks
+      : columnId === "internalMarks"
+      ? paper.interalMaxMarks
+      : columnId === "practicalMarks"
+      ? paper.practicalMaxMarks
+      : null;
+
+  // Validate against max marks
+  if (maxMarks !== null && Number(value) > maxMarks) {
+    alert(`Value cannot exceed the maximum marks of ${maxMarks}.`);
+    return;
+  }
+
+  // Update the marks if valid
+  setUpdatedMarks({
+    ...updatedMarks,
+    [rowId]: {
+      ...updatedMarks[rowId],
+      [columnId]: value,
+      candidateId: candidateId,
+    },
+  });
+};
+
+  
 
   useEffect(() => {
     console.log(updatedMarks);
@@ -374,18 +401,28 @@ const MarksEntry = () => {
                         >
                           {isEditing && !isNonEditable ? (
                             <input
-                              ref={inputRef}
-                              type="text"
-                              value={
-                                updatedMarks[row.id]?.[cell.column.id] ||
-                                cell.getValue()
+                            ref={inputRef}
+                            type="text"
+                            value={
+                              updatedMarks[row.id]?.[cell.column.id] ||
+                              cell.getValue()
+                            }
+                            onChange={(e) =>
+                              handleInputChange(e, row.id, cell.column.id, row.original.candidateID)
+                            }
+                            className="border rounded p-1"
+                            onBlur={() => setEditingCell(null)}
+                            onKeyDown={(e) => {
+                              // Allow only numeric keys, backspace, delete, arrow keys
+                              if (
+                                !/[0-9]/.test(e.key) &&
+                                !["Backspace", "Delete", "ArrowLeft", "ArrowRight"].includes(e.key)
+                              ) {
+                                e.preventDefault();
                               }
-                              onChange={(e) =>
-                                handleInputChange(e, row.id, cell.column.id, row.original.candidateID)
-                              }
-                              className="border rounded p-1"
-                              onBlur={() => setEditingCell(null)}
-                            />
+                            }}
+                          />
+                          
                           ) : (
                             updatedMarks[row.id]?.[cell.column.id] ||
                             cell.getValue()
