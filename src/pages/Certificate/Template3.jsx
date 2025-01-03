@@ -11,7 +11,6 @@ const semesterHindi = {
 
 const Certificate3 = ({ data }) => {
   const paperType2Count = data?.marks.filter((mark) => mark.paperType === 2).length;
-  console.log("Count of paperType === 2:", paperType2Count);
 
   const renderTheoryRows = () => {
     return data.marks
@@ -190,7 +189,6 @@ const Certificate3 = ({ data }) => {
                 <td colSpan="2" style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.totalPracticalMaxMarks}</td>
                 <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', padding: "4px  0px 12px 0px" }}>{data.totalMarks}</td>
                 <td></td>
-                {console.log(data)}
               </tr>
             </tbody>
           </table>

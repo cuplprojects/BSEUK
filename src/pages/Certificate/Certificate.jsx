@@ -48,7 +48,6 @@ const Certificate = () => {
     const studentDetails = result.studentDetails;
     const resultData = studentDetails.result;
     const OverAllDetails = result2
-    console.log(result);
 
     if (studentDetails.sem === "First Semester") {
       return {
@@ -176,7 +175,6 @@ const Certificate = () => {
 
   const generatePDF = async (result, result2) => {
     const data = formatCertificateData(result, result2);
-    console.log(data);
     setCertificateData(data);
     setShowPreview(true);
 
@@ -218,13 +216,11 @@ const Certificate = () => {
         }
       );
       const response2 = await API.get(`/StudentsMarksObtaineds/GetAllYearsResult/${rollNumber}`);
-      console.log(response2.data)
 
       const result = response.data;
       const result2 = response2.data;
 
       const pdf = await generatePDF(result, result2);
-      console.log(result);
       pdf.save(
         `Certificate_${result.studentDetails.rollNo}_${result.studentDetails.sem}.pdf`
       );
@@ -258,7 +254,6 @@ const Certificate = () => {
       const candidates = candidatesResponse.data;
       const pdfPromises = candidates.map(async (candidate) => {
         try {
-          console.log(`Processing candidate: ${candidate.rollNumber}`); // Log candidate processing
           const resultResponse = await API.post(
             "/StudentsMarksObtaineds/GetStudentResult",
             {
@@ -280,9 +275,7 @@ const Certificate = () => {
           }
 
           const result = resultResponse.data;
-          console.log("printing result" + result);
           const pdf = await generatePDF(result);
-          console.log(`Generated PDF for candidate: ${candidate.rollNumber}`); // Log successful PDF generation
           return { pdf, rollNumber: candidate.rollNumber };
         } catch (error) {
           // Check for 404 error and skip the candidate

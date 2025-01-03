@@ -112,7 +112,6 @@ const AddCandidate = () => {
                 papersOpted: formData.papersOpted,
                 groupId: formData.groupId,  // Added groupId field
             });
-            console.log("Success:", response.data);
             toast.success("Candidate added successfully!");
             clearFormData();
         } catch (error) {

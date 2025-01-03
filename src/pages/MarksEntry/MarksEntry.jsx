@@ -28,9 +28,7 @@ const MarksEntry = () => {
   const getColumns = async (paperID) => {
     if (candidates.length === 0) return []; // No candidates, return empty columns
 
-    console.log(paperID);
     const response = await API.get(`/Papers/${paperID}`);
-    console.log(response.data);
     const paperType = response.data.paperType;
 
     if (paperType === 1) {
@@ -60,7 +58,6 @@ const MarksEntry = () => {
   };
 
   useEffect(() => {
-    console.log(selectedFilters.paperID);
     const fetchColumns = async () => {
       const cols = await getColumns(selectedFilters.paperID);
       setColumns(cols);
@@ -107,7 +104,6 @@ const MarksEntry = () => {
           const response = await API.get(
             `Papers/GetBySem/${selectedFilters.semID}`
           );
-          console.log(response.data);
           setPapers(response.data);
           setUpdatedMarks({}); // Reset updatedMarks when semester changes
         } catch (error) {
@@ -151,7 +147,6 @@ const MarksEntry = () => {
   };
 
   const handleInputChange = (e, rowId, columnId, candidateId) => {
-    console.log(`Editing Row ID: ${rowId}, Column ID: ${columnId}, New Value: ${e.target.value}, Candidate ID: ${candidateId}`);
     setUpdatedMarks({
       ...updatedMarks,
       [rowId]: {
@@ -161,11 +156,6 @@ const MarksEntry = () => {
       },
     });
   };
-
-  useEffect(() => {
-    console.log(updatedMarks)
-  }, [updatedMarks]);
-  
 
   const handleSubmit = async () => {
     const marksToSubmit = Object.keys(updatedMarks).map((rowId) => {
@@ -183,7 +173,7 @@ const MarksEntry = () => {
       };
     }).filter(Boolean);
     
-    console.log("Marks to Submit:", marksToSubmit);
+   
     
     try {
       for (const mark of marksToSubmit) {
