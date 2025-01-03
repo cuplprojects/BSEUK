@@ -10,6 +10,8 @@ import {
   getSortedRowModel,
   flexRender,
 } from "@tanstack/react-table";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AddSession = () => {
   const [sessions, setSessions] = useState([]);
@@ -59,23 +61,31 @@ const AddSession = () => {
       const response = await API.get("/Sessions");
       setSessions(response.data);
     } catch (error) {
-      console.error("Error fetching sessions:", error);
+      toast.error("Failed to load sessions");
     }
   };
 
   const handleAddSession = async (e) => {
     e.preventDefault();
-    if (!newSession.trim()) return;
+    if (!newSession.trim()) {
+      toast.warning("Please enter a session name", {
+        autoClose: 2000
+      });
+      return;
+    }
 
     try {
       await API.post("/Sessions", { 
         sesID: 0, 
         sessionName: newSession 
       });
+      toast.success("Session added successfully", {
+        autoClose: 2000
+      });
       setNewSession("");
       fetchSessions();
     } catch (error) {
-      console.error("Error adding session:", error);
+      toast.error("Failed to add session");
     }
   };
 
@@ -85,15 +95,25 @@ const AddSession = () => {
   };
 
   const handleSaveEdit = async (sessionId) => {
+    if (!editedValue.trim()) {
+      toast.warning("Session name cannot be empty", {
+        autoClose: 2000
+      });
+      return;
+    }
+
     try {
       await API.put(`Sessions/${sessionId}`, {
         sesID: sessionId,
         sessionName: editedValue,
       });
+      toast.success("Session updated", {
+        autoClose: 2000
+      });
       setEditingSessionId(null);
       fetchSessions();
     } catch (error) {
-      console.error("Error updating session:", error);
+      toast.error("Failed to update session");
     }
   };
 
@@ -210,6 +230,19 @@ const AddSession = () => {
       animate={{ opacity: 1, y: 0 }}
       className="p-6"
     >
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme={theme === 'dark' ? 'dark' : 'light'}
+      />
+
       <h1 className={`text-3xl font-bold mb-6 ${textClass}`}>Sessions</h1>
 
       {/* Add Session Form */}

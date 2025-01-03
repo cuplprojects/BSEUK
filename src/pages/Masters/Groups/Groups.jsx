@@ -10,6 +10,8 @@ import {
   getSortedRowModel,
   flexRender,
 } from "@tanstack/react-table";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Groups = () => {
   const [groups, setGroups] = useState([]);
@@ -55,22 +57,34 @@ const Groups = () => {
   }, []);
 
   const fetchGroups = async () => {
-    const response = await API.get("/Groups");
-    setGroups(response.data);
+    try {
+      const response = await API.get("/Groups");
+      setGroups(response.data);
+    } catch (error) {
+      toast.error("Failed to load groups");
+    }
   };
 
   const handleAddGroup = async (e) => {
     e.preventDefault();
-    if (!newGroupName.trim()) return;
+    if (!newGroupName.trim()) {
+      toast.warning("Please enter a group name", {
+        autoClose: 2000
+      });
+      return;
+    }
 
     try {
       await API.post("/Groups", {
         groupName: newGroupName
       });
+      toast.success("Group added successfully", {
+        autoClose: 2000
+      });
       setNewGroupName("");
-      fetchGroups(); // Refresh the list
+      fetchGroups();
     } catch (error) {
-      console.error("Error adding group:", error);
+      toast.error("Failed to add group");
     }
   };
 
@@ -79,6 +93,13 @@ const Groups = () => {
   };
 
   const handleSaveEdit = async (groupId, groupName) => {
+    if (!groupName.trim()) {
+      toast.warning("Group name cannot be empty", {
+        autoClose: 2000
+      });
+      return;
+    }
+
     try {
       await API.put(`/Groups/${groupId}`, {
         groupID: groupId,
@@ -90,8 +111,11 @@ const Groups = () => {
         )
       );
       setEditingGroupId(null);
+      toast.success("Group updated", {
+        autoClose: 2000
+      });
     } catch (error) {
-      console.error("Error updating group:", error);
+      toast.error("Failed to update group");
     }
   };
 
@@ -210,6 +234,19 @@ const Groups = () => {
       animate={{ opacity: 1, y: 0 }}
       className="p-6"
     >
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme={theme === 'dark' ? 'dark' : 'light'}
+      />
+
       <h1 className={`text-3xl font-bold mb-6 ${textClass}`}>Groups</h1>
       
       {/* Add Group Form */}
