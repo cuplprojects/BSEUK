@@ -97,9 +97,9 @@ const Dashboard = () => {
         </p>
       </motion.div>
 
-      {/* Quick Actions Grid */}
+      {/* Quick Actions - Updated to use flexbox */}
       <motion.div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        className="flex flex-wrap justify-center gap-6"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -110,6 +110,7 @@ const Dashboard = () => {
             variants={itemVariants}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
+            className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)]"
           >
             <Link to={action.link}>
               <div className={`p-6 rounded-xl ${cardClass} transition-all duration-300
