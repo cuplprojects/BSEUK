@@ -58,8 +58,8 @@ const Certificate2 = ({ data }) => {
   }
 
   const renderTotalResultRows = () => {
-      const dataLength = data?.OverAllDetails.length;
-      return data?.OverAllDetails.map((mark, index) => (
+      const dataLength = data?.OverAllDetails.results.length;
+      return data?.OverAllDetails.results.map((mark, index) => (
         <tr>
             <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px' }}>
               {semesterIdHindi[`${mark?.semID}`]}
