@@ -80,18 +80,18 @@ const MarksEntry = () => {
   const table = useReactTable({
     data: candidates,
     columns: [
-      { 
-        accessorKey: "candidateID", 
+      {
+        accessorKey: "candidateID",
         header: "CandidateID",
         enableSorting: true,
       },
-      { 
-        accessorKey: "candidateRollNumber", 
+      {
+        accessorKey: "candidateRollNumber",
         header: "Roll No",
         enableSorting: true,
       },
-      { 
-        accessorKey: "candidateName", 
+      {
+        accessorKey: "candidateName",
         header: "Candidate Name",
         enableSorting: true,
       },
@@ -199,7 +199,7 @@ const MarksEntry = () => {
       const { candidateId, theoryMarks, internalMarks, practicalMarks } = updatedMarks[rowId];
       const candidateData = candidates.find((candidate) => candidate.candidateID === candidateId);
       if (!candidateData) return null;
-    
+
       return {
         smoID: candidateData.smoID || 0,
         candidateID: candidateData.candidateID,
@@ -209,9 +209,9 @@ const MarksEntry = () => {
         practicalMarks: practicalMarks || 0,
       };
     }).filter(Boolean);
-    
+
     console.log("Marks to Submit:", marksToSubmit);
-    
+
     try {
       for (const mark of marksToSubmit) {
         await API.post('/StudentsMarksObtaineds', mark);
@@ -227,7 +227,7 @@ const MarksEntry = () => {
   return (
     <div className="max-w-6xl mx-auto p-5">
       <h1 className="text-3xl font-bold mb-5">Marks Entry</h1>
-      
+
       <div className="flex flex-col md:flex-row justify-between mb-4">
         <div className="flex flex-row gap-2 w-full">
           {/* Session Dropdown */}
@@ -300,13 +300,23 @@ const MarksEntry = () => {
           </select>
 
           {/* Global Filter */}
-          <input
-            type="text"
-            placeholder="Search..."
-            value={globalFilter}
-            onChange={(e) => setGlobalFilter(e.target.value)}
-            className="border rounded p-2 w-64"
-          />
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search..."
+              value={globalFilter}
+              onChange={(e) => setGlobalFilter(e.target.value)}
+              className="border rounded p-2 w-64 pr-8"  // Added pr-8 for padding-right
+            />
+            {globalFilter && (
+              <button
+                onClick={() => setGlobalFilter("")}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              >
+                ✕
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -352,8 +362,8 @@ const MarksEntry = () => {
                       const isEditing =
                         editingCell?.rowId === row.id &&
                         editingCell?.columnId === cell.column.id;
-                      const isNonEditable = 
-                        cell.column.id === "candidateRollNumber" || 
+                      const isNonEditable =
+                        cell.column.id === "candidateRollNumber" ||
                         cell.column.id === "candidateName" ||
                         cell.column.id === "candidateID";
                       return (
