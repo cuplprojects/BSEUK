@@ -1,13 +1,15 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import API from "../../services/api";
 import {
   useReactTable,
   getCoreRowModel,
-  getPaginationRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
   flexRender,
+  getSortedRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
 } from "@tanstack/react-table";
+import { motion } from "framer-motion";
+import { useThemeStore } from '../../store/themeStore';
 
 const MarksEntry = () => {
   const [sessions, setSessions] = useState([]);
@@ -30,6 +32,32 @@ const MarksEntry = () => {
   const inputRef = useRef(null);
   const [paper,setPaper] = useState({});
   const [inputValue, setInputValue] = useState('');
+
+  const theme = useThemeStore((state) => state.theme);
+  
+  const cardClass = theme === 'dark'
+    ? 'bg-black/40 backdrop-blur-xl border-purple-500/20'
+    : 'bg-white border-blue-200 shadow-xl';
+
+  const textClass = theme === 'dark'
+    ? 'text-purple-100'
+    : 'text-blue-700';
+
+  const inputClass = theme === 'dark'
+    ? 'bg-purple-900/20 border-purple-500/20 text-purple-100 placeholder-purple-400 [&>option]:bg-purple-900 [&>option]:text-purple-100'
+    : 'bg-blue-50 border-blue-200 text-blue-600 placeholder-blue-400 [&>option]:bg-white [&>option]:text-blue-600';
+
+  const buttonClass = theme === 'dark'
+    ? 'bg-purple-600 hover:bg-purple-700 text-white'
+    : 'bg-blue-600 hover:bg-blue-700 text-white';
+
+  const tableHeaderClass = theme === 'dark'
+    ? 'bg-purple-900/50 text-purple-100'
+    : 'bg-blue-50 text-blue-700';
+
+  const tableCellClass = theme === 'dark'
+    ? 'border-purple-500/20 hover:bg-purple-900/30'
+    : 'border-blue-200 hover:bg-blue-50';
 
   // Table Columns
   const getColumns = async (paperID) => {
@@ -248,118 +276,128 @@ const MarksEntry = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-5">
-      <h1 className="text-3xl font-bold mb-5">Marks Entry</h1>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="max-w-6xl mx-auto p-5 space-y-6"
+    >
+      <h1 className={`text-3xl font-bold ${textClass}`}>Marks Entry</h1>
 
-      <div className="flex flex-col md:flex-row justify-between mb-4">
-        <div className="flex flex-row gap-2 w-full">
-          {/* Session Dropdown */}
-          <select
-            className="border rounded p-2 flex-1"
-            onChange={(e) =>
-              setSelectedFilters({ ...selectedFilters, sesID: e.target.value })
-            }
-          >
-            <option value="">Select Session</option>
-            {sessions.map((session) => (
-              <option key={session.sesID} value={session.sesID}>
-                {session.sessionName}
-              </option>
-            ))}
-          </select>
+      <div className={`p-6 rounded-lg ${cardClass}`}>
+        <div className="flex flex-col space-y-4">
+          {/* Dropdowns Row */}
+          <div className="flex flex-col md:flex-row gap-4">
+            {/* Session Dropdown */}
+            <select
+              className={`w-full md:w-1/3 rounded-lg px-4 py-2 ${inputClass}`}
+              onChange={(e) =>
+                setSelectedFilters({ ...selectedFilters, sesID: e.target.value })
+              }
+            >
+              <option value="">Select Session</option>
+              {sessions.map((session) => (
+                <option key={session.sesID} value={session.sesID}>
+                  {session.sessionName}
+                </option>
+              ))}
+            </select>
 
-          {/* Semester Dropdown */}
-          <select
-            className="border rounded p-2 flex-1"
-            onChange={(e) =>
-              setSelectedFilters({ ...selectedFilters, semID: e.target.value })
-            }
-            disabled={!selectedFilters.sesID}
-          >
-            <option value="">Select Semester</option>
-            {semesters.map((semester) => (
-              <option key={semester.semID} value={semester.semID}>
-                {semester.semesterName}
-              </option>
-            ))}
-          </select>
+            {/* Semester Dropdown */}
+            <select
+              className={`w-full md:w-1/3 rounded-lg px-4 py-2 ${inputClass}`}
+              onChange={(e) =>
+                setSelectedFilters({ ...selectedFilters, semID: e.target.value })
+              }
+              disabled={!selectedFilters.sesID}
+            >
+              <option value="">Select Semester</option>
+              {semesters.map((semester) => (
+                <option key={semester.semID} value={semester.semID}>
+                  {semester.semesterName}
+                </option>
+              ))}
+            </select>
 
-          {/* Papers Dropdown */}
-          <select
-            className="border rounded p-2 flex-1"
-            onChange={(e) => {
-              const paperID = e.target.value;
-              setSelectedFilters({ ...selectedFilters, paperID });
-              setUpdatedMarks({});
-              if (paperID) fetchCandidates(paperID);
-            }}
-            disabled={!selectedFilters.semID}
-          >
-            <option value="">Select Paper</option>
-            {papers.map((paper) => (
-              <option key={paper.paperID} value={paper.paperID}>
-                {paper.paperName}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex gap-2">
-          {/* Rows per page selector */}
-          <select
-            value={rowsPerPage}
-            onChange={e => {
-              const newSize = Number(e.target.value);
-              setRowsPerPage(newSize);
-              table.setPageSize(newSize);
-            }}
-            className="border rounded p-2"
-          >
-            {[10, 20, 30, 50].map(pageSize => (
-              <option key={pageSize} value={pageSize}>
-                Show {pageSize}
-              </option>
-            ))}
-          </select>
-
-          {/* Global Filter */}
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search..."
-              value={globalFilter}
-              onChange={(e) => setGlobalFilter(e.target.value)}
-              className="border rounded p-2 w-64 pr-8"  // Added pr-8 for padding-right
-            />
-            {globalFilter && (
-              <button
-                onClick={() => setGlobalFilter("")}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-              >
-                ✕
-              </button>
-            )}
+            {/* Papers Dropdown */}
+            <select
+              className={`w-full md:w-1/3 rounded-lg px-4 py-2 ${inputClass}`}
+              onChange={(e) => {
+                const paperID = e.target.value;
+                setSelectedFilters({ ...selectedFilters, paperID });
+                setUpdatedMarks({});
+                if (paperID) fetchCandidates(paperID);
+              }}
+              disabled={!selectedFilters.semID}
+            >
+              <option value="">Select Paper</option>
+              {papers.map((paper) => (
+                <option key={paper.paperID} value={paper.paperID}>
+                  {paper.paperName}
+                </option>
+              ))}
+            </select>
           </div>
+
+          {/* Search and Rows per page - Only show when candidates exist */}
+          {candidates.length > 0 && (
+            <div className="flex flex-col sm:flex-row gap-4">
+              {/* Search Box - Full width on mobile, grows to fill space on desktop */}
+              <div className="relative flex-grow">
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  value={globalFilter}
+                  onChange={(e) => setGlobalFilter(e.target.value)}
+                  className={`w-full rounded-lg px-4 py-2 pr-10 ${inputClass}`}
+                />
+                {globalFilter && (
+                  <button
+                    onClick={() => setGlobalFilter("")}
+                    className={`absolute right-3 top-1/2 -translate-y-1/2 ${textClass} hover:opacity-75`}
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+
+              {/* Rows per page selector - Fixed width */}
+              <select
+                value={rowsPerPage}
+                onChange={e => {
+                  const newSize = Number(e.target.value);
+                  setRowsPerPage(newSize);
+                  table.setPageSize(newSize);
+                }}
+                className={`w-full sm:w-48 rounded-lg px-4 py-2 ${inputClass}`}
+              >
+                {[10, 20, 30, 50].map(pageSize => (
+                  <option key={pageSize} value={pageSize}>
+                    Show {pageSize}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className={`rounded-lg overflow-hidden ${cardClass}`}>
         {loading ? (
-          <p>Loading...</p>
+          <div className={`p-4 text-center ${textClass}`}>Loading...</div>
         ) : error ? (
-          <p className="text-red-500">{error}</p>
+          <div className="p-4 text-center text-red-500">{error}</div>
         ) : candidates.length === 0 ? (
-          <p>No candidates found for the selected paper.</p>
+          <div className={`p-4 text-center ${textClass}`}>No candidates found for the selected paper.</div>
         ) : (
-          <>
-            <table className="min-w-full border-collapse border border-gray-300">
-              <thead className="bg-gray-200">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className={tableHeaderClass}>
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
                       <th
                         key={header.id}
-                        className="border border-gray-300 p-2 cursor-pointer"
+                        className={`p-3 text-left font-semibold border ${tableCellClass} cursor-pointer`}
                         onClick={header.column.getToggleSortingHandler()}
                       >
                         <div className="flex items-center justify-between">
@@ -368,7 +406,7 @@ const MarksEntry = () => {
                             header.getContext()
                           )}
                           {header.column.getIsSorted() && (
-                            <span>
+                            <span className="ml-2">
                               {header.column.getIsSorted() === "asc" ? " ↑" : " ↓"}
                             </span>
                           )}
@@ -380,7 +418,7 @@ const MarksEntry = () => {
               </thead>
               <tbody>
                 {table.getRowModel().rows.map((row) => (
-                  <tr key={row.id} className="border-b hover:bg-gray-100">
+                  <tr key={row.id} className={`border-b ${tableCellClass}`}>
                     {row.getVisibleCells().map((cell) => {
                       const isEditing =
                         editingCell?.rowId === row.id &&
@@ -392,33 +430,33 @@ const MarksEntry = () => {
                       return (
                         <td
                           key={cell.id}
-                          className="border border-gray-300 p-2"
+                          className={`p-3 border ${tableCellClass}`}
                           onClick={() => !isNonEditable && handleCellClick(row.id, cell.column.id)}
                         >
                           {isEditing && !isNonEditable ? (
                             <input
-                            ref={inputRef}
-                            type="text"
-                            value={inputValue}
-                            onChange={(e) =>
-                              handleInputChange(e, row.id, cell.column.id, row.original.candidateID)
-                            }
-                            className="border rounded p-1"
-                            onBlur={() => setEditingCell(null)}
-                            onKeyDown={(e) => {
-                              // Allow only numeric keys, backspace, delete, arrow keys
-                              if (
-                                !/[0-9]/.test(e.key) &&
-                                !["Backspace", "Delete", "ArrowLeft", "ArrowRight"].includes(e.key)
-                              ) {
-                                e.preventDefault();
+                              ref={inputRef}
+                              type="text"
+                              value={inputValue}
+                              onChange={(e) =>
+                                handleInputChange(e, row.id, cell.column.id, row.original.candidateID)
                               }
-                            }}
-                          />
-                          
+                              className={`w-full px-2 py-1 rounded ${inputClass}`}
+                              onBlur={() => setEditingCell(null)}
+                              onKeyDown={(e) => {
+                                if (
+                                  !/[0-9]/.test(e.key) &&
+                                  !["Backspace", "Delete", "ArrowLeft", "ArrowRight"].includes(e.key)
+                                ) {
+                                  e.preventDefault();
+                                }
+                              }}
+                            />
                           ) : (
-                            updatedMarks[row.id]?.[cell.column.id] ||
-                            cell.getValue()
+                            <span className={textClass}>
+                              {updatedMarks[row.id]?.[cell.column.id] ||
+                                cell.getValue()}
+                            </span>
                           )}
                         </td>
                       );
@@ -429,38 +467,38 @@ const MarksEntry = () => {
             </table>
 
             {/* Pagination Controls */}
-            <div className="flex items-center justify-between mt-4">
+            <div className="flex items-center justify-between p-4">
               <div className="flex gap-2">
                 <button
                   onClick={() => table.setPageIndex(0)}
                   disabled={!table.getCanPreviousPage()}
-                  className="px-3 py-1 border rounded disabled:opacity-50"
+                  className={`px-3 py-1 rounded-lg transition-colors ${buttonClass} disabled:opacity-50`}
                 >
                   {"<<"}
                 </button>
                 <button
                   onClick={() => table.previousPage()}
                   disabled={!table.getCanPreviousPage()}
-                  className="px-3 py-1 border rounded disabled:opacity-50"
+                  className={`px-3 py-1 rounded-lg transition-colors ${buttonClass} disabled:opacity-50`}
                 >
                   {"<"}
                 </button>
                 <button
                   onClick={() => table.nextPage()}
                   disabled={!table.getCanNextPage()}
-                  className="px-3 py-1 border rounded disabled:opacity-50"
+                  className={`px-3 py-1 rounded-lg transition-colors ${buttonClass} disabled:opacity-50`}
                 >
                   {">"}
                 </button>
                 <button
                   onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                   disabled={!table.getCanNextPage()}
-                  className="px-3 py-1 border rounded disabled:opacity-50"
+                  className={`px-3 py-1 rounded-lg transition-colors ${buttonClass} disabled:opacity-50`}
                 >
                   {">>"}
                 </button>
               </div>
-              <span className="flex items-center gap-1">
+              <span className={`flex items-center gap-1 ${textClass}`}>
                 <div>Page</div>
                 <strong>
                   {table.getState().pagination.pageIndex + 1} of{" "}
@@ -469,16 +507,18 @@ const MarksEntry = () => {
               </span>
             </div>
 
-            <button
-              onClick={handleSubmit}
-              className="mt-4 bg-blue-500 text-white p-2 rounded"
-            >
-              Submit
-            </button>
-          </>
+            <div className="p-4">
+              <button
+                onClick={handleSubmit}
+                className={`w-full px-6 py-2 rounded-lg transition-colors ${buttonClass}`}
+              >
+                Submit
+              </button>
+            </div>
+          </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

@@ -1,174 +1,388 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import API from "../../../services/api";
 import { useThemeStore } from "../../../store/themeStore";
+import { motion } from "framer-motion";
+import {
+  useReactTable,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  flexRender,
+} from "@tanstack/react-table";
 
 const AddSession = () => {
   const [sessions, setSessions] = useState([]);
   const [newSession, setNewSession] = useState("");
   const [editingSessionId, setEditingSessionId] = useState(null);
-  const [editedSessionName, setEditedSessionName] = useState("");
+  const [editedValue, setEditedValue] = useState("");
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [sorting, setSorting] = useState([]);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const theme = useThemeStore((state) => state.theme);
 
+  // Theme classes
+  const cardClass = theme === 'dark'
+    ? 'bg-black/40 backdrop-blur-xl border-purple-500/20'
+    : 'bg-white border-blue-200 shadow-xl border';
+
+  const textClass = theme === 'dark'
+    ? 'text-purple-100'
+    : 'text-blue-700';
+
+  const inputClass = theme === 'dark'
+    ? 'bg-purple-900/20 border-purple-500/20 text-purple-100 placeholder-purple-400 [&:not(:disabled)]:hover:bg-purple-900/30 [&>option]:bg-purple-900 [&>option]:text-purple-100'
+    : 'bg-blue-50 border-blue-200 text-blue-600 placeholder-blue-400 [&:not(:disabled)]:hover:bg-blue-100 [&>option]:bg-white [&>option]:text-blue-600';
+
+  const buttonClass = theme === 'dark'
+    ? 'bg-purple-600 hover:bg-purple-700 text-white'
+    : 'bg-blue-600 hover:bg-blue-700 text-white';
+
+  const cancelButtonClass = theme === 'dark'
+    ? 'bg-red-600 hover:bg-red-700 text-white'
+    : 'bg-red-500 hover:bg-red-600 text-white';
+
+  const tableHeaderClass = theme === 'dark'
+    ? 'bg-purple-900/50 text-purple-100'
+    : 'bg-blue-50 text-blue-700';
+
+  const tableCellClass = theme === 'dark'
+    ? 'border-purple-500/20 hover:bg-purple-900/30'
+    : 'border-blue-200 hover:bg-blue-50';
+
   useEffect(() => {
-    // Fetch existing sessions from the API
-    const fetchSessions = async () => {
-      const response = await API.get("/Sessions");
-      setSessions(response.data);
-    };
     fetchSessions();
   }, []);
 
-  const handleAddSession = async () => {
-    // Add new session to the API
-    await API.post("/Sessions", { sesID: 0, sessionName: newSession }); // Update with your API endpoint
-    setNewSession("");
-    // Optionally, refetch sessions after adding
-    const response = await API.get("/Sessions");
-    setSessions(response.data);
+  const fetchSessions = async () => {
+    try {
+      const response = await API.get("/Sessions");
+      setSessions(response.data);
+    } catch (error) {
+      console.error("Error fetching sessions:", error);
+    }
   };
 
-  const handleEditClick = (session) => {
+  const handleAddSession = async (e) => {
+    e.preventDefault();
+    if (!newSession.trim()) return;
+
+    try {
+      await API.post("/Sessions", { 
+        sesID: 0, 
+        sessionName: newSession 
+      });
+      setNewSession("");
+      fetchSessions();
+    } catch (error) {
+      console.error("Error adding session:", error);
+    }
+  };
+
+  const handleEditSession = (session) => {
     setEditingSessionId(session.sesID);
-    setEditedSessionName(session.sessionName);
+    setEditedValue(session.sessionName);
+  };
+
+  const handleSaveEdit = async (sessionId) => {
+    try {
+      await API.put(`Sessions/${sessionId}`, {
+        sesID: sessionId,
+        sessionName: editedValue,
+      });
+      setEditingSessionId(null);
+      fetchSessions();
+    } catch (error) {
+      console.error("Error updating session:", error);
+    }
   };
 
   const handleCancelEdit = () => {
     setEditingSessionId(null);
-    setEditedSessionName("");
+    setEditedValue("");
   };
 
-  const handleSaveEdit = async (session) => {
-    await API.put(`Sessions/${session.sesID}`, {
-      sesID: session.sesID,
-      sessionName: editedSessionName,
-    });
-    setEditingSessionId(null);
-    setEditedSessionName("");
-    const response = await API.get("/Sessions");
-    setSessions(response.data);
-  };
+  const columns = useMemo(() => [
+    {
+      accessorKey: "srNo",
+      header: "Sr.No.",
+      enableSorting: false,
+      cell: (info) => (
+        <div className="w-24">
+          <span className={textClass}>{info.row.index + 1}</span>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "sessionName",
+      header: "Session Name",
+      enableSorting: true,
+      cell: ({ row }) => {
+        const session = row.original;
+        if (editingSessionId === session.sesID) {
+          return (
+            <div className="flex-1">
+              <input
+                autoFocus
+                type="text"
+                value={editedValue}
+                className={`w-full rounded-lg px-3 py-1 ${inputClass}`}
+                onChange={(e) => setEditedValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') {
+                    handleCancelEdit();
+                  } else if (e.key === 'Enter' && editedValue !== session.sessionName) {
+                    handleSaveEdit(session.sesID);
+                  }
+                }}
+              />
+            </div>
+          );
+        }
+        return (
+          <div className="flex-1">
+            <span className={textClass}>{session.sessionName}</span>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "actions",
+      header: "Actions",
+      enableSorting: false,
+      cell: ({ row }) => {
+        const session = row.original;
+        return (
+          <div className="w-48">
+            {editingSessionId === session.sesID ? (
+              <div className="flex gap-2">
+                {editedValue !== session.sessionName && (
+                  <button
+                    onClick={() => handleSaveEdit(session.sesID)}
+                    className={`px-3 py-1 rounded-lg text-sm ${buttonClass}`}
+                  >
+                    Save
+                  </button>
+                )}
+                <button
+                  onClick={handleCancelEdit}
+                  className={`px-3 py-1 rounded-lg text-sm ${cancelButtonClass}`}
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => handleEditSession(session)}
+                className={`px-3 py-1 rounded-lg text-sm ${buttonClass}`}
+              >
+                Edit
+              </button>
+            )}
+          </div>
+        );
+      },
+    },
+  ], [editingSessionId, editedValue, buttonClass, cancelButtonClass, inputClass, textClass]);
 
-  const cardClass =
-    theme === "dark"
-      ? "bg-black/40 backdrop-blur-xl border-purple-500/20"
-      : "bg-white border-blue-200 shadow-sm";
-
-  const textClass = theme === "dark" ? "text-purple-100" : "text-blue-700";
-
-  const inputClass =
-    theme === "dark"
-      ? "bg-purple-900/20 border-purple-500/20 text-purple-100 placeholder-purple-400 [&>option]:bg-purple-900 [&>option]:text-purple-100"
-      : "bg-blue-50 border-blue-200 text-blue-600 placeholder-blue-400 [&>option]:bg-white [&>option]:text-blue-600";
+  const table = useReactTable({
+    data: sessions,
+    columns,
+    state: {
+      globalFilter,
+      sorting,
+    },
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: rowsPerPage,
+      },
+    },
+  });
 
   return (
-    <div>
-      <div className={cardClass}>
-        <div className="flex-1 border border-gray-300 rounded-lg m-2 p-4">
-          <h2 className={`text-lg font-bold ${textClass}`}>Add New Session</h2>
-          <div className="flex flex-col">
-            <input
-              type="text"
-              value={newSession}
-              onChange={(e) => setNewSession(e.target.value)}
-              placeholder="Add new session"
-              className={`border ${
-                theme === "dark" ? "border-gray-600" : "border-gray-300"
-              } rounded-lg p-2 ${inputClass}`}
-            />
-            <button
-              onClick={handleAddSession}
-              className={`mt-2 p-2 rounded-lg ${
-                theme === "dark"
-                  ? "bg-purple-600 text-white"
-                  : "bg-blue-600 text-white"
-              }`}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="p-6"
+    >
+      <h1 className={`text-3xl font-bold mb-6 ${textClass}`}>Sessions</h1>
+
+      {/* Add Session Form */}
+      <div className={`mb-6 p-4 rounded-lg ${cardClass}`}>
+        <form onSubmit={handleAddSession} className="flex gap-4">
+          <input
+            type="text"
+            value={newSession}
+            onChange={(e) => setNewSession(e.target.value)}
+            placeholder="Enter new session name"
+            className={`flex-grow rounded-lg px-4 py-2 ${inputClass}`}
+          />
+          <button
+            type="submit"
+            className={`px-6 py-2 rounded-lg ${buttonClass}`}
+          >
+            Add Session
+          </button>
+        </form>
+      </div>
+
+      {/* Search and Rows per page */}
+      {sessions.length > 0 && (
+        <div className={`mb-6 p-4 rounded-lg ${cardClass}`}>
+          <div className="flex flex-col sm:flex-row gap-4">
+            {/* Search Box */}
+            <div className="relative flex-grow">
+              <input
+                type="text"
+                placeholder="Search..."
+                value={globalFilter}
+                onChange={(e) => setGlobalFilter(e.target.value)}
+                className={`w-full rounded-lg px-4 py-2 pr-10 ${inputClass}`}
+              />
+              {globalFilter && (
+                <button
+                  onClick={() => setGlobalFilter("")}
+                  className={`absolute right-3 top-1/2 -translate-y-1/2 ${textClass} hover:opacity-75`}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {/* Rows per page selector */}
+            <select
+              value={rowsPerPage}
+              onChange={e => {
+                const newSize = Number(e.target.value);
+                setRowsPerPage(newSize);
+                table.setPageSize(newSize);
+              }}
+              className={`w-full sm:w-48 rounded-lg px-4 py-2 ${inputClass}`}
             >
-              Add Session
-            </button>
+              {[10, 20, 30, 50].map(pageSize => (
+                <option key={pageSize} value={pageSize}>
+                  Show {pageSize}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
-        <div className="flex-1 border border-gray-300 rounded-lg m-2 p-4">
-          <h2 className={`text-lg font-bold ${textClass}`}>
-            Existing Sessions
-          </h2>
-          <table className={`w-full border-collapse ${
-            theme === "dark" ? "border border-gray-600" : "border border-gray-300"
-          }`}>
-            <thead>
-              <tr>
-                <th className={`p-2 ${
-                  theme === "dark" ? "border-b border-gray-600" : "border-b border-gray-300"
-                } ${textClass}`}>Session Names</th>
-                <th className={`p-2 ${
-                  theme === "dark" ? "border-b border-gray-600" : "border-b border-gray-300"
-                } ${textClass}`}>Actions Column</th>
-              </tr>
+      )}
+
+      {/* Sessions Table */}
+      <div className={`rounded-lg overflow-hidden ${cardClass}`}>
+        <div className="overflow-x-auto">
+          <table className="min-w-full">
+            <thead className={tableHeaderClass}>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th 
+                      key={header.id} 
+                      onClick={header.column.getToggleSortingHandler()}
+                      className={`p-4 text-left font-semibold ${
+                        header.id.includes('srNo') 
+                          ? 'w-24' 
+                          : header.id.includes('actions')
+                            ? 'w-48'
+                            : 'flex-1'
+                      } ${tableCellClass} ${header.column.getCanSort() ? 'cursor-pointer' : ''}`}
+                    >
+                      <div className="flex items-center justify-between">
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {header.column.getCanSort() && (
+                          <span className="ml-2">
+                            {{
+                              asc: ' ↑',
+                              desc: ' ↓',
+                            }[header.column.getIsSorted()] ?? ''}
+                          </span>
+                        )}
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              ))}
             </thead>
             <tbody>
-              {sessions.map((session) => (
-                <tr key={session.sesID} className={`${
-                  theme === "dark" ? "border-b border-gray-600" : "border-b border-gray-300"
-                }`}>
-                  <td className="p-2">
-                    {editingSessionId === session.sesID ? (
-                      <input
-                        type="text"
-                        value={editedSessionName}
-                        onChange={(e) => setEditedSessionName(e.target.value)}
-                        className={`border ${
-                          theme === "dark"
-                            ? "border-gray-600"
-                            : "border-gray-300"
-                        } rounded-lg p-2 ${inputClass}`}
-                      />
-                    ) : (
-                      <span className={textClass}>{session.sessionName}</span>
-                    )}
-                  </td>
-                  <td className="p-2">
-                    {editingSessionId === session.sesID ? (
-                      <>
-                        <button
-                          onClick={() => handleSaveEdit(session)}
-                          className={`mt-2 p-2 rounded-lg ${
-                            theme === "dark"
-                              ? "bg-purple-600 text-white"
-                              : "bg-blue-600 text-white"
-                          }`}
-                        >
-                          Save
-                        </button>
-                        <button
-                          onClick={handleCancelEdit}
-                          className={`mt-2 p-2 rounded-lg ${
-                            theme === "dark"
-                              ? "bg-gray-600 text-white"
-                              : "bg-gray-300 text-black"
-                          } ml-2`}
-                        >
-                          Cancel
-                        </button>
-                      </>
-                    ) : (
-                      <button
-                        onClick={() => handleEditClick(session)}
-                        className={`mt-2 p-2 rounded-lg ${
-                          theme === "dark"
-                            ? "bg-purple-600 text-white"
-                            : "bg-blue-600 text-white"
-                        }`}
-                      >
-                        Edit
-                      </button>
-                    )}
-                  </td>
+              {table.getRowModel().rows.map((row, index) => (
+                <tr 
+                  key={row.id} 
+                  className={`${tableCellClass} ${
+                    index % 2 === 0 
+                      ? theme === 'dark' 
+                        ? 'bg-purple-900/20' 
+                        : 'bg-blue-50/50'
+                      : ''
+                  }`}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <td 
+                      key={cell.id} 
+                      className={`p-4 ${
+                        cell.column.id.includes('srNo')
+                          ? 'w-24'
+                          : cell.column.id.includes('actions')
+                            ? 'w-48'
+                            : 'flex-1'
+                      }`}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
                 </tr>
               ))}
             </tbody>
           </table>
+
+          {/* Pagination Controls */}
+          <div className="flex items-center justify-between p-4">
+            <div className="flex gap-2">
+              <button
+                onClick={() => table.setPageIndex(0)}
+                disabled={!table.getCanPreviousPage()}
+                className={`px-3 py-1 rounded-lg transition-colors ${buttonClass} disabled:opacity-50`}
+              >
+                {"<<"}
+              </button>
+              <button
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+                className={`px-3 py-1 rounded-lg transition-colors ${buttonClass} disabled:opacity-50`}
+              >
+                {"<"}
+              </button>
+              <button
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+                className={`px-3 py-1 rounded-lg transition-colors ${buttonClass} disabled:opacity-50`}
+              >
+                {">"}
+              </button>
+              <button
+                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                disabled={!table.getCanNextPage()}
+                className={`px-3 py-1 rounded-lg transition-colors ${buttonClass} disabled:opacity-50`}
+              >
+                {">>"}
+              </button>
+            </div>
+            <span className={`flex items-center gap-1 ${textClass}`}>
+              <div>Page</div>
+              <strong>
+                {table.getState().pagination.pageIndex + 1} of{" "}
+                {table.getPageCount()}
+              </strong>
+            </span>
+          </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
