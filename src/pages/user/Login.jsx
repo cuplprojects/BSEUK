@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { useUserStore } from "../../store/useUsertoken";
 import API from "../../services/api";
+import Logo from "./../../assets/logo.png";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -70,7 +71,17 @@ const Login = () => {
               </div>
             </div>
             <div className="relative p-12 text-white z-10 flex flex-col justify-center h-full">
-              <h1 className="text-4xl font-bold mb-6">Welcome to BSEUK Portal</h1>
+              <div className="">
+                <img 
+                src={Logo}
+                alt="BSEUK Logo" 
+                width="400"
+                height="400"
+                className=" mb-8 mx-auto bg-white rounded-lg"
+              />
+              </div>
+            
+              <h1 className="text-4xl font-bold mb-6">Welcome to UBSE Portal</h1>
               <p className="text-lg opacity-90">
                 Log in to access your account and manage your Account, or sign up to create a new account.
               </p>
@@ -159,11 +170,11 @@ const Login = () => {
                   )}
                 </AnimatePresence>
 
-                <div className="flex justify-end text-sm">
+                {/* <div className="flex justify-end text-sm">
                   <Link to="/forgot-password" className="text-blue-600 hover:text-blue-700 transition-colors duration-200">
                     Forgot Password?
                   </Link>
-                </div>
+                </div> */}
 
                 <motion.button
                   whileHover={{ scale: 1.02 }}
