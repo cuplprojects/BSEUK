@@ -100,7 +100,7 @@ const isPassed = semesterStatuses.length === 4 &&
   semesterStatuses.every(status => status === "P") ? "P" : "F";
 
   return (
-    <div className="p-4 outer-border" style={{ position: 'relative' }}>
+    <div className="p-4" style={{ position: 'relative' }}>
       <div
         style={{
           position: 'absolute',
@@ -119,7 +119,7 @@ const isPassed = semesterStatuses.length === 4 &&
 
       <div
         className="container border border-5 p-4 pb-5"
-        style={{ width: "21cm", fontSize: "0.9rem" }}
+        style={{ width: "21cm", fontSize: "0.9rem" , border: '3px solid red'}}
       >
         <div >
           <b style={{ fontSize: "0.8rem" }}>
@@ -173,7 +173,7 @@ const isPassed = semesterStatuses.length === 4 &&
           </div>
         </section>
 
-        <div className="responsive">
+        <div className="responsive" style={{ border: '1px solid black'}}>
           <table border="2" className="table-bordered" width="100%" style={{ borderCollapse: 'collapse', fontSize: "0.8rem", padding: "4px" }}>
             <thead>
               <tr>
