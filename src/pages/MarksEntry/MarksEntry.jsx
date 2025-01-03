@@ -29,6 +29,7 @@ const MarksEntry = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const inputRef = useRef(null);
   const [paper,setPaper] = useState({});
+  const [inputValue, setInputValue] = useState('');
 
   // Table Columns
   const getColumns = async (paperID) => {
@@ -174,46 +175,50 @@ const MarksEntry = () => {
       setEditingCell(null);
     } else {
       setEditingCell({ rowId, columnId });
+      // Get current value from updatedMarks
+      const currentValue = updatedMarks[rowId]?.[columnId] || '';
+      setInputValue(currentValue);
       setTimeout(() => {
-        inputRef.current?.select();
+        if (inputRef.current) {
+          inputRef.current.focus();
+          inputRef.current.select();
+        }
       }, 0);
     }
   };
 
   console.log(updatedMarks)
 
-const handleInputChange = (e, rowId, columnId, candidateId) => {
-  const value = e.target.value;
-
-  // Ensure only numeric values are allowed
-  if (!/^\d*$/.test(value)) return;
-
-  // Get max marks for the column
-  const maxMarks =
-    columnId === "theoryMarks"
+  const handleInputChange = (e, rowId, columnId, candidateId) => {
+    const value = e.target.value;
+    setInputValue(value);
+  
+    // Ensure only numeric values are allowed
+    if (!/^\d*$/.test(value)) return;
+  
+    // Rest of validation logic remains same
+    const maxMarks = columnId === "theoryMarks" 
       ? paper.theoryPaperMaxMarks
       : columnId === "internalMarks"
       ? paper.interalMaxMarks
       : columnId === "practicalMarks"
       ? paper.practicalMaxMarks
       : null;
-
-  // Validate against max marks
-  if (maxMarks !== null && Number(value) > maxMarks) {
-    alert(`Value cannot exceed the maximum marks of ${maxMarks}.`);
-    return;
-  }
-
-  // Update the marks if valid
-  setUpdatedMarks({
-    ...updatedMarks,
-    [rowId]: {
-      ...updatedMarks[rowId],
-      [columnId]: value,
-      candidateId: candidateId,
-    },
-  });
-};
+  
+    if (maxMarks !== null && Number(value) > maxMarks) {
+      alert(`Value cannot exceed the maximum marks of ${maxMarks}.`);
+      return;
+    }
+  
+    setUpdatedMarks({
+      ...updatedMarks,
+      [rowId]: {
+        ...updatedMarks[rowId],
+        [columnId]: value,
+        candidateId: candidateId,
+      },
+    });
+  };
 
   
 
@@ -403,10 +408,7 @@ const handleInputChange = (e, rowId, columnId, candidateId) => {
                             <input
                             ref={inputRef}
                             type="text"
-                            value={
-                              updatedMarks[row.id]?.[cell.column.id] ||
-                              cell.getValue()
-                            }
+                            value={inputValue}
                             onChange={(e) =>
                               handleInputChange(e, row.id, cell.column.id, row.original.candidateID)
                             }
