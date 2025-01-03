@@ -17,7 +17,7 @@ const semesterIdHindi = {
 };
 
 const Certificate2 = ({ data }) => {
-
+  console.log("Data in Certificate4:", data);
   const paperType2Count = data?.marks.filter((mark) => mark.paperType === 2).length;
 
   const renderTheoryRows = () => {
@@ -85,14 +85,21 @@ const Certificate2 = ({ data }) => {
           <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.status === "Pass" ? "P" : "F"}</td>
           
           {index === 0 && (
-          <td rowSpan={dataLength} style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.status === "Pass" ? "P" : "F"}</td>
+          <td rowSpan={dataLength+1} style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.status === "Pass" ? "P" : "F"}</td>
           )}
         </tr>
       ));
   };
 
+  const semesterStatuses = data?.OverAllDetails?.results
+  ?.slice(0, 4)
+  ?.map(result => result?.status === "Pass" ? "P" : "F") || [];
+
+const isPassed = semesterStatuses.length === 4 && 
+  semesterStatuses.every(status => status === "P") ? "P" : "F";
+
   return (
-    <div className="p-4 outer-border" style={{ position: 'relative' }}>
+    <div className="p-4" style={{ position: 'relative' }}>
       <div
         style={{
           position: 'absolute',
@@ -111,7 +118,7 @@ const Certificate2 = ({ data }) => {
 
       <div
         className="container border border-5 p-4 pb-5"
-        style={{ width: "21cm", fontSize: "0.9rem" }}
+        style={{ width: "21cm", fontSize: "0.9rem" , border: '3px solid red'}}
       >
         <div >
           <b style={{ fontSize: "0.8rem" }}>
@@ -165,7 +172,7 @@ const Certificate2 = ({ data }) => {
           </div>
         </section>
 
-        <div className="responsive">
+        <div className="responsive" style={{ border: '1px solid black'}}>
           <table border="2" className="table-bordered" width="100%" style={{ borderCollapse: 'collapse', fontSize: "0.8rem", padding: "4px" }}>
             <thead>
               <tr>
@@ -236,13 +243,13 @@ const Certificate2 = ({ data }) => {
             {renderTotalResultRows()}
             <tr>
                 <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>महायोग </th>
-                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>महायोग </th>
+                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>{data?.OverAllDetails.semMarks}</th>
                 <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}> </th>
-                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>महायोग </th>
+                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>{data?.OverAllDetails.totalPracticalMarks} </th>
                 <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}> </th>
-                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>महायोग </th>
+                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>{data?.OverAllDetails.total}</th>
                 <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}> </th>
-                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>महायोग </th>
+                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>{isPassed ? "P" : "F"} </th>
             </tr>
             </tbody>
             </table>
