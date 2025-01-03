@@ -10,6 +10,8 @@ import {
 } from "@tanstack/react-table";
 import { motion } from "framer-motion";
 import { useThemeStore } from '../../store/themeStore';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const MarksEntry = () => {
   const [sessions, setSessions] = useState([]);
@@ -153,7 +155,7 @@ const MarksEntry = () => {
         setSemesters(semesterResponse.data);
       } catch (error) {
         console.error("Error fetching sessions or semesters:", error);
-        setError("Failed to fetch sessions or semesters.");
+        toast.error("Failed to fetch sessions or semesters.");
       }
     };
     fetchSessionsAndSemesters();
@@ -163,20 +165,16 @@ const MarksEntry = () => {
     if (selectedFilters.semID) {
       const fetchPapers = async () => {
         try {
-          const response = await API.get(
-            `Papers/GetBySem/${selectedFilters.semID}`
-          );
+          const response = await API.get(`Papers/GetBySem/${selectedFilters.semID}`);
           setPapers(response.data);
           setUpdatedMarks({});
+          // toast.success("Papers loaded successfully!");
         } catch (error) {
           console.error("Error fetching papers:", error);
-          setError("Failed to fetch papers.");
+          toast.error("Failed to fetch papers.");
         }
       };
       fetchPapers();
-    } else {
-      setPapers([]);
-      setUpdatedMarks({});
     }
   }, [selectedFilters.semID]);
 
@@ -185,13 +183,12 @@ const MarksEntry = () => {
     setError(null);
     setCandidates([]);
     try {
-      const response = await API.get(
-        `StudentsMarksObtaineds/GetStudentPaperMarks/${paperID}`
-      );
+      const response = await API.get(`StudentsMarksObtaineds/GetStudentPaperMarks/${paperID}`);
       setCandidates(response.data);
+      // toast.success(`${response.data.length} candidates loaded successfully!`);
     } catch (error) {
       console.error("Error fetching candidates:", error);
-      setError("Failed to fetch candidates data.");
+      toast.error("Failed to fetch candidates data.");
     } finally {
       setLoading(false);
     }
@@ -215,14 +212,15 @@ const MarksEntry = () => {
   };
 
   const handleInputChange = (e, rowId, columnId, candidateId) => {
-
     const value = e.target.value;
     setInputValue(value);
   
     // Ensure only numeric values are allowed
-    if (!/^\d*$/.test(value)) return;
+    if (!/^\d*$/.test(value)) {
+      toast.warning("Please enter numbers only!");
+      return;
+    }
   
-    // Rest of validation logic remains same
     const maxMarks = columnId === "theoryMarks" 
       ? paper.theoryPaperMaxMarks
       : columnId === "internalMarks"
@@ -232,7 +230,7 @@ const MarksEntry = () => {
       : null;
   
     if (maxMarks !== null && Number(value) > maxMarks) {
-      alert(`Value cannot exceed the maximum marks of ${maxMarks}.`);
+      toast.error(`Marks cannot exceed the maximum marks of ${maxMarks}!`);
       return;
     }
 
@@ -248,6 +246,11 @@ const MarksEntry = () => {
 
 
   const handleSubmit = async () => {
+    if (Object.keys(updatedMarks).length === 0) {
+      toast.info("No marks to update!");
+      return;
+    }
+
     const marksToSubmit = Object.keys(updatedMarks).map((rowId) => {
       const { candidateId, theoryMarks, internalMarks, practicalMarks } = updatedMarks[rowId];
       const candidateData = candidates.find((candidate) => candidate.candidateID === candidateId);
@@ -264,14 +267,20 @@ const MarksEntry = () => {
     }).filter(Boolean);
 
     try {
-      for (const mark of marksToSubmit) {
-        await API.post('/StudentsMarksObtaineds', mark);
-      }
-      alert("Marks updated successfully!");
+      toast.promise(
+        Promise.all(marksToSubmit.map(mark => API.post('/StudentsMarksObtaineds', mark))),
+        {
+          pending: 'Updating marks...',
+          success: 'Marks updated successfully! 👍',
+          error: 'Failed to update marks 🤯'
+        }
+      );
+      
+      await Promise.all(marksToSubmit.map(mark => API.post('/StudentsMarksObtaineds', mark)));
       fetchCandidates(selectedFilters.paperID);
     } catch (error) {
       console.error("Error updating marks:", error);
-      setError("Failed to update marks.");
+      toast.error("Failed to update marks.");
     }
   };
 
@@ -281,6 +290,19 @@ const MarksEntry = () => {
       animate={{ opacity: 1, y: 0 }}
       className="max-w-6xl mx-auto p-5 space-y-6"
     >
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme={theme === 'dark' ? 'dark' : 'light'}
+      />
+      
       <h1 className={`text-3xl font-bold ${textClass}`}>Marks Entry</h1>
 
       <div className={`p-6 rounded-lg ${cardClass}`}>
