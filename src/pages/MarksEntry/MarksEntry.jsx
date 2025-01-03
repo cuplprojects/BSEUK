@@ -69,7 +69,8 @@ const MarksEntry = () => {
 
     return [];
   };
-  console.log(paper);
+
+
   useEffect(() => {
     const fetchColumns = async () => {
       const cols = await getColumns(selectedFilters.paperID);
@@ -185,8 +186,6 @@ const MarksEntry = () => {
     }
   };
 
-  console.log(updatedMarks)
-
   const handleInputChange = (e, rowId, columnId, candidateId) => {
 
     const value = e.target.value;
@@ -219,10 +218,6 @@ const MarksEntry = () => {
     });
   };
 
-
-  useEffect(() => {
-    console.log(updatedMarks);
-  }, [updatedMarks]);
 
   const handleSubmit = async () => {
     const marksToSubmit = Object.keys(updatedMarks).map((rowId) => {
