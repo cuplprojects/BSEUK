@@ -16,6 +16,7 @@ const semesterIdHindi = {
   "4": "चतुर्थ सेमेस्टर",
 };
 
+ 
 const Certificate2 = ({ data }) => {
   const paperType2Count = data?.marks.filter((mark) => mark.paperType === 2).length;
 
