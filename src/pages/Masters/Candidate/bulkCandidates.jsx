@@ -79,54 +79,113 @@ const NewFormComponent = () => {
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
+    if (!selectedFile) return;
+
+    // Check file type
+    const fileType = selectedFile.name.split('.').pop().toLowerCase();
+    if (!['csv', 'xls', 'xlsx'].includes(fileType)) {
+      toast.error('Please upload a valid Excel or CSV file', {
+        autoClose: 3000
+      });
+      return;
+    }
+
     setFile(selectedFile);
     readExcelFile(selectedFile);
+    toast.info('Processing file...', {
+      autoClose: 2000
+    });
   };
 
   const readExcelFile = (file) => {
     const reader = new FileReader();
     reader.onload = (event) => {
-      const data = new Uint8Array(event.target.result);
-      const workbook = XLSX.read(data, { type: "array" });
-      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-      const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-      const headers = XLSX.utils.sheet_to_json(firstSheet, { header: 1 })[0];
+      try {
+        const data = new Uint8Array(event.target.result);
+        const workbook = XLSX.read(data, { type: "array" });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+        const headers = XLSX.utils.sheet_to_json(firstSheet, { header: 1 })[0];
 
-      setCandidates(jsonData);
-      setHeaders(headers);
+        if (!headers || headers.length === 0) {
+          toast.error('No headers found in the file');
+          return;
+        }
+
+        setCandidates(jsonData);
+        setHeaders(headers);
+        toast.success(`File processed successfully. Found ${jsonData.length} records.`, {
+          autoClose: 3000
+        });
+      } catch (error) {
+        toast.error('Error processing file. Please check the file format.');
+        console.error('File processing error:', error);
+      }
+    };
+    reader.onerror = () => {
+      toast.error('Error reading file');
     };
     reader.readAsArrayBuffer(file);
   };
 
   const handleHeaderChange = (fieldKey, selectedHeader) => {
+    if (!selectedHeader) {
+      toast.warning(`Please select a header for ${fieldKey}`, {
+        autoClose: 2000,
+        hideProgressBar: true
+      });
+      return;
+    }
     setFieldHeaderMapping((prev) => ({ ...prev, [fieldKey]: selectedHeader }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validation checks
+    if (!selectedSemester || !selectedSession) {
+      toast.warning('Please select both Semester and Session', {
+        autoClose: 3000
+      });
+      return;
+    }
+
     if (!file) {
-      toast.error("Please select a file.");
+      toast.error('Please select a file to upload', {
+        autoClose: 3000
+      });
+      return;
+    }
+
+    // Check if all required fields are mapped
+    const requiredFields = ['rollNumber', 'candidateName'];
+    const missingFields = requiredFields.filter(
+      field => !fieldHeaderMapping[field]
+    );
+
+    if (missingFields.length > 0) {
+      toast.error(`Please map the following required fields: ${missingFields.join(', ')}`, {
+        autoClose: 4000
+      });
       return;
     }
 
     try {
       const dataToSubmit = candidates.map((candidate) => {
-        // Create a candidate object matching the required structure
         const candidateData = {
-          candidateID: 0, // Default value
-          semID: parseInt(selectedSemester, 10), // Ensure integer
-          sesID: parseInt(selectedSession, 10), // Ensure integer
+          candidateID: 0,
+          semID: parseInt(selectedSemester, 10),
+          sesID: parseInt(selectedSession, 10),
           candidateName: "",
           group: "",
-          rollNumber: "", // Will be stringified
+          rollNumber: "",
           fName: "",
           mName: "",
-          dob: "", // Will be stringified
+          dob: "",
           institutionName: "",
           category: "",
         };
 
-        // Populate fields based on the mapped headers
         candidateFields.forEach((field) => {
           const selectedHeader = fieldHeaderMapping[field.key];
           if (selectedHeader && candidate[selectedHeader] !== undefined) {
@@ -134,34 +193,59 @@ const NewFormComponent = () => {
           }
         });
 
-        // Stringify rollNumber and dob
         candidateData.rollNumber = JSON.stringify(candidateData.rollNumber);
-
         return candidateData;
       });
 
-      // Submit each candidate record
+      // Show loading toast
+      toast.info('Processing candidates...', {
+        autoClose: false,
+        toastId: 'uploading'
+      });
+
+      // Submit candidates in batches
       for (const candidateData of dataToSubmit) {
-
-        // Using the API service to post the candidate data
         const response = await API.post("Candidates", candidateData);
-
         if (response.status !== 200 && response.status !== 201) {
-          console.error("Error details:", response.data);
-          throw new Error(
-            `Failed to submit: ${response.data.title || response.statusText}`
-          );
+          throw new Error(`Failed to submit: ${response.data.title || response.statusText}`);
         }
       }
 
-      toast.success("Candidates submitted successfully!");
+      // Dismiss loading toast and show success
+      toast.dismiss('uploading');
+      toast.success(`Successfully uploaded ${dataToSubmit.length} candidates!`, {
+        autoClose: 3000
+      });
+
+      // Reset form
+      setFile(null);
+      setCandidates([]);
+      setHeaders([]);
+      setFieldHeaderMapping({});
+      
     } catch (error) {
-      toast.error("Error submitting candidates: " + error.message);
+      toast.dismiss('uploading');
+      toast.error(`Error uploading candidates: ${error.message}`, {
+        autoClose: 5000
+      });
+      console.error("Upload error:", error);
     }
   };
 
   return (
     <div className="p-8">
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme={theme === 'dark' ? 'dark' : 'light'}
+      />
       <div className={`p-6 rounded-lg ${cardClass} mb-6`}>
         <h2 className={`text-xl font-semibold mb-6 ${textClass}`}>Bulk Upload Candidates</h2>
         
@@ -272,3 +356,4 @@ const NewFormComponent = () => {
 };
 
 export default NewFormComponent;
+
