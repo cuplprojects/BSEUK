@@ -35,10 +35,10 @@ const MarksEntry = () => {
   const getColumns = async (paperID) => {
     if (candidates.length === 0) return [];
 
-    console.log(paperID);
     const response = await API.get(`/Papers/${paperID}`);
+
     setPaper(response.data);
-    
+
     const paperType = response.data.paperType;
 
     if (paperType === 1) {
@@ -71,7 +71,6 @@ const MarksEntry = () => {
   };
   console.log(paper);
   useEffect(() => {
-    console.log(selectedFilters.paperID);
     const fetchColumns = async () => {
       const cols = await getColumns(selectedFilters.paperID);
       setColumns(cols);
@@ -138,7 +137,6 @@ const MarksEntry = () => {
           const response = await API.get(
             `Papers/GetBySem/${selectedFilters.semID}`
           );
-          console.log(response.data);
           setPapers(response.data);
           setUpdatedMarks({});
         } catch (error) {
@@ -190,6 +188,7 @@ const MarksEntry = () => {
   console.log(updatedMarks)
 
   const handleInputChange = (e, rowId, columnId, candidateId) => {
+
     const value = e.target.value;
     setInputValue(value);
   
@@ -209,7 +208,7 @@ const MarksEntry = () => {
       alert(`Value cannot exceed the maximum marks of ${maxMarks}.`);
       return;
     }
-  
+
     setUpdatedMarks({
       ...updatedMarks,
       [rowId]: {
@@ -220,7 +219,6 @@ const MarksEntry = () => {
     });
   };
 
-  
 
   useEffect(() => {
     console.log(updatedMarks);
@@ -241,8 +239,6 @@ const MarksEntry = () => {
         practicalMarks: practicalMarks || 0,
       };
     }).filter(Boolean);
-
-    console.log("Marks to Submit:", marksToSubmit);
 
     try {
       for (const mark of marksToSubmit) {

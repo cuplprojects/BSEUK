@@ -13,7 +13,6 @@ const AddSession = () => {
     // Fetch existing sessions from the API
     const fetchSessions = async () => {
       const response = await API.get("/Sessions");
-      console.log(response.data); // Update with your API endpoint
       setSessions(response.data);
     };
     fetchSessions();
