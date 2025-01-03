@@ -130,7 +130,6 @@ const NewFormComponent = () => {
 
       // Submit each candidate record
       for (const candidateData of dataToSubmit) {
-        console.log(JSON.stringify(candidateData, null, 2)); // Log payload for debugging
 
         // Using the API service to post the candidate data
         const response = await API.post("Candidates", candidateData);

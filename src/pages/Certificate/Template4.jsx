@@ -19,7 +19,6 @@ const semesterIdHindi = {
 const Certificate2 = ({ data }) => {
   console.log("Data in Certificate4:", data);
   const paperType2Count = data?.marks.filter((mark) => mark.paperType === 2).length;
-  console.log("Count of paperType === 2:", paperType2Count);
 
   const renderTheoryRows = () => {
     return data.marks

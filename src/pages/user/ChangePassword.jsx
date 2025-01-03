@@ -28,7 +28,6 @@ const ChangePassword = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         // Add your password change logic here
-        console.log('Password change submitted:', formData);
     };
 
     const handleChange = (e) => {
