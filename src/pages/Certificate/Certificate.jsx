@@ -176,7 +176,7 @@ const Certificate = () => {
 
   const generatePDF = async (result, result2) => {
     const data = formatCertificateData(result, result2);
-    console.log(data);
+    // console.log(data);
     setCertificateData(data);
     setShowPreview(true);
 
