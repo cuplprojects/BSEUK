@@ -4,6 +4,7 @@ import API from "../../services/api";
 import Template from "./Template";
 import Template2 from "./Template2";
 import Template3 from "./Template3";
+import Template4 from "./Template4";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import logo from "./../../assets/logo.png";
@@ -39,9 +40,14 @@ const Certificate = () => {
     fetchData();
   }, []);
 
-  const formatCertificateData = (result) => {
+  useEffect(()=>{
+    
+  })
+
+  const formatCertificateData = (result, result2) => {
     const studentDetails = result.studentDetails;
     const resultData = studentDetails.result;
+    const OverAllDetails = result2
     console.log(result);
 
     if (studentDetails.sem === "First Semester") {
@@ -134,15 +140,15 @@ const Certificate = () => {
         headerImage: logo,
         entersession: entersession,
       };
-    } else if (studentDetails.sem === "Second Semester") {
+    } else if (studentDetails.sem === "Fourth Semester") {
       return {
         sno: studentDetails.candidateID,
         name: studentDetails.name,
-        mothersName: studentDetails.mName,
-        fathersName: studentDetails.fName,
         rollNo: studentDetails.rollNo,
-        group: studentDetails.group,
+        fathersName: studentDetails.fName,
+        mothersName: studentDetails.mName,
         institutionName: studentDetails.institutionName,
+        group: studentDetails.group,
         session: studentDetails.session,
         semester: studentDetails.sem,
         marks: resultData.marksDetails.map((mark) => ({
@@ -163,12 +169,13 @@ const Certificate = () => {
         result: resultData.remarks,
         watermarkImage: logo,
         headerImage: logo,
+        OverAllDetails
       };
     }
   };
 
-  const generatePDF = async (result) => {
-    const data = formatCertificateData(result);
+  const generatePDF = async (result, result2) => {
+    const data = formatCertificateData(result, result2);
     console.log(data);
     setCertificateData(data);
     setShowPreview(true);
@@ -210,9 +217,13 @@ const Certificate = () => {
           semesterId: parseInt(selectedSemester),
         }
       );
+      const response2 = await API.get(`/StudentsMarksObtaineds/GetAllYearsResult/${rollNumber}`);
+      console.log(response2.data)
 
       const result = response.data;
-      const pdf = await generatePDF(result);
+      const result2 = response2.data;
+
+      const pdf = await generatePDF(result, result2);
       console.log(result);
       pdf.save(
         `Certificate_${result.studentDetails.rollNo}_${result.studentDetails.sem}.pdf`
@@ -235,7 +246,7 @@ const Certificate = () => {
     }
 
     setLoading(true);
-    setError(null);
+    setError(null); 
 
     try {
       // Fetch the list of candidates first
@@ -336,7 +347,6 @@ const Certificate = () => {
               onChange={(e) => setEntersession(e.target.value)}
               placeholder="Enter Your Session "
               className="w-full px-4 py-2 rounded-lg border"
-              required
             />
           </div>
         </div>
@@ -463,6 +473,8 @@ const Certificate = () => {
               <Template2 data={certificateData} />
             ) : certificateData.semester === "Third Semester" ? (
               <Template3 data={certificateData} />
+            ) : certificateData.semester === "Fourth Semester" ? (
+              <Template4 data={certificateData} />
             ) : (
               <Template data={certificateData} />
             )}
