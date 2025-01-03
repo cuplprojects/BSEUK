@@ -66,7 +66,7 @@ const Navbar = ({ onMenuClick }) => {
         </div>
 
         <div className="flex items-center space-x-4">
-          <AnimatePresence mode="wait">
+          {/* <AnimatePresence mode="wait">
             <motion.button
               key={theme}
               initial={{ y: -20, opacity: 0 }}
@@ -83,7 +83,7 @@ const Navbar = ({ onMenuClick }) => {
             >
               {theme === 'dark' ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5" />}
             </motion.button>
-          </AnimatePresence>
+          </AnimatePresence> */}
 
           <div ref={menuRef}>
             <UserMenu 
