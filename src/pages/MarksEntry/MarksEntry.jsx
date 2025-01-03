@@ -46,7 +46,7 @@ const MarksEntry = () => {
           header: "Internal Marks",
         },
       ];
-    } else if (paperType === 2) {
+    } else {
       return [
         {
           accessorFn: (row) => row?.marks?.practicalMarks || "",
