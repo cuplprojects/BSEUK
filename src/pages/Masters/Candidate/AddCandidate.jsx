@@ -47,7 +47,7 @@ const AddCandidate = () => {
     // Theme classes
     const cardClass = theme === 'dark'
         ? 'bg-black/40 backdrop-blur-xl border-purple-500/20'
-        : 'bg-white border-blue-200 shadow-sm';
+        : 'bg-white border-blue-200 shadow-xl border';
 
     const textClass = theme === 'dark'
         ? 'text-purple-100'
@@ -124,7 +124,7 @@ const AddCandidate = () => {
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-6 shadow-lg rounded-lg"
+            className="p-6  rounded-lg"
         >
             <div className={`rounded-lg ${cardClass} p-6 `}>
                 <h2 className={`text-2xl font-bold mb-8 ${textClass}`}>
