@@ -61,7 +61,7 @@ const Navbar = ({ onMenuClick }) => {
             <FiMenu className="w-6 h-6" />
           </motion.button>
           <Link to="/dashboard" className={`text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${theme === 'dark' ? 'from-purple-400 to-pink-400' : 'text-white'}`}>
-            BSEUK
+            UBSE
           </Link>
         </div>
 
