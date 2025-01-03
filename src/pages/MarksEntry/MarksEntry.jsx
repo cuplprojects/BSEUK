@@ -3,7 +3,10 @@ import API from "../../services/api";
 import {
   useReactTable,
   getCoreRowModel,
-  selectRowsFn,
+  getPaginationRowModel,
+  getFilteredRowModel,
+  getSortedRowModel,
+  flexRender,
 } from "@tanstack/react-table";
 
 const MarksEntry = () => {
@@ -22,11 +25,13 @@ const MarksEntry = () => {
   const [columns, setColumns] = useState([]);
   const [editingCell, setEditingCell] = useState(null);
   const [updatedMarks, setUpdatedMarks] = useState({});
+  const [sorting, setSorting] = useState([]);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const inputRef = useRef(null);
 
   // Table Columns
   const getColumns = async (paperID) => {
-    if (candidates.length === 0) return []; // No candidates, return empty columns
+    if (candidates.length === 0) return [];
 
     console.log(paperID);
     const response = await API.get(`/Papers/${paperID}`);
@@ -39,11 +44,13 @@ const MarksEntry = () => {
           accessorFn: (row) => row?.marks?.theoryPaperMarks || "",
           id: "theoryMarks",
           header: "Theory Marks",
+          enableSorting: true,
         },
         {
           accessorFn: (row) => row?.marks?.interalMarks || "",
           id: "internalMarks",
           header: "Internal Marks",
+          enableSorting: true,
         },
       ];
     } else {
@@ -52,11 +59,12 @@ const MarksEntry = () => {
           accessorFn: (row) => row?.marks?.practicalMarks || "",
           id: "practicalMarks",
           header: "Practical Marks",
+          enableSorting: true,
         },
       ];
     }
 
-    return []; // Default case if paperType is neither 1 nor 2
+    return [];
   };
 
   useEffect(() => {
@@ -72,17 +80,37 @@ const MarksEntry = () => {
   const table = useReactTable({
     data: candidates,
     columns: [
-      { accessorKey: "candidateID", header: "CandidateID"},
-      { accessorKey: "candidateRollNumber", header: "Roll No" },
-      { accessorKey: "candidateName", header: "Candidate Name" },
+      { 
+        accessorKey: "candidateID", 
+        header: "CandidateID",
+        enableSorting: true,
+      },
+      { 
+        accessorKey: "candidateRollNumber", 
+        header: "Roll No",
+        enableSorting: true,
+      },
+      { 
+        accessorKey: "candidateName", 
+        header: "Candidate Name",
+        enableSorting: true,
+      },
       ...columns,
     ],
-    globalFilterFn: "includes",
-    getCoreRowModel: getCoreRowModel(),
     state: {
       globalFilter,
+      sorting,
     },
-    onGlobalFilterChange: setGlobalFilter,
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: rowsPerPage,
+      },
+    },
   });
 
   useEffect(() => {
@@ -109,7 +137,7 @@ const MarksEntry = () => {
           );
           console.log(response.data);
           setPapers(response.data);
-          setUpdatedMarks({}); // Reset updatedMarks when semester changes
+          setUpdatedMarks({});
         } catch (error) {
           console.error("Error fetching papers:", error);
           setError("Failed to fetch papers.");
@@ -117,15 +145,15 @@ const MarksEntry = () => {
       };
       fetchPapers();
     } else {
-      setPapers([]); // Clear papers if semester changes to an invalid state
-      setUpdatedMarks({}); // Reset updatedMarks when semester changes
+      setPapers([]);
+      setUpdatedMarks({});
     }
   }, [selectedFilters.semID]);
 
   const fetchCandidates = async (paperID) => {
     setLoading(true);
     setError(null);
-    setCandidates([]); // Clear previous data while fetching new data
+    setCandidates([]);
     try {
       const response = await API.get(
         `StudentsMarksObtaineds/GetStudentPaperMarks/${paperID}`
@@ -141,11 +169,11 @@ const MarksEntry = () => {
 
   const handleCellClick = (rowId, columnId) => {
     if (editingCell?.rowId === rowId && editingCell?.columnId === columnId) {
-      setEditingCell(null); // Exit editing mode if clicking the same cell
+      setEditingCell(null);
     } else {
       setEditingCell({ rowId, columnId });
       setTimeout(() => {
-        inputRef.current?.select(); // Select the input content after rendering
+        inputRef.current?.select();
       }, 0);
     }
   };
@@ -163,9 +191,8 @@ const MarksEntry = () => {
   };
 
   useEffect(() => {
-    console.log(updatedMarks)
+    console.log(updatedMarks);
   }, [updatedMarks]);
-  
 
   const handleSubmit = async () => {
     const marksToSubmit = Object.keys(updatedMarks).map((rowId) => {
@@ -174,7 +201,7 @@ const MarksEntry = () => {
       if (!candidateData) return null;
     
       return {
-        smoID: candidateData.smoID || 0, // Adjust based on your backend structure
+        smoID: candidateData.smoID || 0,
         candidateID: candidateData.candidateID,
         paperID: selectedFilters.paperID,
         theoryPaperMarks: theoryMarks || 0,
@@ -190,21 +217,17 @@ const MarksEntry = () => {
         await API.post('/StudentsMarksObtaineds', mark);
       }
       alert("Marks updated successfully!");
-      // Optionally refetch candidates to reflect changes
       fetchCandidates(selectedFilters.paperID);
     } catch (error) {
       console.error("Error updating marks:", error);
       setError("Failed to update marks.");
     }
   };
-  
-  
-  
-  
 
   return (
     <div className="max-w-6xl mx-auto p-5">
       <h1 className="text-3xl font-bold mb-5">Marks Entry</h1>
+      
       <div className="flex flex-col md:flex-row justify-between mb-4">
         <div className="flex flex-row gap-2 w-full">
           {/* Session Dropdown */}
@@ -244,7 +267,7 @@ const MarksEntry = () => {
             onChange={(e) => {
               const paperID = e.target.value;
               setSelectedFilters({ ...selectedFilters, paperID });
-              setUpdatedMarks({}); // Reset updatedMarks when paper changes
+              setUpdatedMarks({});
               if (paperID) fetchCandidates(paperID);
             }}
             disabled={!selectedFilters.semID}
@@ -258,14 +281,33 @@ const MarksEntry = () => {
           </select>
         </div>
 
-        {/* Global Filter */}
-        <input
-          type="text"
-          placeholder="Search..."
-          value={globalFilter}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          className="border rounded p-2 mb-4 md:mb-0 md:ml-4 w-full md:w-64"
-        />
+        <div className="flex gap-2">
+          {/* Rows per page selector */}
+          <select
+            value={rowsPerPage}
+            onChange={e => {
+              const newSize = Number(e.target.value);
+              setRowsPerPage(newSize);
+              table.setPageSize(newSize);
+            }}
+            className="border rounded p-2"
+          >
+            {[10, 20, 30, 50].map(pageSize => (
+              <option key={pageSize} value={pageSize}>
+                Show {pageSize}
+              </option>
+            ))}
+          </select>
+
+          {/* Global Filter */}
+          <input
+            type="text"
+            placeholder="Search..."
+            value={globalFilter}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+            className="border rounded p-2 w-64"
+          />
+        </div>
       </div>
 
       <div className="overflow-x-auto">
@@ -284,9 +326,20 @@ const MarksEntry = () => {
                     {headerGroup.headers.map((header) => (
                       <th
                         key={header.id}
-                        className="border border-gray-300 p-2"
+                        className="border border-gray-300 p-2 cursor-pointer"
+                        onClick={header.column.getToggleSortingHandler()}
                       >
-                        {header.column.columnDef.header}
+                        <div className="flex items-center justify-between">
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                          {header.column.getIsSorted() && (
+                            <span>
+                              {header.column.getIsSorted() === "asc" ? " ↑" : " ↓"}
+                            </span>
+                          )}
+                        </div>
                       </th>
                     ))}
                   </tr>
@@ -299,14 +352,17 @@ const MarksEntry = () => {
                       const isEditing =
                         editingCell?.rowId === row.id &&
                         editingCell?.columnId === cell.column.id;
-                      const isNonEditable = cell.column.id === "candidateRollNumber" || cell.column.id === "candidateName"; // Check for non-editable columns
+                      const isNonEditable = 
+                        cell.column.id === "candidateRollNumber" || 
+                        cell.column.id === "candidateName" ||
+                        cell.column.id === "candidateID";
                       return (
                         <td
                           key={cell.id}
                           className="border border-gray-300 p-2"
-                          onClick={() => !isNonEditable && handleCellClick(row.id, cell.column.id)} // Only allow click if not non-editable
+                          onClick={() => !isNonEditable && handleCellClick(row.id, cell.column.id)}
                         >
-                          {isEditing && !isNonEditable ? ( // Render input only if not non-editable
+                          {isEditing && !isNonEditable ? (
                             <input
                               ref={inputRef}
                               type="text"
@@ -331,6 +387,48 @@ const MarksEntry = () => {
                 ))}
               </tbody>
             </table>
+
+            {/* Pagination Controls */}
+            <div className="flex items-center justify-between mt-4">
+              <div className="flex gap-2">
+                <button
+                  onClick={() => table.setPageIndex(0)}
+                  disabled={!table.getCanPreviousPage()}
+                  className="px-3 py-1 border rounded disabled:opacity-50"
+                >
+                  {"<<"}
+                </button>
+                <button
+                  onClick={() => table.previousPage()}
+                  disabled={!table.getCanPreviousPage()}
+                  className="px-3 py-1 border rounded disabled:opacity-50"
+                >
+                  {"<"}
+                </button>
+                <button
+                  onClick={() => table.nextPage()}
+                  disabled={!table.getCanNextPage()}
+                  className="px-3 py-1 border rounded disabled:opacity-50"
+                >
+                  {">"}
+                </button>
+                <button
+                  onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                  disabled={!table.getCanNextPage()}
+                  className="px-3 py-1 border rounded disabled:opacity-50"
+                >
+                  {">>"}
+                </button>
+              </div>
+              <span className="flex items-center gap-1">
+                <div>Page</div>
+                <strong>
+                  {table.getState().pagination.pageIndex + 1} of{" "}
+                  {table.getPageCount()}
+                </strong>
+              </span>
+            </div>
+
             <button
               onClick={handleSubmit}
               className="mt-4 bg-blue-500 text-white p-2 rounded"
