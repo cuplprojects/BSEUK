@@ -201,7 +201,14 @@ const AddUsers = () => {
               name="roleID"
               value={formData.roleID}
               onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 ${inputClass}`}
+              className={`w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 ${inputClass} ${
+                theme === 'dark' 
+                  ? '[&>option]:bg-gray-800 [&>option]:text-purple-100' 
+                  : '[&>option]:bg-white [&>option]:text-blue-600'
+              }`}
+              style={{
+                colorScheme: theme === 'dark' ? 'dark' : 'light'
+              }}
             >
               <option value="">Select a role</option>
               {roles.map(role => (

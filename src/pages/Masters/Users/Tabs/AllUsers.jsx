@@ -12,7 +12,8 @@ import {
 } from "@tanstack/react-table";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { FiSearch } from "react-icons/fi";
+import { FiSearch, FiEdit2 } from "react-icons/fi";
+import { Dialog } from "@headlessui/react";
 
 const AllUsers = () => {
   const [users, setUsers] = useState([]);
@@ -21,6 +22,13 @@ const AllUsers = () => {
   const [sorting, setSorting] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const theme = useThemeStore((state) => state.theme);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+  const [editForm, setEditForm] = useState({
+    name: "",
+    email: "",
+    roleID: 0
+  });
 
   // Theme classes
   const cardClass = theme === 'dark'
@@ -40,7 +48,7 @@ const AllUsers = () => {
     : 'bg-blue-600 hover:bg-blue-700 text-white';
 
   const tableHeaderClass = theme === 'dark'
-    ? 'bg-purple-900/50 text-purple-100'
+    ? 'bg-purple-900/20 text-purple-100'
     : 'bg-blue-50 text-blue-700';
 
   useEffect(() => {
@@ -74,6 +82,24 @@ const AllUsers = () => {
     return role ? role.roleName : 'Unknown Role';
   };
 
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await API.put(`/Users/${editingUser.userID}`, {
+        userID: editingUser.userID,
+        name: editForm.name,
+        email: editForm.email,
+        roleID: parseInt(editForm.roleID)
+      });
+      toast.success("User updated successfully");
+      setIsEditModalOpen(false);
+      fetchUsers(); // Refresh the table
+    } catch (error) {
+      console.error("Error updating user:", error);
+      toast.error("Failed to update user");
+    }
+  };
+
   const columns = useMemo(
     () => [
       {
@@ -93,8 +119,28 @@ const AllUsers = () => {
         header: () => "Role",
         cell: (info) => getRoleName(info.getValue()),
       },
+      {
+        id: "actions",
+        header: "Actions",
+        cell: ({ row }) => (
+          <button
+            onClick={() => {
+              setEditingUser(row.original);
+              setEditForm({
+                name: row.original.name,
+                email: row.original.email,
+                roleID: row.original.roleID
+              });
+              setIsEditModalOpen(true);
+            }}
+            className={`p-2 rounded-lg ${buttonClass}`}
+          >
+            <FiEdit2 className="w-4 h-4" />
+          </button>
+        ),
+      },
     ],
-    [roles]
+    [roles, buttonClass]
   );
 
   const table = useReactTable({
@@ -151,7 +197,14 @@ const AllUsers = () => {
         <select
           value={rowsPerPage}
           onChange={(e) => setRowsPerPage(Number(e.target.value))}
-          className={`px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 ${inputClass}`}
+          className={`px-4 py-2 rounded-lg border ${inputClass} ${
+            theme === 'dark' 
+              ? '[&>option]:bg-gray-800 [&>option]:text-purple-100' 
+              : '[&>option]:bg-white [&>option]:text-blue-600'
+          }`}
+          style={{
+            colorScheme: theme === 'dark' ? 'dark' : 'light'
+          }}
         >
           <option value={10}>10 rows</option>
           <option value={20}>20 rows</option>
@@ -171,14 +224,22 @@ const AllUsers = () => {
                   {headerGroup.headers.map((header) => (
                     <th
                       key={header.id}
-                      onClick={header.column.getToggleSortingHandler()}
-                      className={`p-4 text-left cursor-pointer select-none ${
-                        header.column.getCanSort() ? 'hover:bg-purple-900/30' : ''
-                      }`}
+                      className={`px-6 py-3 text-left ${textClass}`}
                     >
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
+                      {header.isPlaceholder ? null : (
+                        <div
+                          {...{
+                            className: header.column.getCanSort()
+                              ? "cursor-pointer select-none flex items-center gap-2"
+                              : "",
+                            onClick: header.column.getToggleSortingHandler(),
+                          }}
+                        >
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                        </div>
                       )}
                     </th>
                   ))}
@@ -186,23 +247,19 @@ const AllUsers = () => {
               ))}
             </thead>
             <tbody>
-              {table.getRowModel().rows.map((row, index) => (
-                <tr 
+              {table.getRowModel().rows.map((row) => (
+                <tr
                   key={row.id}
-                  className={`border-t border-purple-500/20 ${
-                    index % 2 === 0 
-                      ? theme === 'dark' 
-                        ? 'bg-purple-900/20' 
-                        : 'bg-blue-50/50'
-                      : ''
-                  }`}
+                  className={`border-t ${
+                    theme === "dark" ? "border-gray-700" : "border-gray-200"
+                  } hover:bg-gray-100 dark:hover:bg-gray-800`}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="p-4">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                    <td
+                      key={cell.id}
+                      className={`px-6 py-4 ${textClass}`}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
                   ))}
                 </tr>
@@ -252,6 +309,81 @@ const AllUsers = () => {
           </span>
         </div>
       </div>
+
+      {/* Edit Modal */}
+      <Dialog
+        open={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        className="relative z-50"
+      >
+        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Panel className={`mx-auto max-w-sm rounded-lg ${cardClass} p-6 w-full ${
+            theme === 'dark' ? 'border border-purple-500/30' : ''
+          }`}>
+            <Dialog.Title className={`text-lg font-medium mb-4 ${textClass}`}>
+              Edit User
+            </Dialog.Title>
+            <form onSubmit={handleEditSubmit} className="space-y-4">
+              <div>
+                <label className={`block mb-2 ${textClass}`}>Username</label>
+                <input
+                  type="text"
+                  value={editForm.name}
+                  onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                  className={`w-full ${inputClass} rounded-lg p-2`}
+                  required
+                />
+              </div>
+              <div>
+                <label className={`block mb-2 ${textClass}`}>Email</label>
+                <input
+                  type="email"
+                  value={editForm.email}
+                  onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                  className={`w-full ${inputClass} rounded-lg p-2`}
+                  required
+                />
+              </div>
+              <div>
+                <label className={`block mb-2 ${textClass}`}>Role</label>
+                <select
+                  value={editForm.roleID}
+                  onChange={(e) => setEditForm({ ...editForm, roleID: e.target.value })}
+                  className={`w-full ${inputClass} rounded-lg p-2 `}
+                  required
+                >
+                  <option value="">Select Role</option>
+                  {roles.map((role) => (
+                    <option key={role.roleID} value={role.roleID}>
+                      {role.roleName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex justify-end gap-2 mt-4">
+                <button
+                  type="button"
+                  onClick={() => setIsEditModalOpen(false)}
+                  className={`px-4 py-2 rounded-lg ${
+                    theme === 'dark'
+                      ? 'bg-purple-900/50 hover:bg-purple-900/70'
+                      : 'bg-blue-100 hover:bg-blue-200'
+                  } ${textClass}`}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className={`px-4 py-2 rounded-lg ${buttonClass}`}
+                >
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
     </motion.div>
   );
 };
