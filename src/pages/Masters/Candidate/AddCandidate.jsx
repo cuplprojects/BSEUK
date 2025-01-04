@@ -44,6 +44,7 @@ const AddCandidate = () => {
     const [semesters, setSemesters] = useState([]);
     const [sessions, setSessions] = useState([]);
     const [groups, setGroups] = useState([]);
+    const [categories, setCategories] = useState([]);
     // Theme classes
     const cardClass = theme === 'dark'
         ? 'bg-black/40 backdrop-blur-xl border-purple-500/20'
@@ -84,9 +85,19 @@ const AddCandidate = () => {
             }
         };
 
+        const fetchCategories = async () => {
+            try {
+                const response = await API.get('Categories');
+                setCategories(response.data);
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+            }
+        };
+
         fetchSemesters();
         fetchSessions();
         fetchGroups();
+        fetchCategories();
     }, []);
 
     const handleChange = (e) => {
@@ -277,14 +288,19 @@ const AddCandidate = () => {
                             <label className={`block text-sm font-medium mb-2 ${textClass}`}>
                                 Category
                             </label>
-                            <input
-                                type="text"
+                            <select
                                 name="category"
                                 value={formData.category}
                                 onChange={handleChange}
                                 className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
-                                placeholder="Enter Category"
-                            />
+                            >
+                                <option value="">Select Category</option>
+                                {categories.map((category) => (
+                                    <option key={category.categoryId} value={category.categoryName}>
+                                        {category.categoryName}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
                         <div>
