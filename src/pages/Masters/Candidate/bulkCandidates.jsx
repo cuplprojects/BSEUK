@@ -54,6 +54,20 @@ const NewFormComponent = () => {
     { key: "papersOpted", label: "Papers" },
   ];
 
+  const handleDownloadTemplate = () => {
+    // Use the imported Excel file
+    const templatePath = "public/excel/candidates.xlsx";
+
+    // Create a link element
+    const link = document.createElement("a");
+    link.href = templatePath;
+    link.download = "candidates_template.xlsx"; // Name of the file to be downloaded
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+
   useEffect(() => {
     const fetchSemesters = async () => {
       try {
@@ -222,7 +236,7 @@ const NewFormComponent = () => {
       setCandidates([]);
       setHeaders([]);
       setFieldHeaderMapping({});
-      
+
     } catch (error) {
       toast.dismiss('uploading');
       toast.error(`Error uploading candidates: ${error.message}`, {
@@ -248,7 +262,7 @@ const NewFormComponent = () => {
       />
       <div className={`p-6 rounded-lg ${cardClass} mb-6`}>
         <h2 className={`text-xl font-semibold mb-6 ${textClass}`}>Bulk Upload Candidates</h2>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div>
             <label className={`block text-sm font-medium mb-2 ${textClass}`}>Semester</label>
@@ -283,26 +297,43 @@ const NewFormComponent = () => {
           </div>
         </div>
 
-        <div className="mb-6">
-          <label className={`block text-sm font-medium mb-2 ${textClass}`}>Upload Excel File</label>
-          <input
-            type="file"
-            accept=".csv, .xls, .xlsx"
-            onChange={handleFileChange}
-            className={`w-full rounded-lg px-4 py-2 ${inputClass} file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold ${
-              theme === 'dark'
-                ? 'file:bg-purple-600 file:text-white hover:file:bg-purple-700'
-                : 'file:bg-blue-600 file:text-white hover:file:bg-blue-700'
-            }`}
-          />
+        <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 mb-6 items-end">
+          {/* File Upload Section */}
+          <div className="col-span-12 sm:col-span-8">
+            <label className={`block text-sm font-medium mb-2 ${textClass}`}>
+              Upload Excel File
+            </label>
+            <input
+              type="file"
+              accept=".csv, .xls, .xlsx"
+              onChange={handleFileChange}
+              className={`w-full rounded-lg px-4 py-2 h-12 ${inputClass} file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold ${theme === 'dark'
+                  ? 'file:bg-purple-600 file:text-white hover:file:bg-purple-700'
+                  : 'file:bg-blue-600 file:text-white hover:file:bg-blue-700'
+                }`}
+            />
+          </div>
+
+          {/* Download Template Button */}
+          <div className="col-span-12 sm:col-span-4 flex sm:justify-end">
+            <button
+              type="button"
+              onClick={handleDownloadTemplate}
+              className={`w-full sm:w-auto px-6 py-2 h-12 rounded-lg font-semibold transition-colors ${buttonClass}`}
+            >
+              Download Template
+            </button>
+          </div>
         </div>
 
+
+
+
         <div className={`overflow-x-auto rounded-lg mb-6 ${cardClass}`}>
-          <table className={`w-full border-collapse ${
-            theme === 'dark' 
-              ? 'border-purple-500/20' 
-              : 'border border-blue-200'
-          }`}>
+          <table className={`w-full border-collapse ${theme === 'dark'
+            ? 'border-purple-500/20'
+            : 'border border-blue-200'
+            }`}>
             <thead className={tableHeaderClass}>
               <tr>
                 <th className={`px-6 py-3 text-left font-semibold ${tableCellClass}`}>Field</th>
@@ -313,8 +344,8 @@ const NewFormComponent = () => {
               {candidateFields.map((field, index) => (
                 <tr key={field.key} className={`
                   ${index > 0 && index % 2 === 1  // Start striping from second row
-                    ? theme === 'dark' 
-                      ? 'bg-purple-900/20' 
+                    ? theme === 'dark'
+                      ? 'bg-purple-900/20'
                       : 'bg-blue-50/50'
                     : ''
                   }
@@ -328,8 +359,8 @@ const NewFormComponent = () => {
                     >
                       <option value="">Select Header</option>
                       {headers
-                        .filter(header => !Object.values(fieldHeaderMapping).includes(header) || 
-                                        fieldHeaderMapping[field.key] === header)
+                        .filter(header => !Object.values(fieldHeaderMapping).includes(header) ||
+                          fieldHeaderMapping[field.key] === header)
                         .map((header, index) => (
                           <option key={index} value={header}>{header}</option>
                         ))}
