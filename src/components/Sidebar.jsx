@@ -21,6 +21,7 @@ import { SlCalender } from "react-icons/sl";
 import Logo from "./../assets/logo.png";
 import { PiStudentBold } from "react-icons/pi";
 import { IoShieldCheckmark } from "react-icons/io5";
+import { FaUsers } from "react-icons/fa";
 
 const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
   const location = useLocation();
@@ -29,7 +30,20 @@ const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
 
   const menuItems = [
     { path: "/dashboard", icon: <FiHome className="w-6 h-6" />, label: "Dashboard" },
-    { path: "/add-users", icon: < FiUsers  className="w-6 h-6" />, label: "Add Users" },
+    { path: "/users", icon: < FiUsers  className="w-6 h-6" />, label: "Users" ,
+      subItems: [
+        {
+          path: "/add-users",
+          icon: <FiUserPlus className="w-5 h-5" />,
+          label: "Add Users"
+        },
+        {
+          path: "/all-users",
+          icon: <FaUsers  className="w-5 h-5" />,
+          label: "All Users"
+        }
+      ]
+    },
     {
       path: "candidates", // parent path
       icon: <PiStudentBold className="w-6 h-6" />,

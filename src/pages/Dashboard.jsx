@@ -58,7 +58,7 @@ const Dashboard = () => {
   const quickActions = [
     { 
       label: 'Users', 
-      link: '/add-users',
+      link: '/users',
       icon: <FontAwesomeIcon icon={faUser} className={textClass}/>
     },
     { 
