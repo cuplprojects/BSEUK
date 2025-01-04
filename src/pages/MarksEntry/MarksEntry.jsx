@@ -9,7 +9,7 @@ import {
   getPaginationRowModel,
 } from "@tanstack/react-table";
 import { motion } from "framer-motion";
-import { useThemeStore } from '../../store/themeStore';
+import { useThemeStore } from "../../store/themeStore";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ConfirmationModal from "./ConfirmationModal";
@@ -34,34 +34,37 @@ const MarksEntry = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const inputRef = useRef(null);
   const [paper, setPaper] = useState({});
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [question, setQestion] = useState("");
   const theme = useThemeStore((state) => state.theme);
 
-  const cardClass = theme === 'dark'
-    ? 'bg-black/40 backdrop-blur-xl border-purple-500/20'
-    : 'bg-white border-blue-200 shadow-xl';
+  const cardClass =
+    theme === "dark"
+      ? "bg-black/40 backdrop-blur-xl border-purple-500/20"
+      : "bg-white border-blue-200 shadow-xl";
 
-  const textClass = theme === 'dark'
-    ? 'text-purple-100'
-    : 'text-blue-700';
+  const textClass = theme === "dark" ? "text-purple-100" : "text-blue-700";
 
-  const inputClass = theme === 'dark'
-    ? 'bg-purple-900/20 border-purple-500/20 text-purple-100 placeholder-purple-400 [&>option]:bg-purple-900 [&>option]:text-purple-100'
-    : 'bg-blue-50 border-blue-200 text-blue-600 placeholder-blue-400 [&>option]:bg-white [&>option]:text-blue-600';
+  const inputClass =
+    theme === "dark"
+      ? "bg-purple-900/20 border-purple-500/20 text-purple-100 placeholder-purple-400 [&>option]:bg-purple-900 [&>option]:text-purple-100"
+      : "bg-blue-50 border-blue-200 text-blue-600 placeholder-blue-400 [&>option]:bg-white [&>option]:text-blue-600";
 
-  const buttonClass = theme === 'dark'
-    ? 'bg-purple-600 hover:bg-purple-700 text-white'
-    : 'bg-blue-600 hover:bg-blue-700 text-white';
+  const buttonClass =
+    theme === "dark"
+      ? "bg-purple-600 hover:bg-purple-700 text-white"
+      : "bg-blue-600 hover:bg-blue-700 text-white";
 
-  const tableHeaderClass = theme === 'dark'
-    ? 'bg-purple-900/50 text-purple-100'
-    : 'bg-blue-50 text-blue-700';
+  const tableHeaderClass =
+    theme === "dark"
+      ? "bg-purple-900/50 text-purple-100"
+      : "bg-blue-50 text-blue-700";
 
-  const tableCellClass = theme === 'dark'
-    ? 'border-purple-500/20 hover:bg-purple-900/30'
-    : 'border-blue-200 hover:bg-blue-50';
+  const tableCellClass =
+    theme === "dark"
+      ? "border-purple-500/20 hover:bg-purple-900/30"
+      : "border-blue-200 hover:bg-blue-50";
 
   // Table Columns
   const getColumns = async (paperID) => {
@@ -107,9 +110,20 @@ const MarksEntry = () => {
     setIsModalOpen(true);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     setIsModalOpen(false);
-    toast.success("Marks locked successfully!")
+    try {
+      const datatosend = {
+        id: 0,
+        semID: selectedFilters.semID,
+        sesID: selectedFilters.sesID,
+        isLocked: true,
+      };
+      const response = await API.post("/LockStatus", datatosend);
+      toast.success("Marks locked successfully!");
+    } catch (error) {
+      toast.error(error);
+    }
   };
 
   const handleCancel = () => {
@@ -180,7 +194,9 @@ const MarksEntry = () => {
     if (selectedFilters.semID) {
       const fetchPapers = async () => {
         try {
-          const response = await API.get(`Papers/GetBySem/${selectedFilters.semID}`);
+          const response = await API.get(
+            `Papers/GetBySem/${selectedFilters.semID}`
+          );
           setPapers(response.data);
           setUpdatedMarks({});
           // toast.success("Papers loaded successfully!");
@@ -198,7 +214,9 @@ const MarksEntry = () => {
     setError(null);
     setCandidates([]);
     try {
-      const response = await API.get(`StudentsMarksObtaineds/GetStudentPaperMarks/${paperID}`);
+      const response = await API.get(
+        `StudentsMarksObtaineds/GetStudentPaperMarks/${paperID}`
+      );
       setCandidates(response.data);
       // toast.success(`${response.data.length} candidates loaded successfully!`);
     } catch (error) {
@@ -208,22 +226,34 @@ const MarksEntry = () => {
       setLoading(false);
     }
   };
-  const findNextEditableCell = (table, currentRowIndex, currentColIndex, reverse = false) => {
+  const findNextEditableCell = (
+    table,
+    currentRowIndex,
+    currentColIndex,
+    reverse = false
+  ) => {
     const rows = table.getRowModel().rows;
     const columns = table.getAllColumns();
 
     // Skip non-editable columns (candidateID, candidateRollNumber, candidateName)
     const editableColIndices = columns
       .map((col, index) => ({ index, id: col.id }))
-      .filter(col => !['candidateID', 'candidateRollNumber', 'candidateName'].includes(col.id))
-      .map(col => col.index);
+      .filter(
+        (col) =>
+          !["candidateID", "candidateRollNumber", "candidateName"].includes(
+            col.id
+          )
+      )
+      .map((col) => col.index);
 
     let nextRowIndex = currentRowIndex;
     let nextColIndex;
 
     if (reverse) {
       // Find the previous editable column index
-      nextColIndex = editableColIndices.filter(index => index < currentColIndex).pop();
+      nextColIndex = editableColIndices
+        .filter((index) => index < currentColIndex)
+        .pop();
 
       // If we're at the first column, move to the previous row
       if (nextColIndex === undefined) {
@@ -236,7 +266,9 @@ const MarksEntry = () => {
       }
     } else {
       // Forward navigation (existing logic)
-      nextColIndex = editableColIndices.find(index => index > currentColIndex);
+      nextColIndex = editableColIndices.find(
+        (index) => index > currentColIndex
+      );
 
       // If we're at the last column, move to the next row
       if (nextColIndex === undefined) {
@@ -251,16 +283,21 @@ const MarksEntry = () => {
 
     return {
       rowId: rows[nextRowIndex]?.id,
-      columnId: columns[nextColIndex]?.id
+      columnId: columns[nextColIndex]?.id,
     };
   };
   const handleKeyDown = (e, row, columnId, rowIndex, columnIndex) => {
-    if (e.key === 'Tab') {
+    if (e.key === "Tab") {
       e.preventDefault();
-      const nextCell = findNextEditableCell(table, rowIndex, columnIndex, e.shiftKey);
+      const nextCell = findNextEditableCell(
+        table,
+        rowIndex,
+        columnIndex,
+        e.shiftKey
+      );
       if (nextCell.rowId && nextCell.columnId) {
         setEditingCell(nextCell);
-        setInputValue(updatedMarks[nextCell.rowId]?.[nextCell.columnId] || '');
+        setInputValue(updatedMarks[nextCell.rowId]?.[nextCell.columnId] || "");
         setTimeout(() => {
           if (inputRef.current) {
             inputRef.current.focus();
@@ -268,8 +305,10 @@ const MarksEntry = () => {
           }
         }, 0);
       }
-    } else if (!/[0-9]/.test(e.key) &&
-      !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+    } else if (
+      !/[0-9]/.test(e.key) &&
+      !["Backspace", "Delete", "ArrowLeft", "ArrowRight"].includes(e.key)
+    ) {
       e.preventDefault();
     }
   };
@@ -280,7 +319,7 @@ const MarksEntry = () => {
     } else {
       setEditingCell({ rowId, columnId });
       // Get current value from updatedMarks
-      const currentValue = updatedMarks[rowId]?.[columnId] || '';
+      const currentValue = updatedMarks[rowId]?.[columnId] || "";
       setInputValue(currentValue);
       setTimeout(() => {
         if (inputRef.current) {
@@ -301,13 +340,14 @@ const MarksEntry = () => {
       return;
     }
 
-    const maxMarks = columnId === "theoryMarks"
-      ? paper.theoryPaperMaxMarks
-      : columnId === "internalMarks"
+    const maxMarks =
+      columnId === "theoryMarks"
+        ? paper.theoryPaperMaxMarks
+        : columnId === "internalMarks"
         ? paper.interalMaxMarks
         : columnId === "practicalMarks"
-          ? paper.practicalMaxMarks
-          : null;
+        ? paper.practicalMaxMarks
+        : null;
 
     if (maxMarks !== null && Number(value) > maxMarks) {
       toast.error(`Marks cannot exceed the maximum marks of ${maxMarks}!`);
@@ -324,35 +364,50 @@ const MarksEntry = () => {
     });
   };
 
-
   const handleSubmit = async () => {
     if (Object.keys(updatedMarks).length === 0) {
       toast.info("No marks to update!");
       return;
     }
 
-    const marksToSubmit = Object.keys(updatedMarks).map((rowId) => {
-      const { candidateId, theoryMarks, internalMarks, practicalMarks } = updatedMarks[rowId];
-      const candidateData = candidates.find((candidate) => candidate.candidateID === candidateId);
-      if (!candidateData) return null;
+    const marksToSubmit = Object.keys(updatedMarks)
+      .map((rowId) => {
+        const { candidateId, theoryMarks, internalMarks, practicalMarks } =
+          updatedMarks[rowId];
+        const candidateData = candidates.find(
+          (candidate) => candidate.candidateID === candidateId
+        );
+        if (!candidateData) return null;
 
-      return {
-        smoID: candidateData.smoID || 0,
-        candidateID: candidateData.candidateID,
-        paperID: selectedFilters.paperID,
-        theoryPaperMarks: theoryMarks !== undefined ? theoryMarks : candidateData.marks?.theoryPaperMarks || 0,
-        interalMarks: internalMarks !== undefined ? internalMarks : candidateData.marks?.interalMarks || 0,
-        practicalMarks: practicalMarks !== undefined ? practicalMarks : candidateData.marks?.practicalMarks || 0,
-      };
-    }).filter(Boolean);
+        return {
+          smoID: candidateData.smoID || 0,
+          candidateID: candidateData.candidateID,
+          paperID: selectedFilters.paperID,
+          theoryPaperMarks:
+            theoryMarks !== undefined
+              ? theoryMarks
+              : candidateData.marks?.theoryPaperMarks || 0,
+          interalMarks:
+            internalMarks !== undefined
+              ? internalMarks
+              : candidateData.marks?.interalMarks || 0,
+          practicalMarks:
+            practicalMarks !== undefined
+              ? practicalMarks
+              : candidateData.marks?.practicalMarks || 0,
+        };
+      })
+      .filter(Boolean);
 
     try {
       toast.promise(
-        Promise.all(marksToSubmit.map(mark => API.post('/StudentsMarksObtaineds', mark))),
+        Promise.all(
+          marksToSubmit.map((mark) => API.post("/StudentsMarksObtaineds", mark))
+        ),
         {
-          pending: 'Updating marks...',
-          success: 'Marks updated successfully! 👍',
-          error: 'Failed to update marks 🤯'
+          pending: "Updating marks...",
+          success: "Marks updated successfully!",
+          error: "Failed to update marks",
         }
       );
 
@@ -360,6 +415,50 @@ const MarksEntry = () => {
     } catch (error) {
       console.error("Error updating marks:", error);
       toast.error("Failed to update marks.");
+    }
+  };
+
+  const markAsAbsent = async (candidateID) => {
+    try {
+      const datatosend = {
+        smoID: 0,
+        candidateID: candidateID,
+        paperID: selectedFilters.paperID,
+        theoryPaperMarks: 0,
+        interalMarks: 0,
+        practicalMarks: 0,
+        totalMarks: 0,
+        isAbsent: true,
+      };
+      const response = await API.post(
+        `/StudentsMarksObtaineds`, datatosend
+      );
+      toast.success("Candidate marked as absent successfully!");
+      fetchCandidates(selectedFilters.paperID);
+    } catch (error) {
+      console.error("Error marking candidate as absent:", error);
+      toast.error("Failed to mark candidate as absent.");
+    }
+  };
+
+  const markAsNotAbsent = async (candidateID) => {
+    try {
+      const datatosend = {
+        smoID: 0,
+        candidateID: candidateID,
+        paperID: selectedFilters.paperID,
+        theoryPaperMarks: 0,
+        interalMarks: 0,
+        practicalMarks: 0,
+        totalMarks: 0,
+        isAbsent: false
+      };
+      const response = await API.post(`/StudentsMarksObtaineds`, datatosend);
+      toast.success("Candidate marked as present successfully!");
+      fetchCandidates(selectedFilters.paperID);
+    } catch (error) {
+      console.error("Error marking candidate as present:", error);
+      toast.error("Failed to mark candidate as present.");
     }
   };
 
@@ -379,10 +478,9 @@ const MarksEntry = () => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme={theme === 'dark' ? 'dark' : 'light'}
+        theme={theme === "dark" ? "dark" : "light"}
       />
       <div className="flex justify-between items-center">
-
         <h1 className={`text-3xl font-bold ${textClass}`}>Marks Entry</h1>
         {candidates.length > 0 && (
           <button
@@ -392,7 +490,8 @@ const MarksEntry = () => {
           >
             {/* <FaFileDownload className="inline mr-2" /> */}
             Lock Marks
-          </button>)}
+          </button>
+        )}
       </div>
 
       <div className={`p-6 rounded-lg ${cardClass}`}>
@@ -403,7 +502,10 @@ const MarksEntry = () => {
             <select
               className={`w-full md:w-1/3 rounded-lg px-4 py-2 ${inputClass}`}
               onChange={(e) =>
-                setSelectedFilters({ ...selectedFilters, sesID: e.target.value })
+                setSelectedFilters({
+                  ...selectedFilters,
+                  sesID: e.target.value,
+                })
               }
             >
               <option value="">Select Session</option>
@@ -418,7 +520,10 @@ const MarksEntry = () => {
             <select
               className={`w-full md:w-1/3 rounded-lg px-4 py-2 ${inputClass}`}
               onChange={(e) =>
-                setSelectedFilters({ ...selectedFilters, semID: e.target.value })
+                setSelectedFilters({
+                  ...selectedFilters,
+                  semID: e.target.value,
+                })
               }
               disabled={!selectedFilters.sesID}
             >
@@ -475,22 +580,20 @@ const MarksEntry = () => {
               {/* Rows per page selector - Fixed width */}
               <select
                 value={rowsPerPage}
-                onChange={e => {
+                onChange={(e) => {
                   const newSize = Number(e.target.value);
                   setRowsPerPage(newSize);
                   table.setPageSize(newSize);
                 }}
                 className={`w-full sm:w-48 rounded-lg px-4 py-2 ${inputClass}`}
               >
-                {[10, 20, 30, 50].map(pageSize => (
+                {[10, 20, 30, 50].map((pageSize) => (
                   <option key={pageSize} value={pageSize}>
                     Show {pageSize}
                   </option>
                 ))}
               </select>
             </div>
-
-
           )}
         </div>
       </div>
@@ -501,7 +604,9 @@ const MarksEntry = () => {
         ) : error ? (
           <div className="p-4 text-center text-red-500">{error}</div>
         ) : candidates.length === 0 ? (
-          <div className={`p-4 text-center ${textClass}`}>No candidates found for the selected paper.</div>
+          <div className={`p-4 text-center ${textClass}`}>
+            No candidates found for the selected paper.
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -521,7 +626,9 @@ const MarksEntry = () => {
                           )}
                           {header.column.getIsSorted() && (
                             <span className="ml-2">
-                              {header.column.getIsSorted() === "asc" ? " ↑" : " ↓"}
+                              {header.column.getIsSorted() === "asc"
+                                ? " ↑"
+                                : " ↓"}
                             </span>
                           )}
                         </div>
@@ -532,7 +639,10 @@ const MarksEntry = () => {
               </thead>
               <tbody>
                 {table.getRowModel().rows.map((row) => (
-                  <tr key={row.id} className={`border-b ${tableCellClass}`}>
+                  <tr 
+                    key={row.id} 
+                    className={`border-b ${tableCellClass}`}
+                  >
                     {row.getVisibleCells().map((cell) => {
                       const isEditing =
                         editingCell?.rowId === row.id &&
@@ -540,12 +650,18 @@ const MarksEntry = () => {
                       const isNonEditable =
                         cell.column.id === "candidateRollNumber" ||
                         cell.column.id === "candidateName" ||
-                        cell.column.id === "candidateID";
+                        cell.column.id === "candidateID" ||
+                        row.original.marks?.isAbsent;
                       return (
                         <td
                           key={cell.id}
-                          className={`p-3 border ${tableCellClass}`}
-                          onClick={() => !isNonEditable && handleCellClick(row.id, cell.column.id)}
+                          className={`p-3 border ${tableCellClass} ${
+                            row.original.marks?.isAbsent ? 'opacity-50 pointer-events-none' : ''
+                          }`}
+                          onClick={() =>
+                            !isNonEditable &&
+                            handleCellClick(row.id, cell.column.id)
+                          }
                         >
                           {isEditing && !isNonEditable ? (
                             <input
@@ -553,23 +669,51 @@ const MarksEntry = () => {
                               type="text"
                               value={inputValue}
                               onChange={(e) =>
-                                handleInputChange(e, row.id, cell.column.id, row.original.candidateID)
+                                handleInputChange(
+                                  e,
+                                  row.id,
+                                  cell.column.id,
+                                  row.original.candidateID
+                                )
                               }
                               className={`w-full px-2 py-1 rounded ${inputClass}`}
                               onBlur={() => setEditingCell(null)}
-                              onKeyDown={(e) => handleKeyDown(e, row, cell.column.id,
-                                table.getRowModel().rows.indexOf(row),
-                                row.getAllCells().indexOf(cell)
-                              )}
+                              onKeyDown={(e) =>
+                                handleKeyDown(
+                                  e,
+                                  row,
+                                  cell.column.id,
+                                  table.getRowModel().rows.indexOf(row),
+                                  row.getAllCells().indexOf(cell)
+                                )
+                              }
                             />
                           ) : (
                             <span className={textClass}>
-                              {updatedMarks[row.id]?.[cell.column.id] || cell.getValue()}
+                              {updatedMarks[row.id]?.[cell.column.id] ||
+                                cell.getValue()}
                             </span>
                           )}
                         </td>
                       );
                     })}
+                    <td className={`p-3 border ${tableCellClass}`}>
+                      {row.original.marks?.isAbsent ? (
+                        <button
+                          onClick={() => markAsNotAbsent(row.original.candidateID)}
+                          className={`px-4 py-2 rounded ${buttonClass}`}
+                        >
+                          Mark Present
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => markAsAbsent(row.original.candidateID)}
+                          className={`px-4 py-2 rounded ${buttonClass}`}
+                        >
+                          Mark Absent
+                        </button>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
