@@ -13,6 +13,7 @@ import { useThemeStore } from "../../store/themeStore";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ConfirmationModal from "./ConfirmationModal";
+import * as XLSX from 'xlsx';
 
 const MarksEntry = () => {
   const [sessions, setSessions] = useState([]);
@@ -430,14 +431,58 @@ const MarksEntry = () => {
         totalMarks: 0,
         isAbsent: true,
       };
-      const response = await API.post(
-        `/StudentsMarksObtaineds`, datatosend
-      );
+      const response = await API.post(`/StudentsMarksObtaineds`, datatosend);
       toast.success("Candidate marked as absent successfully!");
       fetchCandidates(selectedFilters.paperID);
     } catch (error) {
       console.error("Error marking candidate as absent:", error);
       toast.error("Failed to mark candidate as absent.");
+    }
+  };
+
+  const handleAudit = async () => {
+    try {
+      const datatosend = {
+        semID: selectedFilters.semID,
+        sesID: selectedFilters.sesID,
+      };
+      
+      const response = await API.post("StudentsMarksObtaineds/Audit", datatosend);
+      const auditData = response.data;
+
+      // Transform the data for Excel
+      const excelData = auditData.map(student => {
+        // Create base object with roll number
+        const rowData = {
+          'Roll Number': student.rollNumber
+        };
+        
+        // Add a column for each missing paper with "Missing" as the value
+        student.missingPapers.forEach((paper, index) => {
+          rowData[`Paper ${index + 1}`] = paper;
+        });
+
+        return rowData;
+      });
+
+      // Create worksheet
+      const ws = XLSX.utils.json_to_sheet(excelData);
+
+      // Create workbook
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Audit Report');
+
+      // Generate filename with current date
+      const date = new Date().toISOString().split('T')[0];
+      const fileName = `audit_report_${date}.xlsx`;
+
+      // Save file
+      XLSX.writeFile(wb, fileName);
+      
+      toast.success('Audit report downloaded successfully!');
+    } catch (error) {
+      console.error('Error generating audit report:', error);
+      toast.error('Failed to generate audit report');
     }
   };
 
@@ -451,7 +496,7 @@ const MarksEntry = () => {
         interalMarks: 0,
         practicalMarks: 0,
         totalMarks: 0,
-        isAbsent: false
+        isAbsent: false,
       };
       const response = await API.post(`/StudentsMarksObtaineds`, datatosend);
       toast.success("Candidate marked as present successfully!");
@@ -484,25 +529,23 @@ const MarksEntry = () => {
         <h1 className={`text-3xl font-bold ${textClass}`}>Marks Entry</h1>
         {candidates.length > 0 && (
           <div className="flex gap-4">
-          <button
-            type="button"
-            onClick={handleMarksLock}
-            className={`w-full sm:w-auto px-6 py-2 h-12 rounded-lg font-semibold transition-colors ${buttonClass}`}
-          >
-            {/* <FaFileDownload className="inline mr-2" /> */}
-            Lock Marks
-          </button>
-          <button
-            type="button"
-            onClick={() => console.log("Audit clicked")}
-            className={`w-full sm:w-auto px-6 py-2 h-12 rounded-lg font-semibold transition-colors ${buttonClass}`}
-          >
-            Audit
-          </button>
+            <button
+              type="button"
+              onClick={handleMarksLock}
+              className={`w-full sm:w-auto px-6 py-2 h-12 rounded-lg font-semibold transition-colors ${buttonClass}`}
+            >
+              {/* <FaFileDownload className="inline mr-2" /> */}
+              Lock Marks
+            </button>
+            <button
+              type="button"
+              onClick={handleAudit}
+              className={`w-full sm:w-auto px-6 py-2 h-12 rounded-lg font-semibold transition-colors ${buttonClass}`}
+            >
+              Audit
+            </button>
           </div>
         )}
-          
-
       </div>
 
       <div className={`p-6 rounded-lg ${cardClass}`}>
@@ -650,10 +693,7 @@ const MarksEntry = () => {
               </thead>
               <tbody>
                 {table.getRowModel().rows.map((row) => (
-                  <tr 
-                    key={row.id} 
-                    className={`border-b ${tableCellClass}`}
-                  >
+                  <tr key={row.id} className={`border-b ${tableCellClass}`}>
                     {row.getVisibleCells().map((cell) => {
                       const isEditing =
                         editingCell?.rowId === row.id &&
@@ -667,7 +707,9 @@ const MarksEntry = () => {
                         <td
                           key={cell.id}
                           className={`p-3 border ${tableCellClass} ${
-                            row.original.marks?.isAbsent ? 'opacity-50 pointer-events-none' : ''
+                            row.original.marks?.isAbsent
+                              ? "opacity-50 pointer-events-none"
+                              : ""
                           }`}
                           onClick={() =>
                             !isNonEditable &&
@@ -711,7 +753,9 @@ const MarksEntry = () => {
                     <td className={`p-3 border ${tableCellClass}`}>
                       {row.original.marks?.isAbsent ? (
                         <button
-                          onClick={() => markAsNotAbsent(row.original.candidateID)}
+                          onClick={() =>
+                            markAsNotAbsent(row.original.candidateID)
+                          }
                           className={`px-4 py-2 rounded ${buttonClass}`}
                         >
                           Mark Present
