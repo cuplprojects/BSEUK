@@ -5,7 +5,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faFileImport, faCalendarAlt, faChartBar, faCertificate, faPencilAlt, faBook, faBuilding,faList } from '@fortawesome/free-solid-svg-icons';
 import { PiCertificateFill } from "react-icons/pi";
 import { IoShieldCheckmark } from "react-icons/io5";
-
+import {
+  FiHome,
+  FiChevronDown,
+  FiChevronLeft,
+  FiChevronRight,
+  FiX,
+  FiUsers,
+  FiUserPlus,
+  FiUpload
+} from "react-icons/fi";
+import { IoPersonAddSharp } from "react-icons/io5";
 const Dashboard = () => {
   const theme = useThemeStore((state) => state.theme);
   
@@ -59,7 +69,7 @@ const Dashboard = () => {
     { 
       label: 'Add Candidates', 
       link: '/add-candidate',
-      icon: <FontAwesomeIcon icon={faUser} className={textClass}/>
+      icon: <IoPersonAddSharp  className={textClass}/>
     },
     { 
       label: 'Import Candidates', 

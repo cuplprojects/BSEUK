@@ -15,12 +15,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useThemeStore } from '../store/themeStore';
 import { useState } from 'react';
 import { PiCertificateBold } from "react-icons/pi";
-import { TbReportSearch } from "react-icons/tb";
 import { GiNotebook } from "react-icons/gi";
 import { MdGroups } from "react-icons/md";
 import { SlCalender } from "react-icons/sl";
 import Logo from "./../assets/logo.png";
 import { PiStudentBold } from "react-icons/pi";
+import { IoShieldCheckmark } from "react-icons/io5";
 
 const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
   const location = useLocation();
@@ -29,10 +29,10 @@ const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
 
   const menuItems = [
     { path: "/dashboard", icon: <FiHome className="w-6 h-6" />, label: "Dashboard" },
-    { path: "/add-users", icon: < PiStudentBold  className="w-6 h-6" />, label: "Add Users" },
+    { path: "/add-users", icon: < FiUsers  className="w-6 h-6" />, label: "Add Users" },
     {
       path: "candidates", // parent path
-      icon: <FiUsers className="w-6 h-6" />,
+      icon: <PiStudentBold className="w-6 h-6" />,
       label: "Candidates",
       subItems: [
         {
@@ -50,6 +50,7 @@ const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
     { path: "/marks-entry", icon: <GiNotebook className="w-6 h-6" />, label: "Marks Entry" },
     { path: "/certificate-generation", icon: <PiCertificateBold className="w-6 h-6" />, label: "Certificate" },
     { path: "/add-groups", icon: <MdGroups className="w-6 h-6" />, label: "Groups" },
+    { path: "/add-roles", icon: <IoShieldCheckmark className="w-6 h-6" />, label: "Roles" },
     { path: "/add-session", icon: <SlCalender className="w-6 h-6" />, label: "Sessions" },
     { path: "/add-institution", icon: <FaBuildingColumns className="w-6 h-6" />, label: "Institutions" },
     { path: "/add-category", icon: <FaList className="w-6 h-6" />, label: "Category" },
