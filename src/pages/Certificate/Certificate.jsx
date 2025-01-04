@@ -10,10 +10,11 @@ import { jsPDF } from "jspdf";
 import logo from "./../../assets/logo.png";
 import "./Certificate.css";
 import JSZip from "jszip";
-import { useThemeStore } from "../../store/themeStore";
+import * as XLSX from "xlsx";
 import { motion } from "framer-motion";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useThemeStore } from "../../store/themeStore";
 
 const Certificate = () => {
   const [sessions, setSessions] = useState([]);
@@ -60,20 +61,18 @@ const Certificate = () => {
         setSemesters(semestersResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Failed to load sessions and semesters");
+        setError("Failed to load sessions and semesters");
       }
     };
     fetchData();
   }, []);
 
-  useEffect(()=>{
-    
-  })
+  useEffect(() => {});
 
   const formatCertificateData = (result, result2) => {
     const studentDetails = result.studentDetails;
     const resultData = studentDetails.result;
-    const OverAllDetails = result2
+    const OverAllDetails = result2;
 
     if (studentDetails.sem === "First Semester") {
       return {
@@ -104,7 +103,7 @@ const Certificate = () => {
         result: resultData.remarks,
         watermarkImage: logo,
         headerImage: logo,
-        entersession: entersession
+        entersession: entersession,
       };
     } else if (studentDetails.sem === "Second Semester") {
       return {
@@ -135,7 +134,7 @@ const Certificate = () => {
         result: resultData.remarks,
         watermarkImage: logo,
         headerImage: logo,
-        entersession: entersession
+        entersession: entersession,
       };
     } else if (studentDetails.sem === "Third Semester") {
       return {
@@ -197,7 +196,7 @@ const Certificate = () => {
         watermarkImage: logo,
         headerImage: logo,
         entersession: entersession,
-        OverAllDetails
+        OverAllDetails,
       };
     }
   };
@@ -227,10 +226,8 @@ const Certificate = () => {
   };
 
   const handleSingleDownload = async () => {
-    if (!selectedSession || !selectedSemester || !rollNumber) {
-      toast.warning("Please fill in all fields", {
-        autoClose: 3000
-      });
+    if (!rollNumber || !selectedSession || !selectedSemester) {
+      setError("Please enter roll number and select session and semester");
       return;
     }
 
@@ -238,42 +235,47 @@ const Certificate = () => {
     setError(null);
 
     try {
-      const loadingToast = toast.loading("Generating certificate...");
-      
-      // Your existing certificate generation logic
-      const result = await API.get(
-        `Candidates/GetCertificateData/${selectedSession}/${selectedSemester}/${rollNumber}`
+      const datatosend = {
+        rollNumber: rollNumber,
+        sessionId: selectedSession,
+        semesterId: selectedSemester,
+      };
+      const auditresult = await API.post(
+        "/StudentsMarksObtaineds/AuditforSingle",
+        datatosend
       );
-      const result2 = await API.get(
-        `StudentsMarksObtaineds/GetStudentMarks/${selectedSession}/${selectedSemester}/${rollNumber}`
-      );
+      const data = auditresult.data;
+      if (data) {
+        const response = await API.post(
+          "/StudentsMarksObtaineds/GetStudentResult",
+          {
+            rollNumber,
+            sessionId: parseInt(selectedSession),
+            semesterId: parseInt(selectedSemester),
+          }
+        );
+        const response2 = await API.get(
+          `/StudentsMarksObtaineds/GetAllYearsResult/${rollNumber}`
+        );
 
-      if (!result.data || !result2.data) {
-        toast.update(loadingToast, {
-          render: "No data found for the given criteria",
-          type: "error",
-          isLoading: false,
-          autoClose: 3000
-        });
-        return;
+        const result = response.data;
+        const result2 = response2.data;
+
+        const pdf = await generatePDF(result, result2);
+        pdf.save(
+          `Certificate_${result.studentDetails.rollNo}_${result.studentDetails.sem}.pdf`
+        );
+        setShowPreview(false);
+      } else {
+        toast.warn(
+          "Insufficient Data to Generate Certificate, Please check not all marks have been entered for the Student"
+        );
       }
-
-      const formattedData = formatCertificateData(result.data, result2.data);
-      setCertificateData(formattedData);
-      setShowPreview(true);
-
-      // Generate PDF
-      await generatePDF();
-
-      toast.update(loadingToast, {
-        render: "Certificate downloaded successfully!",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000
-      });
-
     } catch (error) {
-      toast.error(error.message || "Failed to generate certificate");
+      console.error("Error generating certificate:", error);
+      setError(
+        "Failed to generate certificate. Please check the details and try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -281,70 +283,136 @@ const Certificate = () => {
 
   const handleBulkDownload = async () => {
     if (!selectedSession || !selectedSemester) {
-      toast.warning("Please select both session and semester", {
-        autoClose: 3000
-      });
+      setError("Please select both session and semester");
       return;
     }
-
-    // if (!entersession) {
-    //   toast.warning("Please enter the session for certificate", {
-    //     autoClose: 3000
-    //   });
-    //   return;
-    // }
-
+  
     setLoading(true);
-    const loadingToast = toast.loading("Generating certificates...");
-
+    setError(null);
+  
     try {
-      const response = await API.get(
-        `Candidates/GetAllCertificateData/${selectedSession}/${selectedSemester}`
-      );
-
-      if (!response.data || response.data.length === 0) {
-        toast.update(loadingToast, {
-          render: "No candidates found for the selected criteria",
-          type: "warning",
-          isLoading: false,
-          autoClose: 3000
-        });
-        return;
-      }
-
-      // Your existing bulk download logic
-      const zip = new JSZip();
-      let processedCount = 0;
-
-      for (const candidate of response.data) {
-        // Process each candidate
-        processedCount++;
-        const progress = Math.round((processedCount / response.data.length) * 100);
-        
-        toast.update(loadingToast, {
-          render: `Processing certificates: ${progress}%`,
-          type: "info",
-          isLoading: true
-        });
-
-        // Your existing certificate generation logic for each candidate
-      }
-
-      // Final success message
-      toast.update(loadingToast, {
-        render: `Successfully downloaded ${response.data.length} certificates!`,
-        type: "success",
-        isLoading: false,
-        autoClose: 3000
+      // Fetch the list of candidates
+      const candidatesResponse = await API.post("/Candidates/GetStudents", {
+        sesID: parseInt(selectedSession),
+        semID: parseInt(selectedSemester),
       });
-
+  
+      const candidates = candidatesResponse.data;
+      const pdfPromises = candidates.map(async (candidate) => {
+        try {
+          const datatosend = {
+            rollNumber: candidate.rollNumber,
+            sessionId: parseInt(selectedSession),
+            semesterId: parseInt(selectedSemester),
+          };
+          const auditresult = await API.post(
+            "/StudentsMarksObtaineds/AuditforSingle",
+            datatosend
+          );
+          const data = auditresult.data;
+          if (data) {
+            const resultResponse = await API.post(
+              "/StudentsMarksObtaineds/GetStudentResult",
+              {
+                rollNumber: candidate.rollNumber,
+                sessionId: parseInt(selectedSession),
+                semesterId: parseInt(selectedSemester),
+              }
+            );
+  
+            if (
+              resultResponse.data.message &&
+              resultResponse.data.message === "No scores found for the student."
+            ) {
+              console.warn(
+                `Skipping candidate ${candidate.rollNumber}: No scores found.`
+              );
+              return { rollNumber: candidate.rollNumber, reason: "No scores found" };
+            }
+  
+            const result = resultResponse.data;
+            const pdf = await generatePDF(result);
+            return { pdf, rollNumber: candidate.rollNumber };
+          } else {
+            console.warn(
+              `Skipping candidate ${candidate.rollNumber}: Incomplete data.`
+            );
+            return { rollNumber: candidate.rollNumber, reason: "Incomplete data" };
+          }
+        } catch (error) {
+          if (error.response && error.response.status === 404) {
+            console.warn(
+              `Skipping candidate ${candidate.rollNumber}: Data not found.`
+            );
+            return { rollNumber: candidate.rollNumber, reason: "Data not found" };
+          }
+          console.error(
+            `Error processing candidate ${candidate.rollNumber}:`,
+            error
+          );
+          throw error;
+        }
+      });
+  
+      const results = await Promise.all(pdfPromises);
+  
+      // Filter out valid PDFs and skipped candidates
+      const pdfs = results.filter((result) => result?.pdf);
+      const skipped = results.filter((result) => !result?.pdf);
+  
+      // Generate and download the ZIP file
+      if (pdfs.length > 0) {
+        const zip = new JSZip();
+        pdfs.forEach(({ pdf, rollNumber }) => {
+          zip.file(`Certificate_${rollNumber}.pdf`, pdf.output("blob"), {
+            binary: true,
+          });
+        });
+  
+        const zipBlob = await zip.generateAsync({ type: "blob" });
+        const zipUrl = URL.createObjectURL(zipBlob);
+        const a = document.createElement("a");
+        a.href = zipUrl;
+        a.download = `Certificates_${selectedSession}_${selectedSemester}.zip`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+  
+      // Generate the Excel file for skipped candidates
+      if (skipped.length > 0) {
+        const worksheet = XLSX.utils.json_to_sheet(
+          skipped.map((skip) => ({
+            RollNumber: skip.rollNumber,
+            Reason: skip.reason,
+          }))
+        );
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "SkippedCandidates");
+  
+        // Correct type usage: 'array' for generating blob
+        const excelBuffer = XLSX.write(workbook, {
+          bookType: "xlsx",
+          type: "array",
+        });
+  
+        const excelBlob = new Blob([excelBuffer], {
+          type: "application/octet-stream",
+        });
+  
+        const excelUrl = URL.createObjectURL(excelBlob);
+        const a = document.createElement("a");
+        a.href = excelUrl;
+        a.download = `SkippedCandidates_${selectedSession}_${selectedSemester}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+  
+      setError("Certificates and skipped list generated successfully!");
     } catch (error) {
-      toast.update(loadingToast, {
-        render: error.message || "Failed to generate certificates",
-        type: "error",
-        isLoading: false,
-        autoClose: 3000
-      });
+      console.error("Error generating certificates:", error);
+      setError("Failed to generate certificates. Please try again.");
     } finally {
       setLoading(false);
     }

@@ -113,11 +113,11 @@ const MarksEntry = () => {
   const table = useReactTable({
     data: candidates,
     columns: [
-      {
-        accessorKey: "candidateID",
-        header: "CandidateID",
-        enableSorting: true,
-      },
+      // {
+      //   accessorKey: "candidateID",
+      //   header: "CandidateID",
+      //   enableSorting: true,
+      // },
       {
         accessorKey: "candidateRollNumber",
         header: "Roll No",
@@ -267,16 +267,10 @@ const MarksEntry = () => {
     }).filter(Boolean);
 
     try {
-      toast.promise(
-        Promise.all(marksToSubmit.map(mark => API.post('/StudentsMarksObtaineds', mark))),
-        {
-          pending: 'Updating marks...',
-          success: 'Marks updated successfully! 👍',
-          error: 'Failed to update marks 🤯'
-        }
-      );
-      
-      await Promise.all(marksToSubmit.map(mark => API.post('/StudentsMarksObtaineds', mark)));
+      for (const mark of marksToSubmit) {
+        await API.post('/StudentsMarksObtaineds', mark);
+      }
+      alert("Marks updated successfully!");
       fetchCandidates(selectedFilters.paperID);
     } catch (error) {
       console.error("Error updating marks:", error);
