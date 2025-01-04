@@ -1,9 +1,259 @@
-import React from 'react'
+import React, { useState, useEffect, useMemo } from "react";
+import API from "../../../../services/api";
+import { useThemeStore } from "../../../../store/themeStore";
+import { motion } from "framer-motion";
+import {
+  useReactTable,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  flexRender,
+} from "@tanstack/react-table";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { FiSearch } from "react-icons/fi";
 
 const AllUsers = () => {
-  return (
-    <div>This is AllUsers.</div>
-  )
-}
+  const [users, setUsers] = useState([]);
+  const [roles, setRoles] = useState([]);
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [sorting, setSorting] = useState([]);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const theme = useThemeStore((state) => state.theme);
 
-export default AllUsers
+  // Theme classes
+  const cardClass = theme === 'dark'
+    ? 'bg-black/40 backdrop-blur-xl border-purple-500/20'
+    : 'bg-white border-blue-200 shadow-xl border';
+
+  const textClass = theme === 'dark'
+    ? 'text-purple-100'
+    : 'text-blue-700';
+
+  const inputClass = theme === 'dark'
+    ? 'bg-purple-900/20 border-purple-500/20 text-purple-100 placeholder-purple-400 [&:not(:disabled)]:hover:bg-purple-900/30'
+    : 'bg-blue-50 border-blue-200 text-blue-600 placeholder-blue-400 [&:not(:disabled)]:hover:bg-blue-100';
+
+  const buttonClass = theme === 'dark'
+    ? 'bg-purple-600 hover:bg-purple-700 text-white'
+    : 'bg-blue-600 hover:bg-blue-700 text-white';
+
+  const tableHeaderClass = theme === 'dark'
+    ? 'bg-purple-900/50 text-purple-100'
+    : 'bg-blue-50 text-blue-700';
+
+  useEffect(() => {
+    fetchUsers();
+    fetchRoles();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await API.get("/Users");
+      console.log("API Response:", response.data);
+      setUsers(response.data);
+      console.log("Users state after setting:", users);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      toast.error("Failed to load users");
+    }
+  };
+
+  const fetchRoles = async () => {
+    try {
+      const response = await API.get("/Roles");
+      setRoles(response.data);
+    } catch (error) {
+      toast.error("Failed to load roles");
+    }
+  };
+
+  const getRoleName = (roleId) => {
+    const role = roles.find(r => r.roleID === roleId);
+    return role ? role.roleName : 'Unknown Role';
+  };
+
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "userID",
+        header: () => "User ID",
+      },
+      {
+        accessorKey: "name",
+        header: () => "Username",
+      },
+      {
+        accessorKey: "email",
+        header: () => "Email",
+      },
+      {
+        accessorKey: "roleID",
+        header: () => "Role",
+        cell: (info) => getRoleName(info.getValue()),
+      },
+    ],
+    [roles]
+  );
+
+  const table = useReactTable({
+    data: users,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    state: {
+      sorting,
+      globalFilter,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageIndex: 0,
+      },
+    },
+    onSortingChange: setSorting,
+    onGlobalFilterChange: setGlobalFilter,
+  });
+
+  console.log({
+    usersLength: users.length,
+    tableRows: table.getRowModel().rows.length,
+    rawUsers: users,
+    tableData: table.getRowModel().rows,
+  });
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-4"
+    >
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        theme={theme === 'dark' ? 'dark' : 'light'}
+      />
+
+      {/* Search and Rows Per Page */}
+      <div className="flex flex-col sm:flex-row justify-between gap-4 mb-4">
+        <div className="relative">
+          <input
+            type="text"
+            value={globalFilter ?? ""}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+            className={`pl-10 pr-4 py-2 w-full sm:w-64 rounded-lg border focus:outline-none focus:ring-2 ${inputClass}`}
+            placeholder="Search users..."
+          />
+          <FiSearch className="absolute left-3 top-2.5 h-5 w-5 text-purple-400" />
+        </div>
+
+        <select
+          value={rowsPerPage}
+          onChange={(e) => setRowsPerPage(Number(e.target.value))}
+          className={`px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 ${inputClass}`}
+        >
+          <option value={10}>10 rows</option>
+          <option value={20}>20 rows</option>
+          <option value={30}>30 rows</option>
+          <option value={40}>40 rows</option>
+          <option value={50}>50 rows</option>
+        </select>
+      </div>
+
+      {/* Table */}
+      <div className={`rounded-lg overflow-hidden border ${cardClass}`}>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className={tableHeaderClass}>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th
+                      key={header.id}
+                      onClick={header.column.getToggleSortingHandler()}
+                      className={`p-4 text-left cursor-pointer select-none ${
+                        header.column.getCanSort() ? 'hover:bg-purple-900/30' : ''
+                      }`}
+                    >
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map((row, index) => (
+                <tr 
+                  key={row.id}
+                  className={`border-t border-purple-500/20 ${
+                    index % 2 === 0 
+                      ? theme === 'dark' 
+                        ? 'bg-purple-900/20' 
+                        : 'bg-blue-50/50'
+                      : ''
+                  }`}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id} className="p-4">
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        <div className="flex items-center justify-between p-4 border-t border-purple-500/20">
+          <div className="flex gap-2">
+            <button
+              onClick={() => table.setPageIndex(0)}
+              disabled={!table.getCanPreviousPage()}
+              className={`px-3 py-1 rounded-lg transition-colors ${buttonClass} disabled:opacity-50`}
+            >
+              {"<<"}
+            </button>
+            <button
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+              className={`px-3 py-1 rounded-lg transition-colors ${buttonClass} disabled:opacity-50`}
+            >
+              {"<"}
+            </button>
+            <button
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+              className={`px-3 py-1 rounded-lg transition-colors ${buttonClass} disabled:opacity-50`}
+            >
+              {">"}
+            </button>
+            <button
+              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+              disabled={!table.getCanNextPage()}
+              className={`px-3 py-1 rounded-lg transition-colors ${buttonClass} disabled:opacity-50`}
+            >
+              {">>"}
+            </button>
+          </div>
+          <span className={`flex items-center gap-1 ${textClass}`}>
+            <div>Page</div>
+            <strong>
+              {table.getState().pagination.pageIndex + 1} of{" "}
+              {table.getPageCount()}
+            </strong>
+          </span>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+export default AllUsers;
