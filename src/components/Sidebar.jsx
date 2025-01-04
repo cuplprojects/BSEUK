@@ -9,6 +9,7 @@ import {
   FiUserPlus,
   FiUpload
 } from "react-icons/fi";
+import { FaBuildingColumns } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
 import { useThemeStore } from '../store/themeStore';
 import { useState } from 'react';
@@ -46,7 +47,8 @@ const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
     { path: "/marks-entry", icon: <GiNotebook className="w-6 h-6" />, label: "Marks Entry" },
     { path: "/certificate-generation", icon: <PiCertificateBold className="w-6 h-6" />, label: "Certificate" },
     { path: "/add-groups", icon: <MdGroups className="w-6 h-6" />, label: "Groups" },
-    { path: "/add-session", icon: <SlCalender className="w-6 h-6" />, label: "Sessions" }
+    { path: "/add-session", icon: <SlCalender className="w-6 h-6" />, label: "Sessions" },
+    { path: "/add-institution", icon: <FaBuildingColumns className="w-6 h-6" />, label: "Institutions" }
   ];
 
   const toggleExpand = (path) => {
