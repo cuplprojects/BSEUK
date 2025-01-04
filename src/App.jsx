@@ -14,12 +14,14 @@ import { useUserStore } from './store/useUsertoken';
 import AddSession from './pages/Masters/Session/AddSession';
 import Institution from './pages/Masters/Institution/Institution';
 import Category from './pages/Masters/Category/Category';
-import AddUsers from './pages/Masters/Users/AddUsers';
-
+import AddUsers from './pages/Masters/Users/Tabs/AddUsers';
+import Roles from './pages/Masters/Roles/Roles';
+import Users from './pages/Masters/Users/Users';
+import AllUsers from './pages/Masters/Users/Tabs/AllUsers';
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, isLoading } = useUserStore();
-  
+
   // Show loading state while checking authentication
   if (isLoading) {
     return (
@@ -28,22 +30,22 @@ const ProtectedRoute = ({ children }) => {
       </div>
     );
   }
-  
+
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-  
+
   return children;
 };
 
 // Public Route Component
 const PublicRoute = ({ children }) => {
   const { isAuthenticated } = useUserStore();
-  
+
   if (isAuthenticated) {
     return <Navigate to="/dashboard" replace />;
   }
-  
+
   return children;
 };
 
@@ -57,21 +59,21 @@ function App() {
     <Router>
       <Routes>
         {/* Public Routes - with redirect if authenticated */}
-        <Route 
-          path="/login" 
+        <Route
+          path="/login"
           element={
             <PublicRoute>
               <Login />
             </PublicRoute>
-          } 
+          }
         />
-        <Route 
-          path="/forgot-password" 
+        <Route
+          path="/forgot-password"
           element={
             <PublicRoute>
               <Forgot />
             </PublicRoute>
-          } 
+          }
         />
 
         {/* Protected Routes */}
@@ -87,17 +89,22 @@ function App() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="profile" element={<Profile />} />
           <Route path="change-password" element={<ChangePassword />} />
-          
+
           {/* Pages Routes */}
           <Route path="marks-entry" element={<MarksEntry />} />
           <Route path="certificate-generation" element={<Certificate />} />
-          <Route path ="add-candidate" element = {<AddCandidate/>} />
-          <Route path ="add-bulkcandidates" element = {<BulkCandidates/>} />
-          <Route path ="add-groups" element = {<Groups/>} />
-          <Route path ="add-session" element = {<AddSession/>} />
-          <Route path ="add-institution" element = {<Institution/>} />
-          <Route path ="add-category" element = {<Category/>} />
-          <Route path ="add-users" element = {<AddUsers/>} />
+          <Route path="add-candidate" element={<AddCandidate />} />
+          <Route path="add-bulkcandidates" element={<BulkCandidates />} />
+          <Route path="add-groups" element={<Groups />} />
+          <Route path="add-session" element={<AddSession />} />
+          <Route path="add-institution" element={<Institution />} />
+          <Route path="add-category" element={<Category />} />
+          <Route path="users">
+            <Route index element={<Navigate to="add" replace />} />
+            <Route path="add" element={<Users />} />
+            <Route path="all" element={<Users />} />
+            <Route path="access" element={<Users />} />
+          </Route>
           {/* Catch all route for authenticated users */}
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>

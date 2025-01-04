@@ -4,7 +4,18 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faFileImport, faCalendarAlt, faChartBar, faCertificate, faPencilAlt, faBook, faBuilding,faList } from '@fortawesome/free-solid-svg-icons';
 import { PiCertificateFill } from "react-icons/pi";
-
+import { IoShieldCheckmark } from "react-icons/io5";
+import {
+  FiHome,
+  FiChevronDown,
+  FiChevronLeft,
+  FiChevronRight,
+  FiX,
+  FiUsers,
+  FiUserPlus,
+  FiUpload
+} from "react-icons/fi";
+import { IoPersonAddSharp } from "react-icons/io5";
 const Dashboard = () => {
   const theme = useThemeStore((state) => state.theme);
   
@@ -46,14 +57,19 @@ const Dashboard = () => {
 
   const quickActions = [
     { 
-      label: 'Add Candidate', 
-      link: '/add-candidate',
+      label: 'Users', 
+      link: '/users/add',
       icon: <FontAwesomeIcon icon={faUser} className={textClass}/>
     },
     { 
-      label: 'Add Users', 
-      link: '/add-users',
-      icon: <FontAwesomeIcon icon={faUser} className={textClass}/>
+      label: 'Roles', 
+      link: '/add-roles',
+      icon: <IoShieldCheckmark className={textClass}/>
+    },
+    { 
+      label: 'Add Candidates', 
+      link: '/add-candidate',
+      icon: <IoPersonAddSharp  className={textClass}/>
     },
     { 
       label: 'Import Candidates', 
