@@ -341,7 +341,6 @@ const MarksEntry = () => {
         }
       );
       
-      await Promise.all(marksToSubmit.map(mark => API.post('/StudentsMarksObtaineds', mark)));
       fetchCandidates(selectedFilters.paperID);
     } catch (error) {
       console.error("Error updating marks:", error);
