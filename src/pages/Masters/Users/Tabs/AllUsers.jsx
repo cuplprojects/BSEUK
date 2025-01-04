@@ -48,8 +48,12 @@ const AllUsers = () => {
     : 'bg-blue-600 hover:bg-blue-700 text-white';
 
   const tableHeaderClass = theme === 'dark'
-    ? 'bg-purple-900/20 text-purple-100'
+    ? 'bg-purple-900/50 text-purple-100'
     : 'bg-blue-50 text-blue-700';
+
+  const tableCellClass = theme === 'dark'
+    ? 'border-purple-500/20 hover:bg-purple-900/30'
+    : 'border-blue-200 hover:bg-blue-50';
 
   useEffect(() => {
     fetchUsers();
@@ -215,49 +219,52 @@ const AllUsers = () => {
       </div>
 
       {/* Table */}
-      <div className={`rounded-lg overflow-hidden border ${cardClass}`}>
+      <div className={`rounded-lg overflow-hidden ${cardClass}`}>
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="min-w-full">
             <thead className={tableHeaderClass}>
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <th
-                      key={header.id}
-                      className={`px-6 py-3 text-left ${textClass}`}
+                    <th 
+                      key={header.id} 
+                      onClick={header.column.getToggleSortingHandler()}
+                      className={`p-4 text-left font-semibold ${
+                        header.column.getCanSort() ? 'cursor-pointer' : ''
+                      } ${tableCellClass}`}
                     >
-                      {header.isPlaceholder ? null : (
-                        <div
-                          {...{
-                            className: header.column.getCanSort()
-                              ? "cursor-pointer select-none flex items-center gap-2"
-                              : "",
-                            onClick: header.column.getToggleSortingHandler(),
-                          }}
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                        </div>
-                      )}
+                      <div className="flex items-center justify-between">
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {header.column.getCanSort() && (
+                          <span className="ml-2">
+                            {{
+                              asc: ' ↑',
+                              desc: ' ↓',
+                            }[header.column.getIsSorted()] ?? ''}
+                          </span>
+                        )}
+                      </div>
                     </th>
                   ))}
                 </tr>
               ))}
             </thead>
             <tbody>
-              {table.getRowModel().rows.map((row) => (
-                <tr
-                  key={row.id}
-                  className={`border-t ${
-                    theme === "dark" ? "border-gray-700" : "border-gray-200"
-                  } hover:bg-gray-100 dark:hover:bg-gray-800`}
+              {table.getRowModel().rows.map((row, index) => (
+                <tr 
+                  key={row.id} 
+                  className={`${textClass} ${tableCellClass} ${
+                    index % 2 === 0 
+                      ? theme === 'dark' 
+                        ? 'bg-purple-900/20' 
+                        : 'bg-blue-50/50'
+                      : ''
+                  }`}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <td
-                      key={cell.id}
-                      className={`px-6 py-4 ${textClass}`}
+                    <td 
+                      key={cell.id} 
+                      className="p-4"
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
