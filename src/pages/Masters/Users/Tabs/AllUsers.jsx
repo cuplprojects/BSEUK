@@ -14,6 +14,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FiSearch, FiEdit2 } from "react-icons/fi";
 import { Dialog } from "@headlessui/react";
+import { GoPasskeyFill } from "react-icons/go";
+import { useNavigate } from "react-router-dom";
 
 const AllUsers = () => {
   const [users, setUsers] = useState([]);
@@ -29,6 +31,7 @@ const AllUsers = () => {
     email: "",
     roleID: 0
   });
+  const navigate = useNavigate();
 
   // Theme classes
   const cardClass = theme === 'dark'
@@ -127,24 +130,38 @@ const AllUsers = () => {
         id: "actions",
         header: "Actions",
         cell: ({ row }) => (
-          <button
-            onClick={() => {
-              setEditingUser(row.original);
-              setEditForm({
-                name: row.original.name,
-                email: row.original.email,
-                roleID: row.original.roleID
-              });
-              setIsEditModalOpen(true);
-            }}
-            className={`p-2 rounded-lg ${buttonClass}`}
-          >
-            <FiEdit2 className="w-4 h-4" />
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                setEditingUser(row.original);
+                setEditForm({
+                  name: row.original.name,
+                  email: row.original.email,
+                  roleID: row.original.roleID
+                });
+                setIsEditModalOpen(true);
+              }}
+              className={`p-2 rounded-lg ${buttonClass}`}
+            >
+              <FiEdit2 className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => {
+                navigate('/users/access', { 
+                  state: { 
+                    userData: row.original 
+                  }
+                });
+              }}
+              className="p-2 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-white"
+            >
+              <GoPasskeyFill className="w-4 h-4" />
+            </button>
+          </div>
         ),
       },
     ],
-    [roles, buttonClass]
+    [roles, buttonClass, navigate]
   );
 
   const table = useReactTable({

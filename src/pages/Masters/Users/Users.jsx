@@ -13,13 +13,19 @@ const Users = () => {
   const location = useLocation();
   const theme = useThemeStore((state) => state.theme);
 
-  // Set active tab based on current route
+  // Check if we have user data for UserAccess
+  const hasUserData = location.pathname === '/users/access' && location.state?.userData;
+
   useEffect(() => {
+    // Redirect to add if trying to access UserAccess without data
+    if (location.pathname === '/users/access' && !location.state?.userData) {
+      navigate('/users/add');
+    }
     // Default to add-users when landing on /users
     if (location.pathname === '/users') {
       navigate('/users/add');
     }
-  }, [location.pathname, navigate]);
+  }, [location.pathname, navigate, location.state]);
 
   // Determine active tab from current route
   const activeTab = location.pathname === '/users/all'
@@ -62,12 +68,17 @@ const Users = () => {
       id: 'access',
       label: 'User Access',
       icon: <GoPasskeyFill className="w-5 h-5" />,
-      path: '/users/access'
+      path: '/users/access',
+      disabled: !hasUserData
     }
   ];
 
   const handleTabChange = (tab) => {
-    navigate(tab.path);
+    if (!tab.disabled) {
+      navigate(tab.path, { 
+        state: tab.id === 'access' ? location.state : undefined 
+      });
+    }
   };
 
   return (
@@ -89,8 +100,15 @@ const Users = () => {
             <button
               key={tab.id}
               onClick={() => handleTabChange(tab)}
+              disabled={tab.disabled}
               className={`px-6 py-4 relative flex items-center gap-2 font-medium transition-colors ${
-                activeTab === tab.id ? activeTabClass : inactiveTabClass
+                activeTab === tab.id 
+                  ? activeTabClass 
+                  : tab.disabled
+                    ? theme === 'dark'
+                      ? 'text-purple-700 cursor-not-allowed'
+                      : 'text-blue-300 cursor-not-allowed'
+                    : inactiveTabClass
               }`}
             >
               {tab.icon}
