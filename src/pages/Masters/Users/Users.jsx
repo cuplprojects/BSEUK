@@ -3,7 +3,9 @@ import { motion } from "framer-motion";
 import { useThemeStore } from "../../../store/themeStore";
 import AddUsers from './Tabs/AddUsers';
 import AllUsers from './Tabs/AllUsers';
+import UserAccess from './Tabs/UserAccess';
 import { FiUsers, FiUserPlus } from "react-icons/fi";
+import { GoPasskeyFill } from "react-icons/go";
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const Users = () => {
@@ -20,7 +22,11 @@ const Users = () => {
   }, [location.pathname, navigate]);
 
   // Determine active tab from current route
-  const activeTab = location.pathname === '/all-users' ? 'all' : 'add';
+  const activeTab = location.pathname === '/all-users' 
+    ? 'all' 
+    : location.pathname === '/user-access'
+      ? 'access'
+      : 'add';
 
   // Theme classes
   const cardClass = theme === 'dark'
@@ -41,16 +47,22 @@ const Users = () => {
 
   const tabs = [
     {
+      id: 'add',
+      label: 'Add User',
+      icon: <FiUserPlus className="w-5 h-5" />,
+      path: '/add-users'
+    },
+    {
       id: 'all',
       label: 'All Users',
       icon: <FiUsers className="w-5 h-5" />,
       path: '/all-users'
     },
     {
-      id: 'add',
-      label: 'Add User',
-      icon: <FiUserPlus className="w-5 h-5" />,
-      path: '/add-users'
+      id: 'access',
+      label: 'User Access',
+      icon: <GoPasskeyFill className="w-5 h-5" />,
+      path: '/user-access'
     }
   ];
 
@@ -106,7 +118,12 @@ const Users = () => {
           transition={{ duration: 0.2 }}
           key={activeTab}
         >
-          {location.pathname === '/all-users' ? <AllUsers /> : <AddUsers />}
+          {location.pathname === '/all-users' 
+            ? <AllUsers /> 
+            : location.pathname === '/user-access'
+              ? <UserAccess />
+              : <AddUsers />
+          }
         </motion.div>
       </div>
     </motion.div>

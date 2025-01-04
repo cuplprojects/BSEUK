@@ -104,6 +104,7 @@ function App() {
           <Route path="all-users" element={<Users />} />
           <Route path ="add-users" element = {<AddUsers/>} />
           <Route path ="add-roles" element = {<Roles/>} />
+          <Route path="user-access" element={<Users />} />
           {/* Catch all route for authenticated users */}
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>
