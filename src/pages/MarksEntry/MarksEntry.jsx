@@ -32,11 +32,11 @@ const MarksEntry = () => {
   const [sorting, setSorting] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const inputRef = useRef(null);
-  const [paper,setPaper] = useState({});
+  const [paper, setPaper] = useState({});
   const [inputValue, setInputValue] = useState('');
 
   const theme = useThemeStore((state) => state.theme);
-  
+
   const cardClass = theme === 'dark'
     ? 'bg-black/40 backdrop-blur-xl border-purple-500/20'
     : 'bg-white border-blue-200 shadow-xl';
@@ -193,6 +193,71 @@ const MarksEntry = () => {
       setLoading(false);
     }
   };
+  const findNextEditableCell = (table, currentRowIndex, currentColIndex, reverse = false) => {
+    const rows = table.getRowModel().rows;
+    const columns = table.getAllColumns();
+
+    // Skip non-editable columns (candidateID, candidateRollNumber, candidateName)
+    const editableColIndices = columns
+      .map((col, index) => ({ index, id: col.id }))
+      .filter(col => !['candidateID', 'candidateRollNumber', 'candidateName'].includes(col.id))
+      .map(col => col.index);
+
+    let nextRowIndex = currentRowIndex;
+    let nextColIndex;
+
+    if (reverse) {
+      // Find the previous editable column index
+      nextColIndex = editableColIndices.filter(index => index < currentColIndex).pop();
+
+      // If we're at the first column, move to the previous row
+      if (nextColIndex === undefined) {
+        nextRowIndex--;
+        // If we're at the first row, wrap to the last row
+        if (nextRowIndex < 0) {
+          nextRowIndex = rows.length - 1;
+        }
+        nextColIndex = editableColIndices[editableColIndices.length - 1];
+      }
+    } else {
+      // Forward navigation (existing logic)
+      nextColIndex = editableColIndices.find(index => index > currentColIndex);
+
+      // If we're at the last column, move to the next row
+      if (nextColIndex === undefined) {
+        nextRowIndex++;
+        // If we're at the last row, wrap to the first row
+        if (nextRowIndex >= rows.length) {
+          nextRowIndex = 0;
+        }
+        nextColIndex = editableColIndices[0];
+      }
+    }
+
+    return {
+      rowId: rows[nextRowIndex]?.id,
+      columnId: columns[nextColIndex]?.id
+    };
+  };
+  const handleKeyDown = (e, row, columnId, rowIndex, columnIndex) => {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const nextCell = findNextEditableCell(table, rowIndex, columnIndex, e.shiftKey);
+      if (nextCell.rowId && nextCell.columnId) {
+        setEditingCell(nextCell);
+        setInputValue(updatedMarks[nextCell.rowId]?.[nextCell.columnId] || '');
+        setTimeout(() => {
+          if (inputRef.current) {
+            inputRef.current.focus();
+            inputRef.current.select();
+          }
+        }, 0);
+      }
+    } else if (!/[0-9]/.test(e.key) &&
+      !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+      e.preventDefault();
+    }
+  };
 
   const handleCellClick = (rowId, columnId) => {
     if (editingCell?.rowId === rowId && editingCell?.columnId === columnId) {
@@ -214,21 +279,21 @@ const MarksEntry = () => {
   const handleInputChange = (e, rowId, columnId, candidateId) => {
     const value = e.target.value;
     setInputValue(value);
-  
+
     // Ensure only numeric values are allowed
     if (!/^\d*$/.test(value)) {
       toast.warning("Please enter numbers only!");
       return;
     }
-  
-    const maxMarks = columnId === "theoryMarks" 
+
+    const maxMarks = columnId === "theoryMarks"
       ? paper.theoryPaperMaxMarks
       : columnId === "internalMarks"
-      ? paper.interalMaxMarks
-      : columnId === "practicalMarks"
-      ? paper.practicalMaxMarks
-      : null;
-  
+        ? paper.interalMaxMarks
+        : columnId === "practicalMarks"
+          ? paper.practicalMaxMarks
+          : null;
+
     if (maxMarks !== null && Number(value) > maxMarks) {
       toast.error(`Marks cannot exceed the maximum marks of ${maxMarks}!`);
       return;
@@ -267,10 +332,16 @@ const MarksEntry = () => {
     }).filter(Boolean);
 
     try {
-      for (const mark of marksToSubmit) {
-        await API.post('/StudentsMarksObtaineds', mark);
-      }
-      alert("Marks updated successfully!");
+      toast.promise(
+        Promise.all(marksToSubmit.map(mark => API.post('/StudentsMarksObtaineds', mark))),
+        {
+          pending: 'Updating marks...',
+          success: 'Marks updated successfully! 👍',
+          error: 'Failed to update marks 🤯'
+        }
+      );
+      
+      await Promise.all(marksToSubmit.map(mark => API.post('/StudentsMarksObtaineds', mark)));
       fetchCandidates(selectedFilters.paperID);
     } catch (error) {
       console.error("Error updating marks:", error);
@@ -296,7 +367,7 @@ const MarksEntry = () => {
         pauseOnHover
         theme={theme === 'dark' ? 'dark' : 'light'}
       />
-      
+
       <h1 className={`text-3xl font-bold ${textClass}`}>Marks Entry</h1>
 
       <div className={`p-6 rounded-lg ${cardClass}`}>
@@ -459,19 +530,14 @@ const MarksEntry = () => {
                               }
                               className={`w-full px-2 py-1 rounded ${inputClass}`}
                               onBlur={() => setEditingCell(null)}
-                              onKeyDown={(e) => {
-                                if (
-                                  !/[0-9]/.test(e.key) &&
-                                  !["Backspace", "Delete", "ArrowLeft", "ArrowRight"].includes(e.key)
-                                ) {
-                                  e.preventDefault();
-                                }
-                              }}
+                              onKeyDown={(e) => handleKeyDown(e, row, cell.column.id,
+                                table.getRowModel().rows.indexOf(row),
+                                row.getAllCells().indexOf(cell)
+                              )}
                             />
                           ) : (
                             <span className={textClass}>
-                              {updatedMarks[row.id]?.[cell.column.id] ||
-                                cell.getValue()}
+                              {updatedMarks[row.id]?.[cell.column.id] || cell.getValue()}
                             </span>
                           )}
                         </td>

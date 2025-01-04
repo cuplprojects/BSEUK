@@ -1,6 +1,9 @@
 import { motion } from 'framer-motion';
 import { useThemeStore } from '../store/themeStore';
 import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser, faFileImport, faCalendarAlt, faChartBar, faCertificate, faPencilAlt, faBook, faBuilding,faList } from '@fortawesome/free-solid-svg-icons';
+
 
 const Dashboard = () => {
   const theme = useThemeStore((state) => state.theme);
@@ -8,6 +11,11 @@ const Dashboard = () => {
   const cardClass = theme === 'dark'
     ? 'bg-black/40 backdrop-blur-xl border border-purple-500/20 hover:bg-purple-900/20'
     : 'bg-white border-blue-200 shadow-xl hover:shadow-2xl hover:bg-blue-50/50';
+
+    const textClass = theme === 'dark'
+    ? 'text-purple-100'
+    : 'text-blue-700';
+
 
   // Enhanced animation variants
   const containerVariants = {
@@ -40,38 +48,48 @@ const Dashboard = () => {
     { 
       label: 'Add Candidate', 
       link: '/add-candidate',
-      icon: '👤'
+      icon: <FontAwesomeIcon icon={faUser} className={textClass}/>
     },
     { 
       label: 'Import Candidates', 
       link: '/add-bulkcandidates',
-      icon: '📥'
+      icon: <FontAwesomeIcon icon={faFileImport} className={textClass}/>
     },
     { 
       label: 'Create Session', 
       link: '/add-session',
-      icon: '📅'
+      icon: <FontAwesomeIcon icon={faCalendarAlt} className={textClass}/>
     },
-    // { 
-    //   label: 'View Reports', 
-    //   link: '/report',
-    //   icon: '📊'
-    // },
+    { 
+      label: 'View Reports', 
+      link: '/report',
+      icon: <FontAwesomeIcon icon={faChartBar} className={textClass}/>
+    },
     { 
       label: 'Certificate', 
       link: '/certificate-generation',
-      icon: '📜'
+      icon: <FontAwesomeIcon icon={faCertificate} className={textClass}/>
     },
     { 
       label: 'Marks Entry', 
       link: '/marks-entry',
-      icon: '✏️'
+      icon: <FontAwesomeIcon icon={faPencilAlt} className={textClass}/>
     },
     { 
       label: 'Add Groups', 
       link: '/add-groups',
-      icon: '📚'
+      icon: <FontAwesomeIcon icon={faBook} className={textClass}/>
     },
+    { 
+      label: 'Add Institution', 
+      link: '/add-groups',
+      icon: <FontAwesomeIcon icon={faBuilding} className={textClass}/>
+    },
+    { 
+      label: 'Add Category', 
+      link: '/add-category',
+      icon: <FontAwesomeIcon icon={faList} className={textClass}/>
+    }
   ];
 
   return (
