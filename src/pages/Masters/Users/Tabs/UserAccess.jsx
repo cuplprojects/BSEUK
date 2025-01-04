@@ -16,7 +16,7 @@ const UserAccess = () => {
   const [userAuth, setUserAuth] = useState({
     uaID: 0,
     userID: userData?.userID || 0,
-    userName: userData?.name || '',
+    userName: userData?.userName || '',
     password: ''
   });
 

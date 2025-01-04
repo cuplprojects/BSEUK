@@ -66,9 +66,28 @@ const AllUsers = () => {
   const fetchUsers = async () => {
     try {
       const response = await API.get("/Users");
-      console.log("API Response:", response.data);
-      setUsers(response.data);
-      console.log("Users state after setting:", users);
+      const usersData = response.data;
+      
+      // Fetch UserAuth data for each user
+      const usersWithAuth = await Promise.all(
+        usersData.map(async (user) => {
+          try {
+            const authResponse = await API.get(`/UserAuths/${user.userID}`);
+            return {
+              ...user,
+              userName: authResponse.data.userName
+            };
+          } catch (error) {
+            // If no auth found, set userName as "Not Set"
+            return {
+              ...user,
+              userName: "Not Set"
+            };
+          }
+        })
+      );
+      
+      setUsers(usersWithAuth);
     } catch (error) {
       console.error("Error fetching users:", error);
       toast.error("Failed to load users");
@@ -115,6 +134,10 @@ const AllUsers = () => {
       },
       {
         accessorKey: "name",
+        header: () => "Name",
+      },
+      {
+        accessorKey: "userName",
         header: () => "Username",
       },
       {
@@ -124,7 +147,7 @@ const AllUsers = () => {
       {
         accessorKey: "roleID",
         header: () => "Role",
-        cell: (info) => getRoleName(info.getValue()),
+        cell: ({ row }) => getRoleName(row.original.roleID),
       },
       {
         id: "actions",
@@ -346,11 +369,11 @@ const AllUsers = () => {
             theme === 'dark' ? 'border border-purple-500/30' : ''
           }`}>
             <Dialog.Title className={`text-lg font-medium mb-4 ${textClass}`}>
-              Edit User
+              Edit User - {editingUser?.userName}
             </Dialog.Title>
             <form onSubmit={handleEditSubmit} className="space-y-4">
               <div>
-                <label className={`block mb-2 ${textClass}`}>Username</label>
+                <label className={`block mb-2 ${textClass}`}>Name</label>
                 <input
                   type="text"
                   value={editForm.name}

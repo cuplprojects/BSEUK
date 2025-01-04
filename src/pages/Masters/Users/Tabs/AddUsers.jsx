@@ -3,10 +3,12 @@ import { motion } from "framer-motion";
 import { useThemeStore } from "../../../../store/themeStore";
 import API from "../../../../services/api";
 import { toast, ToastContainer } from "react-toastify";
+import { useNavigate } from 'react-router-dom';
 import "react-toastify/dist/ReactToastify.css";
 
 const AddUsers = () => {
   const theme = useThemeStore((state) => state.theme);
+  const navigate = useNavigate();
   const [roles, setRoles] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
@@ -98,40 +100,44 @@ const AddUsers = () => {
 
     setIsLoading(true);
     try {
-      await API.post("/Users", {
-        userID: 0,
+      const response = await API.post("/Users", {
         name: formData.name,
         email: formData.email,
         roleID: parseInt(formData.roleID)
       });
 
       toast.success("User added successfully");
-      setFormData({ name: '', email: '', roleID: '' });
+      
+      // Navigate to UserAccess with the new user's data
+      navigate('/users/access', {
+        state: {
+          userData: {
+            userID: response.data.userID, // Assuming the API returns the new user's ID
+            name: response.data.name,
+            email: response.data.email,
+            roleID: response.data.roleID
+          }
+        }
+      });
+
     } catch (error) {
+      console.error("Error adding user:", error);
       toast.error("Failed to add user");
-    } finally {
-      setIsLoading(false);
+      setIsLoading(false); // Only reset loading if there's an error
     }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     
-    // Real-time username validation
     if (name === 'name') {
-      // Only allow alphanumeric characters
-      const sanitizedValue = value.replace(/[^a-zA-Z0-9]/g, '');
-      setFormData(prev => ({
-        ...prev,
-        [name]: sanitizedValue
-      }));
-      return;
+      // Only allow alphabets and spaces
+      if (value === '' || /^[A-Za-z\s]+$/.test(value)) {
+        setFormData(prev => ({ ...prev, [name]: value }));
+      }
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
     }
-
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
   };
 
   return (
@@ -168,11 +174,8 @@ const AddUsers = () => {
               value={formData.name}
               onChange={handleChange}
               className={`w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 ${inputClass}`}
-              placeholder="Enter username (letters and numbers only)"
+              placeholder="Enter name"
             />
-            <p className={`text-xs ${theme === 'dark' ? 'text-purple-300' : 'text-blue-600'}`}>
-              Username must contain both letters and numbers, no special characters allowed
-            </p>
           </div>
 
           {/* Email Field */}
