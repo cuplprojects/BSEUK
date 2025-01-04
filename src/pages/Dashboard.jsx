@@ -51,6 +51,11 @@ const Dashboard = () => {
       icon: <FontAwesomeIcon icon={faUser} className={textClass}/>
     },
     { 
+      label: 'Add Users', 
+      link: '/add-users',
+      icon: <FontAwesomeIcon icon={faUser} className={textClass}/>
+    },
+    { 
       label: 'Import Candidates', 
       link: '/add-bulkcandidates',
       icon: <FontAwesomeIcon icon={faFileImport} className={textClass}/>
