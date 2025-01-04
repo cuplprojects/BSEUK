@@ -336,12 +336,11 @@ const MarksEntry = () => {
         Promise.all(marksToSubmit.map(mark => API.post('/StudentsMarksObtaineds', mark))),
         {
           pending: 'Updating marks...',
-          success: 'Marks updated successfully!',
-          error: 'Failed to update marks'
+          success: 'Marks updated successfully! 👍',
+          error: 'Failed to update marks 🤯'
         }
       );
-
-      await Promise.all(marksToSubmit.map(mark => API.post('/StudentsMarksObtaineds', mark)));
+      
       fetchCandidates(selectedFilters.paperID);
     } catch (error) {
       console.error("Error updating marks:", error);

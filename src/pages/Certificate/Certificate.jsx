@@ -61,7 +61,7 @@ const Certificate = () => {
         setSemesters(semestersResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Failed to load sessions and semesters");
+        setError("Failed to load sessions and semesters");
       }
     };
     fetchData();
