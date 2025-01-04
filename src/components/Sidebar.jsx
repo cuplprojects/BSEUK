@@ -20,6 +20,7 @@ import { GiNotebook } from "react-icons/gi";
 import { MdGroups } from "react-icons/md";
 import { SlCalender } from "react-icons/sl";
 import Logo from "./../assets/logo.png";
+import { PiStudentBold } from "react-icons/pi";
 
 const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
   const location = useLocation();
@@ -28,6 +29,7 @@ const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
 
   const menuItems = [
     { path: "/dashboard", icon: <FiHome className="w-6 h-6" />, label: "Dashboard" },
+    { path: "/add-users", icon: < PiStudentBold  className="w-6 h-6" />, label: "Add Users" },
     {
       path: "candidates", // parent path
       icon: <FiUsers className="w-6 h-6" />,
