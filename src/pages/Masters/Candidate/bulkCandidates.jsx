@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import * as XLSX from "xlsx";
 import API from "./../../../services/api";
 import { useThemeStore } from "../../../store/themeStore";
+import { FaFileDownload } from "react-icons/fa";
 
 const NewFormComponent = () => {
   const [semesters, setSemesters] = useState([]);
@@ -321,7 +322,8 @@ const NewFormComponent = () => {
               onClick={handleDownloadTemplate}
               className={`w-full sm:w-auto px-6 py-2 h-12 rounded-lg font-semibold transition-colors ${buttonClass}`}
             >
-              Download Template
+              <FaFileDownload className="inline mr-2" />
+              Template
             </button>
           </div>
         </div>

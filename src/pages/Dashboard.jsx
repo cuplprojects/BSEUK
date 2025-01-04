@@ -3,7 +3,7 @@ import { useThemeStore } from '../store/themeStore';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faFileImport, faCalendarAlt, faChartBar, faCertificate, faPencilAlt, faBook, faBuilding,faList } from '@fortawesome/free-solid-svg-icons';
-
+import { PiCertificateFill } from "react-icons/pi";
 
 const Dashboard = () => {
   const theme = useThemeStore((state) => state.theme);
@@ -68,7 +68,7 @@ const Dashboard = () => {
     { 
       label: 'Certificate', 
       link: '/certificate-generation',
-      icon: <FontAwesomeIcon icon={faCertificate} className={textClass}/>
+      icon: <PiCertificateFill className={textClass}/>
     },
     { 
       label: 'Marks Entry', 
