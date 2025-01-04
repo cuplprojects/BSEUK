@@ -7,6 +7,7 @@ import { useUserStore } from '../../store/useUsertoken';
 const SimpleProfile = () => {
   const theme = useThemeStore((state) => state.theme);
   const { userId, userDetails, setUserDetails } = useUserStore();
+  const [userName, setUserName] = useState('Not Set');
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -23,6 +24,22 @@ const SimpleProfile = () => {
     fetchUserDetails();
   }, [userId, userDetails, setUserDetails]);
 
+  // New effect to fetch UserAuth details
+  useEffect(() => {
+    const fetchUserAuth = async () => {
+      if (userId) {
+        try {
+          const response = await API.get(`/UserAuths/${userId}`);
+          setUserName(response.data.userName);
+        } catch (error) {
+          console.error('Error fetching user auth:', error);
+          setUserName('Not Set');
+        }
+      }
+    };
+
+    fetchUserAuth();
+  }, [userId]);
 
   const [profile] = useState({
     name: userDetails?.name,
@@ -40,19 +57,21 @@ const SimpleProfile = () => {
   return (
     <div className="max-w-md mx-auto mt-10">
       <div className={`border rounded-2xl p-6 ${cardClass}`}>
-        <h1 className="text-2xl font-bold mb-4 text-center flex items-center justify-center gap-2">
-          <span
-            className={`w-8 h-8 rounded-full flex items-center justify-center text-lg font-semibold ${theme === 'dark' ? 'bg-purple-500/20 text-purple-300' : 'bg-blue-500/20 text-blue-600'
-              }`}
-          >
-            {userDetails?.name?.charAt(0)?.toUpperCase() || '?'}
-          </span>
-          <span>{profile.name}</span>
-        </h1>
-
-        <div className="flex items-center gap-3 justify-center">
-          <FiMail className={`w-5 h-5 ${subTextClass}`} />
-          <span className={subTextClass}>{profile.email}</span>
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-2 flex items-center justify-center gap-2">
+            <span
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-lg font-semibold ${theme === 'dark' ? 'bg-purple-500/20 text-purple-300' : 'bg-blue-500/20 text-blue-600'
+                }`}
+            >
+              {userDetails?.name?.charAt(0)?.toUpperCase() || '?'}
+            </span>
+            <span>{profile.name}</span>
+          </h1>
+          <div className="text-lg mb-4">{userName}</div>
+          <div className="flex items-center gap-3 justify-center">
+            <FiMail className={`w-5 h-5 ${subTextClass}`} />
+            <span className={subTextClass}>{profile.email}</span>
+          </div>
         </div>
       </div>
     </div>
