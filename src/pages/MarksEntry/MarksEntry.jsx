@@ -260,9 +260,9 @@ const MarksEntry = () => {
         smoID: candidateData.smoID || 0,
         candidateID: candidateData.candidateID,
         paperID: selectedFilters.paperID,
-        theoryPaperMarks: theoryMarks || 0,
-        interalMarks: internalMarks || 0,
-        practicalMarks: practicalMarks || 0,
+        theoryPaperMarks: theoryMarks !== undefined ? theoryMarks : candidateData.marks?.theoryPaperMarks || 0,
+        interalMarks: internalMarks !== undefined ? internalMarks : candidateData.marks?.interalMarks || 0,
+        practicalMarks: practicalMarks !== undefined ? practicalMarks : candidateData.marks?.practicalMarks || 0,
       };
     }).filter(Boolean);
 

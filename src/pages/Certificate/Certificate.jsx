@@ -104,6 +104,7 @@ const Certificate = () => {
         result: resultData.remarks,
         watermarkImage: logo,
         headerImage: logo,
+        entersession: entersession
       };
     } else if (studentDetails.sem === "Second Semester") {
       return {
@@ -134,6 +135,7 @@ const Certificate = () => {
         result: resultData.remarks,
         watermarkImage: logo,
         headerImage: logo,
+        entersession: entersession
       };
     } else if (studentDetails.sem === "Third Semester") {
       return {
@@ -194,6 +196,7 @@ const Certificate = () => {
         result: resultData.remarks,
         watermarkImage: logo,
         headerImage: logo,
+        entersession: entersession,
         OverAllDetails
       };
     }
