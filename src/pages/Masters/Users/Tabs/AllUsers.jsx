@@ -129,9 +129,18 @@ const AllUsers = () => {
   const columns = useMemo(
     () => [
       {
-        accessorKey: "userID",
-        header: () => "User ID",
+        id: 'srNo',
+        header: () => "Sr.No",
+        cell: ({ row, table }) => {
+          const currentPage = table.getState().pagination.pageIndex;
+          const rowsPerPage = table.getState().pagination.pageSize;
+          return currentPage * rowsPerPage + row.index + 1;
+        },
       },
+      // {
+      //   accessorKey: "userID",
+      //   header: () => "User ID",
+      // },
       {
         accessorKey: "name",
         header: () => "Name",
