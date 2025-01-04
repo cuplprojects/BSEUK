@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 import { useThemeStore } from '../../store/themeStore';
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ConfirmationModal from "./ConfirmationModal";
 
 const MarksEntry = () => {
   const [sessions, setSessions] = useState([]);
@@ -34,7 +35,8 @@ const MarksEntry = () => {
   const inputRef = useRef(null);
   const [paper, setPaper] = useState({});
   const [inputValue, setInputValue] = useState('');
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [question, setQestion] = useState("");
   const theme = useThemeStore((state) => state.theme);
 
   const cardClass = theme === 'dark'
@@ -100,6 +102,19 @@ const MarksEntry = () => {
     return [];
   };
 
+  const handleMarksLock = () => {
+    setQestion("Are you sure you want to lock the marks?");
+    setIsModalOpen(true);
+  };
+
+  const handleConfirm = () => {
+    setIsModalOpen(false);
+    toast.success("Marks locked successfully!")
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
     const fetchColumns = async () => {
@@ -340,7 +355,7 @@ const MarksEntry = () => {
           error: 'Failed to update marks 🤯'
         }
       );
-      
+
       fetchCandidates(selectedFilters.paperID);
     } catch (error) {
       console.error("Error updating marks:", error);
@@ -366,8 +381,19 @@ const MarksEntry = () => {
         pauseOnHover
         theme={theme === 'dark' ? 'dark' : 'light'}
       />
+      <div className="flex justify-between items-center">
 
-      <h1 className={`text-3xl font-bold ${textClass}`}>Marks Entry</h1>
+        <h1 className={`text-3xl font-bold ${textClass}`}>Marks Entry</h1>
+        {candidates.length > 0 && (
+          <button
+            type="button"
+            onClick={handleMarksLock}
+            className={`w-full sm:w-auto px-6 py-2 h-12 rounded-lg font-semibold transition-colors ${buttonClass}`}
+          >
+            {/* <FaFileDownload className="inline mr-2" /> */}
+            Lock Marks
+          </button>)}
+      </div>
 
       <div className={`p-6 rounded-lg ${cardClass}`}>
         <div className="flex flex-col space-y-4">
@@ -463,6 +489,8 @@ const MarksEntry = () => {
                 ))}
               </select>
             </div>
+
+
           )}
         </div>
       </div>
@@ -598,6 +626,12 @@ const MarksEntry = () => {
             </div>
           </div>
         )}
+        <ConfirmationModal
+          question={question}
+          isOpen={isModalOpen}
+          onConfirm={handleConfirm}
+          onCancel={handleCancel}
+        />
       </div>
     </motion.div>
   );
