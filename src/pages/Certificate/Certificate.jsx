@@ -67,7 +67,6 @@ const Certificate = () => {
     fetchData();
   }, []);
 
-    
   useEffect(() => {});
 
   const formatCertificateData = (result, result2) => {
