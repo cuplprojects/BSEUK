@@ -113,11 +113,11 @@ const MarksEntry = () => {
   const table = useReactTable({
     data: candidates,
     columns: [
-      {
-        accessorKey: "candidateID",
-        header: "CandidateID",
-        enableSorting: true,
-      },
+      // {
+      //   accessorKey: "candidateID",
+      //   header: "CandidateID",
+      //   enableSorting: true,
+      // },
       {
         accessorKey: "candidateRollNumber",
         header: "Roll No",
@@ -336,8 +336,8 @@ const MarksEntry = () => {
         Promise.all(marksToSubmit.map(mark => API.post('/StudentsMarksObtaineds', mark))),
         {
           pending: 'Updating marks...',
-          success: 'Marks updated successfully! 👍',
-          error: 'Failed to update marks 🤯'
+          success: 'Marks updated successfully!',
+          error: 'Failed to update marks'
         }
       );
 
