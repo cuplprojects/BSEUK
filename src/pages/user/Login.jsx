@@ -71,16 +71,21 @@ const Login = () => {
               </div>
             </div>
             <div className="relative p-12 text-white z-10 flex flex-col justify-center h-full">
-              <div className="">
-                <img 
-                src={Logo}
-                alt="BSEUK Logo" 
-                width="400"
-                height="400"
-                className=" mb-8 mx-auto bg-white rounded-lg"
+              <motion.div
+                initial={false}
+                animate={{
+                  width: "12rem",
+                  height: "12rem"
+                }}
+                transition={{ duration: 0.2 }}
+                className="mx-auto mb-8 rounded-full"
+                style={{
+                  backgroundImage: `url(${Logo})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundColor: "white"
+                }}
               />
-              </div>
-            
               <h1 className="text-4xl font-bold mb-6">Welcome to UBSE Portal</h1>
               <p className="text-lg opacity-90">
                 Log in to access your account and manage your Account, or sign up to create a new account.
@@ -91,6 +96,14 @@ const Login = () => {
           {/* Right side with form */}
           <div className="w-full md:w-1/2 p-8 sm:p-12 bg-white flex items-center">
             <div className="max-w-md mx-auto w-full">
+              {/* Add welcome text for mobile screens */}
+              <motion.h1 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="md:hidden text-2xl font-bold mb-6 text-center text-blue-600"
+              >
+                Welcome to UBSE Portal
+              </motion.h1>
               <h2 className="text-2xl sm:text-3xl font-bold mb-8 text-center bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">
                 LOGIN
               </h2>

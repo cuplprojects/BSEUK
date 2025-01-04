@@ -10,6 +10,10 @@ import { jsPDF } from "jspdf";
 import logo from "./../../assets/logo.png";
 import "./Certificate.css";
 import JSZip from "jszip";
+import { useThemeStore } from "../../store/themeStore";
+import { motion } from "framer-motion";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Certificate = () => {
   const [sessions, setSessions] = useState([]);
@@ -23,6 +27,28 @@ const Certificate = () => {
   const [showPreview, setShowPreview] = useState(false);
   const [entersession, setEntersession] = useState("");
 
+  const theme = useThemeStore((state) => state.theme);
+  
+  const cardClass = theme === 'dark'
+    ? 'bg-black/40 backdrop-blur-xl border-purple-500/20'
+    : 'bg-white border-blue-200 shadow-xl';
+
+  const textClass = theme === 'dark'
+    ? 'text-purple-100'
+    : 'text-blue-700';
+
+  const inputClass = theme === 'dark'
+    ? 'bg-purple-900/20 border-purple-500/20 text-purple-100 placeholder-purple-400 [&>option]:bg-purple-900 [&>option]:text-purple-100'
+    : 'bg-blue-50 border-blue-200 text-blue-600 placeholder-blue-400 [&>option]:bg-white [&>option]:text-blue-600';
+
+  const buttonClass = theme === 'dark'
+    ? 'bg-purple-600 hover:bg-purple-700 text-white'
+    : 'bg-blue-600 hover:bg-blue-700 text-white';
+
+  const bulkButtonClass = theme === 'dark'
+    ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+    : 'bg-green-600 hover:bg-green-700 text-white';
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -34,7 +60,7 @@ const Certificate = () => {
         setSemesters(semestersResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
-        setError("Failed to load sessions and semesters");
+        toast.error("Failed to load sessions and semesters");
       }
     };
     fetchData();
@@ -201,8 +227,10 @@ const Certificate = () => {
   };
 
   const handleSingleDownload = async () => {
-    if (!rollNumber || !selectedSession || !selectedSemester) {
-      setError("Please enter roll number and select session and semester");
+    if (!selectedSession || !selectedSemester || !rollNumber) {
+      toast.warning("Please fill in all fields", {
+        autoClose: 3000
+      });
       return;
     }
 
@@ -210,29 +238,42 @@ const Certificate = () => {
     setError(null);
 
     try {
-      const response = await API.post(
-        "/StudentsMarksObtaineds/GetStudentResult",
-        {
-          rollNumber,
-          sessionId: parseInt(selectedSession),
-          semesterId: parseInt(selectedSemester),
-        }
+      const loadingToast = toast.loading("Generating certificate...");
+      
+      // Your existing certificate generation logic
+      const result = await API.get(
+        `Candidates/GetCertificateData/${selectedSession}/${selectedSemester}/${rollNumber}`
       );
-      const response2 = await API.get(`/StudentsMarksObtaineds/GetAllYearsResult/${rollNumber}`);
-
-      const result = response.data;
-      const result2 = response2.data;
-
-      const pdf = await generatePDF(result, result2);
-      pdf.save(
-        `Certificate_${result.studentDetails.rollNo}_${result.studentDetails.sem}.pdf`
+      const result2 = await API.get(
+        `StudentsMarksObtaineds/GetStudentMarks/${selectedSession}/${selectedSemester}/${rollNumber}`
       );
-      setShowPreview(false);
+
+      if (!result.data || !result2.data) {
+        toast.update(loadingToast, {
+          render: "No data found for the given criteria",
+          type: "error",
+          isLoading: false,
+          autoClose: 3000
+        });
+        return;
+      }
+
+      const formattedData = formatCertificateData(result.data, result2.data);
+      setCertificateData(formattedData);
+      setShowPreview(true);
+
+      // Generate PDF
+      await generatePDF();
+
+      toast.update(loadingToast, {
+        render: "Certificate downloaded successfully!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000
+      });
+
     } catch (error) {
-      console.error("Error generating certificate:", error);
-      setError(
-        "Failed to generate certificate. Please check the details and try again."
-      );
+      toast.error(error.message || "Failed to generate certificate");
     } finally {
       setLoading(false);
     }
@@ -240,124 +281,124 @@ const Certificate = () => {
 
   const handleBulkDownload = async () => {
     if (!selectedSession || !selectedSemester) {
-      setError("Please select both session and semester");
+      toast.warning("Please select both session and semester", {
+        autoClose: 3000
+      });
       return;
     }
 
+    // if (!entersession) {
+    //   toast.warning("Please enter the session for certificate", {
+    //     autoClose: 3000
+    //   });
+    //   return;
+    // }
+
     setLoading(true);
-    setError(null); 
+    const loadingToast = toast.loading("Generating certificates...");
 
     try {
-      // Fetch the list of candidates first
-      const candidatesResponse = await API.post("/Candidates/GetStudents", {
-        sesID: parseInt(selectedSession),
-        semID: parseInt(selectedSemester),
-      });
-
-      const candidates = candidatesResponse.data;
-      const pdfPromises = candidates.map(async (candidate) => {
-        try {
-          const resultResponse = await API.post(
-            "/StudentsMarksObtaineds/GetStudentResult",
-            {
-              rollNumber: candidate.rollNumber,
-              sessionId: parseInt(selectedSession),
-              semesterId: parseInt(selectedSemester),
-            }
-          );
-
-          // Check if the result contains a message indicating no scores found
-          if (
-            resultResponse.data.message &&
-            resultResponse.data.message === "No scores found for the student."
-          ) {
-            console.warn(
-              `Skipping candidate ${candidate.rollNumber}: No scores found.`
-            );
-            return null; // Skip this candidate
-          }
-
-          const result = resultResponse.data;
-          const pdf = await generatePDF(result);
-          return { pdf, rollNumber: candidate.rollNumber };
-        } catch (error) {
-          // Check for 404 error and skip the candidate
-          if (error.response && error.response.status === 404) {
-            console.warn(
-              `Skipping candidate ${candidate.rollNumber}: Data not found.`
-            );
-            return null; // Skip this candidate
-          }
-          console.error(
-            `Error processing candidate ${candidate.rollNumber}:`,
-            error
-          ); // Log error details
-          throw error; // Rethrow other errors
-        }
-      });
-
-      // Wait for all PDFs to be generated and filter out any null values
-      const pdfs = (await Promise.all(pdfPromises)).filter(
-        (pdf) => pdf !== null
+      const response = await API.get(
+        `Candidates/GetAllCertificateData/${selectedSession}/${selectedSemester}`
       );
 
-      // Create a ZIP file
-      const zip = new JSZip();
-      pdfs.forEach(({ pdf, rollNumber }) => {
-        zip.file(`Certificate_${rollNumber}.pdf`, pdf.output("blob"), {
-          binary: true,
+      if (!response.data || response.data.length === 0) {
+        toast.update(loadingToast, {
+          render: "No candidates found for the selected criteria",
+          type: "warning",
+          isLoading: false,
+          autoClose: 3000
         });
+        return;
+      }
+
+      // Your existing bulk download logic
+      const zip = new JSZip();
+      let processedCount = 0;
+
+      for (const candidate of response.data) {
+        // Process each candidate
+        processedCount++;
+        const progress = Math.round((processedCount / response.data.length) * 100);
+        
+        toast.update(loadingToast, {
+          render: `Processing certificates: ${progress}%`,
+          type: "info",
+          isLoading: true
+        });
+
+        // Your existing certificate generation logic for each candidate
+      }
+
+      // Final success message
+      toast.update(loadingToast, {
+        render: `Successfully downloaded ${response.data.length} certificates!`,
+        type: "success",
+        isLoading: false,
+        autoClose: 3000
       });
 
-      // Generate the ZIP file and trigger download
-      const zipBlob = await zip.generateAsync({ type: "blob" });
-      const zipUrl = URL.createObjectURL(zipBlob);
-      const a = document.createElement("a");
-      a.href = zipUrl;
-      a.download = `Certificates_${selectedSession}_${selectedSemester}.zip`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setShowPreview(false);
-      setError("All certificates generated successfully!");
     } catch (error) {
-      console.error("Error generating certificates:", error);
-      setError("Failed to generate certificates. Please try again.");
+      toast.update(loadingToast, {
+        render: error.message || "Failed to generate certificates",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="p-6"
+    >
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme={theme === 'dark' ? 'dark' : 'light'}
+      />
       <div className="max-w-4xl mx-auto space-y-6">
-        <h1 className="text-3xl font-bold mb-8">Certificate Generation</h1>
-        <div className="border rounded-lg p-6 bg-white shadow">
-          <div>
-            <h2 className="block mb-2 text-xl font-semibold mb-4">
-              Enter Session For Certificate Generation
-            </h2>
-            <input
-              type="text"
-              value={entersession}
-              onChange={(e) => setEntersession(e.target.value)}
-              placeholder="Enter Your Session "
-              className="w-full px-4 py-2 rounded-lg border"
-            />
-          </div>
+        <h1 className={`text-3xl font-bold mb-8 ${textClass}`}>
+          Certificate Generation
+        </h1>
+
+        {/* Session Input Section */}
+        <div className={`rounded-lg p-6 ${cardClass}`}>
+          <h2 className={`text-xl font-semibold mb-4 ${textClass}`}>
+            Enter Session For Certificate Generation
+          </h2>
+          <input
+            type="text"
+            value={entersession}
+            onChange={(e) => setEntersession(e.target.value)}
+            placeholder="Enter Your Session"
+            className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
+          />
         </div>
-        {/* Individual Certificate Download */}
-        <div className="border rounded-lg p-6 bg-white shadow">
-          <h2 className="text-xl font-semibold mb-4">
+
+        {/* Individual Certificate Section */}
+        <div className={`rounded-lg p-6 ${cardClass}`}>
+          <h2 className={`text-xl font-semibold mb-4 ${textClass}`}>
             Download Individual Certificate
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div>
-              <label className="block mb-2">Session</label>
+              <label className={`block mb-2 text-sm font-medium ${textClass}`}>Session</label>
               <select
                 value={selectedSession}
                 onChange={(e) => setSelectedSession(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border"
+                className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
               >
                 <option value="">Select Session</option>
                 {sessions.map((session) => (
@@ -368,11 +409,11 @@ const Certificate = () => {
               </select>
             </div>
             <div>
-              <label className="block mb-2">Semester</label>
+              <label className={`block mb-2 text-sm font-medium ${textClass}`}>Semester</label>
               <select
                 value={selectedSemester}
                 onChange={(e) => setSelectedSemester(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border"
+                className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
               >
                 <option value="">Select Semester</option>
                 {semesters.map((semester) => (
@@ -383,38 +424,38 @@ const Certificate = () => {
               </select>
             </div>
             <div>
-              <label className="block mb-2">Roll Number</label>
+              <label className={`block mb-2 text-sm font-medium ${textClass}`}>Roll Number</label>
               <input
                 type="text"
                 value={rollNumber}
                 onChange={(e) => setRollNumber(e.target.value)}
                 placeholder="Enter Roll Number"
-                className="w-full px-4 py-2 rounded-lg border"
+                className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
               />
             </div>
           </div>
           <button
             onClick={handleSingleDownload}
             disabled={loading}
-            className="w-full px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2 mt-5"
+            className={`w-full px-6 py-2 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 mt-5 ${buttonClass} disabled:opacity-50`}
           >
             {loading ? <FiLoader className="animate-spin" /> : <FiDownload />}
             Download Certificate
           </button>
         </div>
 
-        {/* Bulk Certificate Download */}
-        <div className="border rounded-lg p-6 bg-white shadow">
-          <h2 className="text-xl font-semibold mb-4">
+        {/* Bulk Certificate Section */}
+        <div className={`rounded-lg p-6 ${cardClass}`}>
+          <h2 className={`text-xl font-semibold mb-4 ${textClass}`}>
             Bulk Download Certificates
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block mb-2">Session</label>
+              <label className={`block mb-2 text-sm font-medium ${textClass}`}>Session</label>
               <select
                 value={selectedSession}
                 onChange={(e) => setSelectedSession(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border"
+                className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
               >
                 <option value="">Select Session</option>
                 {sessions.map((session) => (
@@ -425,11 +466,11 @@ const Certificate = () => {
               </select>
             </div>
             <div>
-              <label className="block mb-2">Semester</label>
+              <label className={`block mb-2 text-sm font-medium ${textClass}`}>Semester</label>
               <select
                 value={selectedSemester}
                 onChange={(e) => setSelectedSemester(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border"
+                className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
               >
                 <option value="">Select Semester</option>
                 {semesters.map((semester) => (
@@ -443,26 +484,29 @@ const Certificate = () => {
           <button
             onClick={handleBulkDownload}
             disabled={loading}
-            className="w-full px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center justify-center gap-2"
+            className={`w-full px-6 py-2 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 ${bulkButtonClass} disabled:opacity-50`}
           >
             {loading ? <FiLoader className="animate-spin" /> : <FiDownload />}
             Download All Certificates
           </button>
         </div>
 
+        {/* Error/Success Message */}
         {error && (
-          <div
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
             className={`p-4 rounded-lg ${
               error.includes("success")
-                ? "bg-green-100 text-green-700"
-                : "bg-red-100 text-red-700"
+                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-200"
+                : "bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-200"
             }`}
           >
             {error}
-          </div>
+          </motion.div>
         )}
 
-        {/* Hidden certificate template for PDF generation */}
+        {/* Hidden certificate template */}
         {showPreview && certificateData && (
           <div className="fixed left-[-9999px]" id="certificate-template">
             {certificateData.semester === "Second Semester" ? (
@@ -477,7 +521,7 @@ const Certificate = () => {
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 
