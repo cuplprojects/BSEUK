@@ -17,14 +17,14 @@ const Users = () => {
   useEffect(() => {
     // Default to add-users when landing on /users
     if (location.pathname === '/users') {
-      navigate('/add-users');
+      navigate('/users/add');
     }
   }, [location.pathname, navigate]);
 
   // Determine active tab from current route
-  const activeTab = location.pathname === '/all-users' 
-    ? 'all' 
-    : location.pathname === '/user-access'
+  const activeTab = location.pathname === '/users/all'
+    ? 'all'
+    : location.pathname === '/users/access'
       ? 'access'
       : 'add';
 
@@ -50,19 +50,19 @@ const Users = () => {
       id: 'add',
       label: 'Add User',
       icon: <FiUserPlus className="w-5 h-5" />,
-      path: '/add-users'
+      path: '/users/add'
     },
     {
       id: 'all',
       label: 'All Users',
       icon: <FiUsers className="w-5 h-5" />,
-      path: '/all-users'
+      path: '/users/all'
     },
     {
       id: 'access',
       label: 'User Access',
       icon: <GoPasskeyFill className="w-5 h-5" />,
-      path: '/user-access'
+      path: '/users/access'
     }
   ];
 
@@ -118,9 +118,9 @@ const Users = () => {
           transition={{ duration: 0.2 }}
           key={activeTab}
         >
-          {location.pathname === '/all-users' 
+          {location.pathname === '/users/all' 
             ? <AllUsers /> 
-            : location.pathname === '/user-access'
+            : location.pathname === '/users/access'
               ? <UserAccess />
               : <AddUsers />
           }
