@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { useThemeStore } from '../store/themeStore';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faFileImport, faCalendarAlt, faChartBar, faCertificate, faPencilAlt, faBook, faBuilding } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faFileImport, faCalendarAlt, faChartBar, faCertificate, faPencilAlt, faBook, faBuilding,faList } from '@fortawesome/free-solid-svg-icons';
 
 
 const Dashboard = () => {
@@ -84,6 +84,11 @@ const Dashboard = () => {
       label: 'Add Institution', 
       link: '/add-groups',
       icon: <FontAwesomeIcon icon={faBuilding} className={textClass}/>
+    },
+    { 
+      label: 'Add Category', 
+      link: '/add-category',
+      icon: <FontAwesomeIcon icon={faList} className={textClass}/>
     }
   ];
 

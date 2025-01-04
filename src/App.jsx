@@ -13,6 +13,7 @@ import Groups from './pages/Masters/Groups/Groups';
 import { useUserStore } from './store/useUsertoken';
 import AddSession from './pages/Masters/Session/AddSession';
 import Institution from './pages/Masters/Institution/Institution';
+import Category from './pages/Masters/Category/Category';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -94,6 +95,7 @@ function App() {
           <Route path ="add-groups" element = {<Groups/>} />
           <Route path ="add-session" element = {<AddSession/>} />
           <Route path ="add-institution" element = {<Institution/>} />
+          <Route path ="add-category" element = {<Category/>} />
           {/* Catch all route for authenticated users */}
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>
