@@ -385,6 +385,7 @@ const MarksEntry = () => {
 
         <h1 className={`text-3xl font-bold ${textClass}`}>Marks Entry</h1>
         {candidates.length > 0 && (
+          <div className="flex gap-4">
           <button
             type="button"
             onClick={handleMarksLock}
@@ -392,7 +393,17 @@ const MarksEntry = () => {
           >
             {/* <FaFileDownload className="inline mr-2" /> */}
             Lock Marks
-          </button>)}
+          </button>
+          <button
+            type="button"
+            onClick={() => console.log("Audit clicked")}
+            className={`w-full sm:w-auto px-6 py-2 h-12 rounded-lg font-semibold transition-colors ${buttonClass}`}
+          >
+            Audit
+          </button>
+          </div>
+        )}
+          
       </div>
 
       <div className={`p-6 rounded-lg ${cardClass}`}>
