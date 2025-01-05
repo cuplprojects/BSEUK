@@ -33,15 +33,20 @@ const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
     { path: "/users", icon: < FiUsers  className="w-6 h-6" />, label: "Users" ,
       subItems: [
         {
-          path: "/add-users",
+          path: "/users/add",
           icon: <FiUserPlus className="w-5 h-5" />,
           label: "Add Users"
         },
         {
-          path: "/all-users",
+          path: "/users/all",
           icon: <FaUsers  className="w-5 h-5" />,
           label: "All Users"
-        }
+        },
+        // {
+        //   path: "/users/access",
+        //   icon: <FiUserPlus className="w-5 h-5" />,
+        //   label: "Access"
+        // }
       ]
     },
     {
