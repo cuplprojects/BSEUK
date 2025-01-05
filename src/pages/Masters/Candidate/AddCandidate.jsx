@@ -45,6 +45,7 @@ const AddCandidate = () => {
     const [sessions, setSessions] = useState([]);
     const [groups, setGroups] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [institutions, setInstitutions] = useState([]);
     // Theme classes
     const cardClass = theme === 'dark'
         ? 'bg-black/40 backdrop-blur-xl border-purple-500/20'
@@ -94,10 +95,20 @@ const AddCandidate = () => {
             }
         };
 
+        const fetchInstitutions = async () => {
+            try {
+                const response = await API.get('Institutes');
+                setInstitutions(response.data);
+            } catch (error) {
+                console.error("Error fetching institutions:", error);
+            }
+        };
+
         fetchSemesters();
         fetchSessions();
         fetchGroups();
         fetchCategories();
+        fetchInstitutions();
     }, []);
 
     const handleChange = (e) => {
@@ -237,14 +248,19 @@ const AddCandidate = () => {
                             <label className={`block text-sm font-medium mb-2 ${textClass}`}>
                                 Institution Name
                             </label>
-                            <input
-                                type="text"
+                            <select
                                 name="institutionName"
                                 value={formData.institutionName}
                                 onChange={handleChange}
                                 className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
-                                placeholder="Enter institution name"
-                            />
+                            >
+                                <option value="">Select Institution</option>
+                                {institutions.map((institution) => (
+                                    <option key={institution.id} value={institution.instituteName}>
+                                        {institution.instituteName}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
                         <div>
