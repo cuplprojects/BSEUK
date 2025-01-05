@@ -4,7 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { motion } from "framer-motion";
 import { useThemeStore } from '../../../store/themeStore';
 import API from '../../../services/api';
-import { XMarkIcon } from '@heroicons/react/24/solid';
+import { XMarkIcon, CheckIcon } from '@heroicons/react/24/solid';
 
 const AddCandidate = () => {
     const theme = useThemeStore((state) => state.theme);
@@ -117,15 +117,24 @@ const AddCandidate = () => {
             }
         };
 
+        // Clear selected papers when semester changes
+        setSelectedPapers([]);
+        setFormData(prev => ({
+            ...prev,
+            papersOpted: '' // Clear the papersOpted string
+        }));
+
+        if (formData.semID) {
+            fetchPapers(formData.semID);
+        } else {
+            setAvailablePapers([]);
+        }
+
         fetchSemesters();
         fetchSessions();
         fetchGroups();
         fetchCategories();
         fetchInstitutions();
-
-        if (formData.semID) {
-            fetchPapers(formData.semID);
-        }
     }, [formData.semID]);
 
     const handleChange = (e) => {
@@ -358,7 +367,7 @@ const AddCandidate = () => {
                             </select>
                         </div>
 
-                        <div>
+                        <div className="col-span-2">
                             <label className={`block text-sm font-medium mb-2 ${textClass}`}>
                                 Papers Opted
                             </label>
@@ -385,34 +394,51 @@ const AddCandidate = () => {
                                     ))}
                                 </div>
 
-                                <select
-                                    className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
-                                    onChange={(e) => {
-                                        const paper = availablePapers.find(
-                                            p => p.paperCode.toString() === e.target.value
-                                        );
-                                        if (paper) handlePaperSelect(paper);
-                                        e.target.value = ''; // Reset select after choosing
-                                    }}
-                                    value=""
-                                    disabled={!formData.semID}
-                                >
-                                    <option value="">Select Papers</option>
-                                    {availablePapers.map((paper) => (
-                                        !selectedPapers.find(p => p.paperCode === paper.paperCode) && (
-                                            <option key={paper.paperCode} value={paper.paperCode}>
-                                                {paper.paperName} ({paper.paperCode})
-                                            </option>
-                                        )
-                                    ))}
-                                </select>
-                                {!formData.semID && (
-                                    <p className={`text-sm ${
-                                        theme === 'dark' ? 'text-purple-400' : 'text-blue-500'
-                                    }`}>
-                                        Please select a semester first to view available papers
-                                    </p>
-                                )}
+                                <div className="relative">
+                                    <div 
+                                        className={`w-full px-4 py-2 rounded-lg border ${inputClass} max-h-60 overflow-y-auto`}
+                                    >
+                                        {!formData.semID ? (
+                                            <p className={`text-sm ${
+                                                theme === 'dark' ? 'text-purple-400' : 'text-blue-500'
+                                            }`}>
+                                                Please select a semester first to view available papers
+                                            </p>
+                                        ) : availablePapers.length === 0 ? (
+                                            <p className={`text-sm ${
+                                                theme === 'dark' ? 'text-purple-400' : 'text-blue-500'
+                                            }`}>
+                                                No papers available for this semester
+                                            </p>
+                                        ) : (
+                                            <div className="space-y-1">
+                                                {availablePapers.map((paper) => {
+                                                    const isSelected = selectedPapers.some(p => p.paperCode === paper.paperCode);
+                                                    return (
+                                                        <div
+                                                            key={paper.paperCode}
+                                                            onClick={() => !isSelected && handlePaperSelect(paper)}
+                                                            className={`px-2 py-1 rounded cursor-pointer flex items-center justify-between ${
+                                                                theme === 'dark'
+                                                                    ? 'hover:bg-purple-900/50'
+                                                                    : 'hover:bg-blue-50'
+                                                            }`}
+                                                        >
+                                                            <span>{paper.paperName} ({paper.paperCode})</span>
+                                                            {isSelected && (
+                                                                <CheckIcon className={`h-4 w-4 ${
+                                                                    theme === 'dark' 
+                                                                        ? 'text-purple-400' 
+                                                                        : 'text-blue-500'
+                                                                }`} />
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
