@@ -4,12 +4,24 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Breadcrumb from '../components/Breadcrumb';
 import { useThemeStore } from '../store/themeStore';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function Layout() {
-  const theme = useThemeStore((state) => state.theme);
+  // Get initial state from localStorage or default to false
+  const initialCollapsedState = localStorage.getItem('sidebarCollapsed') === 'true';
+  const [isCollapsed, setIsCollapsed] = useState(initialCollapsedState);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const theme = useThemeStore((state) => state.theme);
+
+  // Save to localStorage whenever isCollapsed changes
+  useEffect(() => {
+    localStorage.setItem('sidebarCollapsed', isCollapsed);
+  }, [isCollapsed]);
+
+  // Handle collapse state
+  const handleCollapse = (collapsed) => {
+    setIsCollapsed(collapsed);
+  };
 
   return (
     <div className={`flex h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-blue-900'}`}>
@@ -29,7 +41,7 @@ function Layout() {
           onClose={() => setIsMobileMenuOpen(false)} 
           isMobile={window.innerWidth < 768}
           isCollapsed={isCollapsed}
-          onCollapse={setIsCollapsed}
+          onCollapse={handleCollapse}
         />
       </div>
       
