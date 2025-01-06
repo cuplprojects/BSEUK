@@ -18,6 +18,8 @@ import AddUsers from './pages/Masters/Users/Tabs/AddUsers';
 import Roles from './pages/Masters/Roles/Roles';
 import Users from './pages/Masters/Users/Users';
 import AllUsers from './pages/Masters/Users/Tabs/AllUsers';
+import { useEffect, useState } from 'react';
+import isAdminAccess from './services/isAdminAccess';
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, isLoading } = useUserStore();
@@ -53,7 +55,19 @@ const PublicRoute = ({ children }) => {
 
 
 function App() {
+  const [isAdmin, setIsAdmin] = useState(false);
   const { isAuthenticated } = useUserStore();
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      const adminStatus = await isAdminAccess();
+      setIsAdmin(adminStatus);
+    };
+    
+    if (isAuthenticated) {
+      checkAdmin();
+    }
+  }, [isAuthenticated]);
 
   return (
     <Router>
@@ -90,22 +104,29 @@ function App() {
           <Route path="profile" element={<Profile />} />
           <Route path="change-password" element={<ChangePassword />} />
 
-          {/* Pages Routes */}
+          {/* Basic User Routes */}
           <Route path="marks-entry" element={<MarksEntry />} />
           <Route path="certificate-generation" element={<Certificate />} />
-          <Route path="add-candidate" element={<AddCandidate />} />
-          <Route path="add-bulkcandidates" element={<BulkCandidates />} />
-          <Route path="add-groups" element={<Groups />} />
-          <Route path="add-session" element={<AddSession />} />
-          <Route path="add-institution" element={<Institution />} />
-          <Route path="add-roles" element={<Roles />} />
-          <Route path="add-category" element={<Category />} />
-          <Route path="users">
-            <Route index element={<Navigate to="add" replace />} />
-            <Route path="add" element={<Users />} />
-            <Route path="all" element={<Users />} />
-            <Route path="access" element={<Users />} />
-          </Route>
+
+          {/* Admin Only Routes - Only shown if isAdmin is true */}
+          {isAdmin && (
+            <>
+              <Route path="add-candidate" element={<AddCandidate />} />
+              <Route path="add-bulkcandidates" element={<BulkCandidates />} />
+              <Route path="add-groups" element={<Groups />} />
+              <Route path="add-session" element={<AddSession />} />
+              <Route path="add-institution" element={<Institution />} />
+              <Route path="add-roles" element={<Roles />} />
+              <Route path="add-category" element={<Category />} />
+              <Route path="users">
+                <Route index element={<Navigate to="add" replace />} />
+                <Route path="add" element={<Users />} />
+                <Route path="all" element={<Users />} />
+                <Route path="access" element={<Users />} />
+              </Route>
+            </>
+          )}
+
           {/* Catch all route for authenticated users */}
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>
