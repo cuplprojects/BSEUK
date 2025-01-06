@@ -77,7 +77,7 @@ const Certificate = () => {
     const studentDetails = result.studentDetails;
     const resultData = studentDetails.result;
     const OverAllDetails = result2;
-
+    console.log(resultData);
     if (studentDetails.sem === "First Semester") {
       return {
         sno: studentDetails.candidateID,
@@ -101,6 +101,7 @@ const Certificate = () => {
           internalMax: mark.internalMaxMarks,
           internal: mark.internalMarks,
           total: mark.rowTotal,
+          isAbsent: mark.isAbsent,
         })),
         totalMarks: resultData.totalMarksObtained,
         maxMarks: resultData.totalMaxMarks,
@@ -132,6 +133,7 @@ const Certificate = () => {
           internal: mark.internalMarks,
           total: mark.rowTotal,
           pageremark: mark.paperRemarks,
+          isAbsent: mark.isAbsent,
         })),
         totalMarks: resultData.totalMarksObtained,
         maxMarks: resultData.totalMaxMarks,
@@ -162,6 +164,7 @@ const Certificate = () => {
           internalMax: mark.internalMaxMarks,
           internal: mark.internalMarks,
           total: mark.rowTotal,
+          isAbsent: mark.isAbsent,
         })),
         totalMarks: resultData.totalMarksObtained,
         maxMarks: resultData.totalMaxMarks,
@@ -193,6 +196,7 @@ const Certificate = () => {
           internal: mark.internalMarks,
           total: mark.rowTotal,
           pageremark: mark.paperRemarks,
+          isAbsent: mark.isAbsent,
         })),
         totalMarks: resultData.totalMarksObtained,
         maxMarks: resultData.totalMaxMarks,
@@ -293,17 +297,17 @@ const Certificate = () => {
     setError(null);
 
     try {
-      const datatosend = {
-        rollNumber: rollNumber,
-        sessionId: selectedSession,
-        semesterId: selectedSemester,
-      };
-      const auditresult = await API.post(
-        "/StudentsMarksObtaineds/AuditforSingle",
-        datatosend
-      );
-      const data = auditresult.data;
-      if (data) {
+      // const datatosend = {
+      //   rollNumber: rollNumber,
+      //   sessionId: selectedSession,
+      //   semesterId: selectedSemester,
+      // };
+      // const auditresult = await API.post(
+      //   "/StudentsMarksObtaineds/AuditforSingle",
+      //   datatosend
+      // );
+      // const data = auditresult.data;
+      // if (data) {
         const response = await API.post(
           "/StudentsMarksObtaineds/GetStudentResult",
           {
@@ -324,11 +328,11 @@ const Certificate = () => {
           `Certificate_${result.studentDetails.rollNo}_${result.studentDetails.sem}.pdf`
         );
         setShowPreview(false);
-      } else {
-        toast.warn(
-          "Insufficient Data to Generate Certificate, Please check not all marks have been entered for the Student"
-        );
-      }
+      // } else {
+      //   toast.warn(
+      //     "Insufficient Data to Generate Certificate, Please check not all marks have been entered for the Student"
+      //   );
+      // }
     } catch (error) {
       console.error("Error generating certificate:", error);
       setError(
