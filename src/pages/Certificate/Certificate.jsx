@@ -15,6 +15,8 @@ import { motion } from "framer-motion";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useThemeStore } from "../../store/themeStore";
+import { FaEye } from "react-icons/fa";
+import PreviewModal from './PreviewModal';
 
 const Certificate = () => {
   const [sessions, setSessions] = useState([]);
@@ -27,9 +29,11 @@ const Certificate = () => {
   const [certificateData, setCertificateData] = useState(null);
   const [showPreview, setShowPreview] = useState(false);
   const [entersession, setEntersession] = useState("");
+  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
+  const [isPreview, setIsPreview] = useState(false);
 
   const theme = useThemeStore((state) => state.theme);
-  
+
   const cardClass = theme === 'dark'
     ? 'bg-black/40 backdrop-blur-xl border-purple-500/20'
     : 'bg-white border-blue-200 shadow-xl';
@@ -67,7 +71,7 @@ const Certificate = () => {
     fetchData();
   }, []);
 
-  useEffect(() => {});
+  useEffect(() => { });
 
   const formatCertificateData = (result, result2) => {
     const studentDetails = result.studentDetails;
@@ -225,6 +229,60 @@ const Certificate = () => {
     return pdf;
   };
 
+  const handlePreview = async () => {
+    if (!rollNumber || !selectedSession || !selectedSemester) {
+      setError("Please enter roll number and select session and semester");
+      return;
+    }
+    setIsPreview(true);
+    setLoading(true);
+    setError(null);
+
+    try {
+      // const datatosend = {
+      //   rollNumber: rollNumber,
+      //   sessionId: selectedSession,
+      //   semesterId: selectedSemester,
+      // };
+      // const auditresult = await API.post(
+      //   "/StudentsMarksObtaineds/AuditforSingle",
+      //   datatosend
+      // );
+      // const data = auditresult.data;
+
+      const response = await API.post(
+        "/StudentsMarksObtaineds/GetStudentResult",
+        {
+          rollNumber,
+          sessionId: parseInt(selectedSession),
+          semesterId: parseInt(selectedSemester),
+        }
+      );
+      const response2 = await API.get(
+        `/StudentsMarksObtaineds/GetAllYearsResult/${rollNumber}`
+      );
+
+      const result = response.data;
+      const result2 = response2.data;
+
+      const formattedData = formatCertificateData(result, result2);
+      setCertificateData(formattedData);
+      setIsPreviewModalOpen(true);
+      //      else {
+      //   toast.warn(
+      //     "Insufficient Data to Generate Certificate, Please check not all marks have been entered for the Student"
+      //   );
+      // }
+    } catch (error) {
+      console.error("Error generating preview:", error);
+      setError(
+        "Failed to generate preview. Please check the details and try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSingleDownload = async () => {
     if (!rollNumber || !selectedSession || !selectedSemester) {
       setError("Please enter roll number and select session and semester");
@@ -286,17 +344,17 @@ const Certificate = () => {
       setError("Please select both session and semester");
       return;
     }
-  
+
     setLoading(true);
     setError(null);
-  
+
     try {
       // Fetch the list of candidates
       const candidatesResponse = await API.post("/Candidates/GetStudents", {
         sesID: parseInt(selectedSession),
         semID: parseInt(selectedSemester),
       });
-  
+
       const candidates = candidatesResponse.data;
       const pdfPromises = candidates.map(async (candidate) => {
         try {
@@ -319,7 +377,7 @@ const Certificate = () => {
                 semesterId: parseInt(selectedSemester),
               }
             );
-  
+
             if (
               resultResponse.data.message &&
               resultResponse.data.message === "No scores found for the student."
@@ -329,7 +387,7 @@ const Certificate = () => {
               );
               return { rollNumber: candidate.rollNumber, reason: "No scores found" };
             }
-  
+
             const result = resultResponse.data;
             const pdf = await generatePDF(result);
             return { pdf, rollNumber: candidate.rollNumber };
@@ -353,13 +411,13 @@ const Certificate = () => {
           throw error;
         }
       });
-  
+
       const results = await Promise.all(pdfPromises);
-  
+
       // Filter out valid PDFs and skipped candidates
       const pdfs = results.filter((result) => result?.pdf);
       const skipped = results.filter((result) => !result?.pdf);
-  
+
       // Generate and download the ZIP file
       if (pdfs.length > 0) {
         const zip = new JSZip();
@@ -368,7 +426,7 @@ const Certificate = () => {
             binary: true,
           });
         });
-  
+
         const zipBlob = await zip.generateAsync({ type: "blob" });
         const zipUrl = URL.createObjectURL(zipBlob);
         const a = document.createElement("a");
@@ -378,7 +436,7 @@ const Certificate = () => {
         a.click();
         document.body.removeChild(a);
       }
-  
+
       // Generate the Excel file for skipped candidates
       if (skipped.length > 0) {
         const worksheet = XLSX.utils.json_to_sheet(
@@ -389,17 +447,17 @@ const Certificate = () => {
         );
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "SkippedCandidates");
-  
+
         // Correct type usage: 'array' for generating blob
         const excelBuffer = XLSX.write(workbook, {
           bookType: "xlsx",
           type: "array",
         });
-  
+
         const excelBlob = new Blob([excelBuffer], {
           type: "application/octet-stream",
         });
-  
+
         const excelUrl = URL.createObjectURL(excelBlob);
         const a = document.createElement("a");
         a.href = excelUrl;
@@ -408,7 +466,7 @@ const Certificate = () => {
         a.click();
         document.body.removeChild(a);
       }
-  
+
       setError("Certificates and skipped list generated successfully!");
     } catch (error) {
       console.error("Error generating certificates:", error);
@@ -502,14 +560,25 @@ const Certificate = () => {
               />
             </div>
           </div>
-          <button
-            onClick={handleSingleDownload}
-            disabled={loading}
-            className={`w-full px-6 py-2 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 mt-5 ${buttonClass} disabled:opacity-50`}
-          >
-            {loading ? <FiLoader className="animate-spin" /> : <FiDownload />}
-            Download Certificate
-          </button>
+          <div className="flex flex-col md:flex-row gap-4">
+            <button
+              onClick={handlePreview}
+              disabled={loading}
+              className={`w-full px-6 py-2 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 mt-5 ${buttonClass} disabled:opacity-50`}
+            >
+              {loading ? <FaEye className="animate-spin" /> : <FaEye />}
+              Preview Certificate
+            </button>
+            <button
+              onClick={handleSingleDownload}
+              disabled={loading}
+              className={`w-full px-6 py-2 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 mt-5 ${buttonClass} disabled:opacity-50`}
+            >
+              {loading ? <FiLoader className="animate-spin" /> : <FiDownload />}
+              Download Certificate
+            </button>
+          </div>
+
         </div>
 
         {/* Bulk Certificate Section */}
@@ -564,11 +633,10 @@ const Certificate = () => {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`p-4 rounded-lg ${
-              error.includes("success")
-                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-200"
-                : "bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-200"
-            }`}
+            className={`p-4 rounded-lg ${error.includes("success")
+              ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-200"
+              : "bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-200"
+              }`}
           >
             {error}
           </motion.div>
@@ -589,6 +657,25 @@ const Certificate = () => {
           </div>
         )}
       </div>
+      {/* Preview Modal */}
+      <PreviewModal
+        isOpen={isPreviewModalOpen}
+        onClose={() => setIsPreviewModalOpen(false)}
+      >
+        {certificateData && (
+          <div className="w-full max-w-4xl">
+            {certificateData.semester === "Second Semester" ? (
+              <Template2 data={certificateData} isPreview={isPreview} />
+            ) : certificateData.semester === "Third Semester" ? (
+              <Template3 data={certificateData} isPreview={isPreview} />
+            ) : certificateData.semester === "Fourth Semester" ? (
+              <Template4 data={certificateData} isPreview={isPreview} />
+            ) : (
+              <Template data={certificateData} isPreview={isPreview} />
+            )}
+          </div>
+        )}
+      </PreviewModal>
     </motion.div>
   );
 };

@@ -9,27 +9,53 @@ const semesterHindi = {
   "FOURTH SEMESTER": "चतुर्थ सेमेस्टर",
 };
 
-const Certificate = ({ data }) => {
-  const paperType2Count = data?.marks.filter((mark) => mark.paperType === 2).length;
+const Certificate = ({ data, isPreview }) => {
+  // const paperType2Count = data?.marks.filter((mark) => mark.paperType === 2).length;
+  const getCellStyle = (value) => ({
+    border: '1px solid black',
+    textAlign: 'center',
+    padding: '4px 0px 12px 0px',
+    backgroundColor: isPreview && !value ? 'red' : 'transparent',
+  });
+  // const renderTheoryRows = () => {
+  //   return data.marks
+  //     .filter((mark) => mark.type === 1)
+  //     .map((mark, index) => (
+  //       <tr key={index}>
+  //         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px', verticalAlign: "middle" }}>{mark.code}</td>
+  //         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.name}</td>
+  //         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.maxMarks}</td>
+  //         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.theoryMax}</td>
+  //         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.theory}</td>
+  //         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.internalMax}</td>
+  //         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.internal}</td>
+  //         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>-</td>
+  //         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>-</td>
+  //         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  4px 12px 4px' }}>{mark.total}</td>
+  //       </tr>
+  //     ));
+  // };
 
   const renderTheoryRows = () => {
     return data.marks
       .filter((mark) => mark.type === 1)
       .map((mark, index) => (
         <tr key={index}>
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px', verticalAlign: "middle" }}>{mark.code}</td>
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.name}</td>
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.maxMarks}</td>
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.theoryMax}</td>
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.theory}</td>
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.internalMax}</td>
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.internal}</td>
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>-</td>
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>-</td>
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  4px 12px 4px' }}>{mark.total}</td>
+          <td style={getCellStyle(mark.code)}>{mark.code}</td>
+          <td style={getCellStyle(mark.name)}>{mark.name}</td>
+          <td style={getCellStyle(mark.maxMarks)}>{mark.maxMarks}</td>
+          <td style={getCellStyle(mark.theoryMax)}>{mark.theoryMax}</td>
+          <td style={getCellStyle(mark.theory)}>{mark.theory}</td>
+          <td style={getCellStyle(mark.internalMax)}>{mark.internalMax}</td>
+          <td style={getCellStyle(mark.internal)}>{mark.internal}</td>
+          <td style={getCellStyle('-')}>-</td>
+          <td style={getCellStyle('-')}>-</td>
+          <td style={getCellStyle(mark.total)}>{mark.total}</td>
+          <td style={getCellStyle(mark.pageremark === "उत्तीर्ण" ? "P" : "F")}>{mark.pageremark === "उत्तीर्ण" ? "P" : "F"}</td>
         </tr>
       ));
   };
+
 
   const renderPracticalRows = () => {
     const practicalMarks = data.marks.filter((mark) => mark.type === 2);

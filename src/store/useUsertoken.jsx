@@ -26,7 +26,7 @@ export const useUserStore = create(
         try {
           const decodedToken = jwtDecode(token);
           const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
-          
+            
           localStorage.setItem('userToken', token);
           
           set({ 
