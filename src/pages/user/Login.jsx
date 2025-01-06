@@ -88,7 +88,7 @@ const Login = () => {
               />
               <h1 className="text-4xl font-bold mb-6">Welcome to UBSE Portal</h1>
               <p className="text-lg opacity-90">
-                Log in to access your account and manage your Account, or sign up to create a new account.
+                Log in to access your account and manage your Account.
               </p>
             </div>
           </div>
