@@ -54,11 +54,11 @@ const AddUsers = () => {
       return false;
     }
     
-    // Username must contain both letters and numbers
-    if (!/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z0-9]+$/.test(formData.name)) {
-      toast.warning("Username must contain both letters and numbers (no special characters or spaces)");
-      return false;
-    }
+    // // Username must contain both letters and numbers
+    // if (!/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z0-9]+$/.test(formData.name)) {
+    //   toast.warning("Username must contain both letters and numbers (no special characters or spaces)");
+    //   return false;
+    // }
 
     // Minimum length check
     if (formData.name.length < 3) {
@@ -165,7 +165,7 @@ const AddUsers = () => {
           {/* Name Field */}
           <div className="space-y-2">
             <label htmlFor="name" className={`block font-medium ${labelClass}`}>
-              Username
+              Name
             </label>
             <input
               type="text"

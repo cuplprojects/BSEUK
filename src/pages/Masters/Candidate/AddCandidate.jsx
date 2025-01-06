@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { motion } from "framer-motion";
 import { useThemeStore } from '../../../store/themeStore';
 import API from '../../../services/api';
+import { XMarkIcon, CheckIcon } from '@heroicons/react/24/solid';
 
 const AddCandidate = () => {
     const theme = useThemeStore((state) => state.theme);
@@ -20,7 +21,6 @@ const AddCandidate = () => {
         sesID: "",
         category: "",
         papersOpted: "",
-        groupId: "",  // Added groupId field
     });
 
     const clearFormData = () => {
@@ -37,7 +37,6 @@ const AddCandidate = () => {
             sesID: "",
             category: "",
             papersOpted: "",
-            groupId: "",  // Reset groupId
         });
     };
 
@@ -45,6 +44,10 @@ const AddCandidate = () => {
     const [sessions, setSessions] = useState([]);
     const [groups, setGroups] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [institutions, setInstitutions] = useState([]);
+    const [availablePapers, setAvailablePapers] = useState([]);
+    const [selectedPapers, setSelectedPapers] = useState([]);
+
     // Theme classes
     const cardClass = theme === 'dark'
         ? 'bg-black/40 backdrop-blur-xl border-purple-500/20'
@@ -94,11 +97,43 @@ const AddCandidate = () => {
             }
         };
 
+        const fetchInstitutions = async () => {
+            try {
+                const response = await API.get('Institutes');
+                setInstitutions(response.data);
+            } catch (error) {
+                console.error("Error fetching institutions:", error);
+            }
+        };
+
+        const fetchPapers = async (semId) => {
+            try {
+                const response = await API.get(`Papers/GetBySem/${semId}`);
+                setAvailablePapers(response.data);
+            } catch (error) {
+                console.error("Error fetching papers:", error);
+            }
+        };
+
+        // Clear selected papers when semester changes
+        setSelectedPapers([]);
+        setFormData(prev => ({
+            ...prev,
+            papersOpted: '' // Clear the papersOpted string
+        }));
+
+        if (formData.semID) {
+            fetchPapers(formData.semID);
+        } else {
+            setAvailablePapers([]);
+        }
+
         fetchSemesters();
         fetchSessions();
         fetchGroups();
         fetchCategories();
-    }, []);
+        fetchInstitutions();
+    }, [formData.semID]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -121,7 +156,6 @@ const AddCandidate = () => {
                 sesID: formData.sesID,
                 category: formData.category,
                 papersOpted: formData.papersOpted,
-                groupId: formData.groupId,  // Added groupId field
             });
             toast.success("Candidate added successfully!");
             clearFormData();
@@ -129,6 +163,28 @@ const AddCandidate = () => {
             console.error("Error:", error);
             toast.error("Failed to add candidate");
         }
+    };
+
+    const handlePaperSelect = (paper) => {
+        if (!selectedPapers.find(p => p.paperCode === paper.paperCode)) {
+            const newSelectedPapers = [...selectedPapers, paper];
+            setSelectedPapers(newSelectedPapers);
+            setFormData(prev => ({
+                ...prev,
+                papersOpted: newSelectedPapers.map(p => p.paperCode).join(',')
+            }));
+        }
+    };
+
+    const handleRemovePaper = (paperToRemove) => {
+        const newSelectedPapers = selectedPapers.filter(
+            paper => paper.paperCode !== paperToRemove.paperCode
+        );
+        setSelectedPapers(newSelectedPapers);
+        setFormData(prev => ({
+            ...prev,
+            papersOpted: newSelectedPapers.map(p => p.paperCode).join(',')
+        }));
     };
 
     return (
@@ -237,14 +293,19 @@ const AddCandidate = () => {
                             <label className={`block text-sm font-medium mb-2 ${textClass}`}>
                                 Institution Name
                             </label>
-                            <input
-                                type="text"
+                            <select
                                 name="institutionName"
                                 value={formData.institutionName}
                                 onChange={handleChange}
                                 className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
-                                placeholder="Enter institution name"
-                            />
+                            >
+                                <option value="">Select Institution</option>
+                                {institutions.map((institution) => (
+                                    <option key={institution.id} value={institution.instituteName}>
+                                        {institution.instituteName}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
                         <div>
@@ -303,18 +364,79 @@ const AddCandidate = () => {
                             </select>
                         </div>
 
-                        <div>
+                        <div className="col-span-2">
                             <label className={`block text-sm font-medium mb-2 ${textClass}`}>
                                 Papers Opted
                             </label>
-                            <input
-                                type="text"
-                                name="papersOpted"
-                                value={formData.papersOpted}
-                                onChange={handleChange}
-                                className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
-                                placeholder="Enter paper codes separated by commas"
-                            />
+                            <div className="space-y-2">
+                                <div className="flex flex-wrap gap-2 min-h-[2.5rem] p-2 border rounded-lg ${inputClass}">
+                                    {selectedPapers.map((paper) => (
+                                        <div
+                                            key={paper.paperCode}
+                                            className={`flex items-center gap-1 px-2 py-1 rounded-md ${
+                                                theme === 'dark' 
+                                                    ? 'bg-purple-700 text-purple-100' 
+                                                    : 'bg-blue-100 text-blue-700'
+                                            }`}
+                                        >
+                                            <span className="text-sm">{paper.paperName} ({paper.paperCode})</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleRemovePaper(paper)}
+                                                className="hover:opacity-75"
+                                            >
+                                                <XMarkIcon className="h-4 w-4" />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="relative">
+                                    <div 
+                                        className={`w-full px-4 py-2 rounded-lg border ${inputClass} max-h-60 overflow-y-auto`}
+                                    >
+                                        {!formData.semID ? (
+                                            <p className={`text-sm ${
+                                                theme === 'dark' ? 'text-purple-400' : 'text-blue-500'
+                                            }`}>
+                                                Please select a semester first to view available papers
+                                            </p>
+                                        ) : availablePapers.length === 0 ? (
+                                            <p className={`text-sm ${
+                                                theme === 'dark' ? 'text-purple-400' : 'text-blue-500'
+                                            }`}>
+                                                No papers available for this semester
+                                            </p>
+                                        ) : (
+                                            <div className="space-y-1">
+                                                {availablePapers.map((paper) => {
+                                                    const isSelected = selectedPapers.some(p => p.paperCode === paper.paperCode);
+                                                    return (
+                                                        <div
+                                                            key={paper.paperCode}
+                                                            onClick={() => !isSelected && handlePaperSelect(paper)}
+                                                            className={`px-2 py-1 rounded cursor-pointer flex items-center justify-between ${
+                                                                theme === 'dark'
+                                                                    ? 'hover:bg-purple-900/50'
+                                                                    : 'hover:bg-blue-50'
+                                                            }`}
+                                                        >
+                                                            <span>{paper.paperName} ({paper.paperCode})</span>
+                                                            {isSelected && (
+                                                                <CheckIcon className={`h-4 w-4 ${
+                                                                    theme === 'dark' 
+                                                                        ? 'text-purple-400' 
+                                                                        : 'text-blue-500'
+                                                                }`} />
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div className="flex justify-end gap-4">

@@ -81,11 +81,11 @@ const Dashboard = () => {
       link: '/add-session',
       icon: <FontAwesomeIcon icon={faCalendarAlt} className={textClass}/>
     },
-    { 
-      label: 'View Reports', 
-      link: '/report',
-      icon: <FontAwesomeIcon icon={faChartBar} className={textClass}/>
-    },
+    // { 
+    //   label: 'View Reports', 
+    //   link: '/report',
+    //   icon: <FontAwesomeIcon icon={faChartBar} className={textClass}/>
+    // },
     { 
       label: 'Certificate', 
       link: '/certificate-generation',
@@ -103,7 +103,7 @@ const Dashboard = () => {
     },
     { 
       label: 'Add Institution', 
-      link: '/add-groups',
+      link: '/add-institution',
       icon: <FontAwesomeIcon icon={faBuilding} className={textClass}/>
     },
     { 
