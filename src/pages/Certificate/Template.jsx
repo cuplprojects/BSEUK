@@ -110,26 +110,26 @@ const Certificate = ({ data, isPreview }) => {
           <h5 style={{ fontSize: "1rem", marginBottom: "0.3rem" }}>अंक विवरण : <span id="sem-hindi">
             {semesterHindi[data.semester.toUpperCase()]}
           </span></h5>
-          <h5 style={{ fontSize: "1rem", marginBottom: "0.3rem", fontWeight: 'bold' }}>
+          <h5 style={{ fontSize: "1rem", marginBottom: "0.3rem", fontWeight: 'bold', textTransform: 'upperCase' }}>
             <u>MARKS STATEMENT : {data.semester}</u>
           </h5>
         </div>
 
         <section className="mb-4">
           <div className="mb-3" style={{ display: 'grid', gridTemplateColumns: ' 2fr 1fr 1fr' }}>
-            <div><b>नाम <br />Name:</b> <span className="ms-2">{data.name}</span></div>
+            <div><b>नाम <br />Name:</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.name}</span></div>
             <div><b>अनुक्रमांक <br />Roll No.:</b> <span className="ms-2">{data.rollNo}</span></div>
             <div><b>वर्ग <br />Group:</b> <span className="ms-2">{data.group}</span></div>
           </div>
 
           <div className="row mb-3" style={{ display: 'grid', gridTemplateColumns: ' 1fr 1fr ' }}>
-            <div style={{}}><b>माता का नाम <br />Mother's Name:</b> <span className="ms-2">{data.mothersName}</span></div>
-            <div style={{}}><b>पिता का नाम <br />Father's Name:</b> <span className="ms-2">{data.fathersName}</span></div>
+            <div style={{}}><b>माता का नाम <br />Mother's Name:</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.mothersName}</span></div>
+            <div style={{}}><b>पिता का नाम <br />Father's Name:</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.fathersName}</span></div>
           </div>
 
           <div className="row">
             <div className="col-md-12">
-              <b>संस्थान का नाम <br />Institution's Name:</b> <span className="ms-2">{data.institutionName}</span>
+              <b>संस्थान का नाम <br />Institution's Name:</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.institutionName}</span>
             </div>
           </div>
         </section>

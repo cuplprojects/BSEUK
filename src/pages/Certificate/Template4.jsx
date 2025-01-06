@@ -16,17 +16,31 @@ const semesterIdHindi = {
   "4": "चतुर्थ सेमेस्टर",
 };
 
- 
-const Certificate2 = ({ data, isPreview }) => {
+
+const Certificate2 = ({ data }) => {
   const paperType2Count = data?.marks.filter((mark) => mark.paperType === 2).length;
+
+  console.log(data.marks);
+  const totalTheoryMax = data.marks.reduce((acc, mark) => acc + mark.theoryMax, 0);
+  const totalInternalMax = data.marks.reduce((acc, mark) => acc + mark.internalMax, 0);
+  const totalPracticalMax = data.marks.filter((mark) => mark.type === 2).reduce((acc, mark) => acc + mark.maxMarks, 0);
+  console.log(totalInternalMax);
+  console.log(totalTheoryMax);
+  console.log(totalPracticalMax);
+  const getCellStyle = (value) => ({
+    border: '1px solid black',
+    textAlign: 'center',
+    padding: '4px 0px 12px 0px',
+    backgroundColor: isPreview && !value ? '#fa968e' : 'transparent',
+  });
 
   const renderTheoryRows = () => {
     return data.marks
       .filter((mark) => mark.type === 1)
       .map((mark, index) => (
         <tr key={index}>
-          
-          <td colSpan={mark.code === 47 ? 2 : 0} style={{ border: '1px solid black', textAlign: 'left', padding: '4px  0px 12px 0px' }}>{mark.code === 47 ? "" : mark.code} {mark.code === 47 ? "" : "-"} {mark.name}</td>
+
+          <td colSpan={mark.code === 47 ? 2 : 0} style={{ border: '1px solid black', textAlign: 'left', padding: '4px  0px 12px 5px' }}>{mark.code === 47 ? "" : mark.code} {mark.code === 47 ? "" : "-"} {mark.name}</td>
           <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.theoryMax}</td>
           <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.theory}</td>
           <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.internalMax}</td>
@@ -43,13 +57,11 @@ const Certificate2 = ({ data, isPreview }) => {
     return practicalMarks.map((mark, index) => (
       <tr key={index}>
         <td colSpan="2" style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.name}</td>
-        {/* <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.maxMarks}</td> */}
         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>-</td>
         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>-</td>
         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.maxMarks}</td>
         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.practical}</td>
         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.maxMarks}</td>
-        {/* <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.practical}</td> */}
         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.total}</td>
         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.pageremark === "उत्तीर्ण" ? "P" : "F"}</td>
       </tr>
@@ -57,46 +69,46 @@ const Certificate2 = ({ data, isPreview }) => {
   }
 
   const renderTotalResultRows = () => {
-      const dataLength = data?.OverAllDetails.results.length;
-      return data?.OverAllDetails.results.map((mark, index) => (
-        <tr>
-            <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px' }}>
-              {semesterIdHindi[`${mark?.semID}`]}
-            </td>
-            {/* ------------------------------------------------------ */}
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>
-            {mark.semID === 4 ? "-" : mark.totalTheoryMaxMarks + mark.totalInternalMaxMarks}
-            </td>
+    const dataLength = data?.OverAllDetails.results.length;
+    return data?.OverAllDetails.results.map((mark, index) => (
+      <tr>
+        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px' }}>
+          {semesterIdHindi[`${mark?.semID}`]}
+        </td>
+        {/* ------------------------------------------------------ */}
+        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>
+          {mark.semID === 4 ? "-" : mark.totalTheoryMaxMarks + mark.totalInternalMaxMarks}
+        </td>
 
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>
-            {mark.semID === 4 ? "-" : mark.totalTheoryMarks + mark.totalInternalMarks}
-            </td>
-          {/* ------------------------------------------------------ */}
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>
-            {mark.semID === 4 ? mark.overallTotalMaxMarks : mark.totalPracticalMaxMarks}
-            </td>
+        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>
+          {mark.semID === 4 ? "-" : mark.totalTheoryMarks + mark.totalInternalMarks}
+        </td>
+        {/* ------------------------------------------------------ */}
+        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>
+          {mark.semID === 4 ? mark.overallTotalMaxMarks : mark.totalPracticalMaxMarks}
+        </td>
 
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.semID === 4 ? mark.overallTotalMarks : mark.totalPracticalMarks}</td>
-          {/* ------------------------------------------------------ */}
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{ mark.overallTotalMaxMarks}</td>
+        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.semID === 4 ? mark.overallTotalMarks : mark.totalPracticalMarks}</td>
+        {/* ------------------------------------------------------ */}
+        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.overallTotalMaxMarks}</td>
 
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.overallTotalMarks}</td>
-          {/* --------------------------------------------------------- */}
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.status === "Pass" ? "P" : "F"}</td>
-          
-          {index === 0 && (
-          <td rowSpan={dataLength+1} style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.status === "Pass" ? "P" : "F"}</td>
-          )}
-        </tr>
-      ));
+        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.overallTotalMarks}</td>
+        {/* --------------------------------------------------------- */}
+        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.status === "Pass" ? "P" : "F"}</td>
+
+        {index === 0 && (
+          <td rowSpan={dataLength + 1} style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.status === "Pass" ? "P" : "F"}</td>
+        )}
+      </tr>
+    ));
   };
 
   const semesterStatuses = data?.OverAllDetails?.results
-  ?.slice(0, 4)
-  ?.map(result => result?.status === "Pass" ? "P" : "F") || [];
+    ?.slice(0, 4)
+    ?.map(result => result?.status === "Pass" ? "P" : "F") || [];
 
-const isPassed = semesterStatuses.length === 4 && 
-  semesterStatuses.every(status => status === "P") ? "P" : "F";
+  const isPassed = semesterStatuses.length === 4 &&
+    semesterStatuses.every(status => status === "P") ? "P" : "F";
 
   return (
     <div className="p-4" style={{ position: 'relative' }}>
@@ -118,7 +130,7 @@ const isPassed = semesterStatuses.length === 4 &&
 
       <div
         className="container border border-5 p-4 pb-5"
-        style={{ width: "21cm", fontSize: "0.9rem" , border: '3px solid red'}}
+        style={{ width: "21cm", fontSize: "0.9rem", border: '3px solid red' }}
       >
         <div >
           <b style={{ fontSize: "0.8rem" }}>
@@ -140,7 +152,7 @@ const isPassed = semesterStatuses.length === 4 &&
           <h4 style={{ fontSize: "1.1rem", marginBottom: "0.3rem", fontWeight: 'bold' }}>प्रारम्भिक शिक्षा में द्विवर्षीय डिप्लोमा</h4>
           <h4 style={{ fontSize: "1.1rem", marginBottom: "0.3rem", fontWeight: 'bold' }}>
             TWO-YEAR DIPLOMA IN ELEMENTARY EDUCATION - {data.entersession || data.session}
-             {/* {data.session.split('-')[0]} */}
+            {/* {data.session.split('-')[0]} */}
           </h4>
         </div>
 
@@ -148,35 +160,35 @@ const isPassed = semesterStatuses.length === 4 &&
           <h5 style={{ fontSize: "1rem", marginBottom: "0.3rem" }}>अंक विवरण : <span id="sem-hindi">
             {semesterHindi[data.semester.toUpperCase()]}
           </span></h5>
-          <h5 style={{ fontSize: "1rem", marginBottom: "0.3rem", fontWeight: 'bold' }}>
+          <h5 style={{ fontSize: "1rem", marginBottom: "0.3rem", fontWeight: 'bold', textTransform:"upperCase" }}>
             <u>MARKS STATEMENT : {data.semester}</u>
           </h5>
         </div>
 
         <section className="mb-4">
           <div className="mb-3" style={{ display: 'grid', gridTemplateColumns: ' 2fr 1fr 1fr' }}>
-            <div><b>नाम <br />Name:</b> <span className="ms-2">{data.name}</span></div>
+            <div><b>नाम <br />Name:</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.name}</span></div>
             <div><b>अनुक्रमांक <br />Roll No.:</b> <span className="ms-2">{data.rollNo}</span></div>
             <div><b>वर्ग <br />Group:</b> <span className="ms-2">{data.group}</span></div>
           </div>
 
           <div className="row mb-3" style={{ display: 'grid', gridTemplateColumns: ' 1fr 1fr ' }}>
-            <div style={{}}><b>माता का नाम <br />Mother's Name:</b> <span className="ms-2">{data.mothersName}</span></div>
-            <div style={{}}><b>पिता का नाम <br />Father's Name:</b> <span className="ms-2">{data.fathersName}</span></div>
+            <div style={{}}><b>माता का नाम <br />Mother's Name:</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.mothersName}</span></div>
+            <div style={{}}><b>पिता का नाम <br />Father's Name:</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.fathersName}</span></div>
           </div>
 
           <div className="row">
             <div className="col-md-12">
-              <b>संस्थान का नाम <br />Institution's Name:</b> <span className="ms-2">{data.institutionName}</span>
+              <b>संस्थान का नाम <br />Institution's Name:</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.institutionName}</span>
             </div>
           </div>
         </section>
 
-        <div className="responsive" style={{ border: '1px solid black'}}>
+        <div className="responsive" style={{ border: '1px solid black' }}>
           <table border="2" className="table-bordered" width="100%" style={{ borderCollapse: 'collapse', fontSize: "0.8rem", padding: "4px" }}>
             <thead>
               <tr>
-                <th rowSpan="2" colSpan="2" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>विषय / विद्यालय अनुभव <br/>Subject / School Internship</th>
+                <th rowSpan="2" colSpan="2" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>विषय / विद्यालय अनुभव <br />Subject / School Internship</th>
                 <th colSpan="2" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>बाह्य आकलन</th>
                 <th colSpan="2" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>आंतरिक आकालन</th>
                 <th rowSpan="2" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>योग पूर्णांक</th>
@@ -191,35 +203,45 @@ const isPassed = semesterStatuses.length === 4 &&
               </tr>
             </thead>
             <tbody>
-          <td
-            rowSpan="7"
-            style={{
-              border: '1px solid black',
-              padding: '25px',
-              textAlign: 'center',
-              verticalAlign: 'middle', // Ensures proper alignment of content
-              position: 'relative', // Allows for better placement of rotated text
-            }}
-          >
-          <span
-            style={{
-            display: 'inline-block',
-            transform: 'rotate(-90deg)',
-            transformOrigin: 'center',
-            whiteSpace: 'nowrap',
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%) rotate(-90deg)',
-          }}>
-          शिक्षण योजना निर्माण एवं <br/> शिक्षण
-          </span>
-            </td>
+              <td
+                rowSpan="7"
+                style={{
+                  border: '1px solid black',
+                  padding: '25px',
+                  textAlign: 'center',
+                  verticalAlign: 'middle', // Ensures proper alignment of content
+                  position: 'relative', // Allows for better placement of rotated text
+                }}
+              >
+                <span
+                  style={{
+                    display: 'inline-block',
+                    transform: 'rotate(-90deg)',
+                    transformOrigin: 'center',
+                    whiteSpace: 'nowrap',
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%) rotate(-90deg)',
+                  }}>
+                  शिक्षण योजना निर्माण एवं <br /> शिक्षण
+                </span>
+              </td>
               {renderTheoryRows()}
               {renderPracticalRows()}
             </tbody>
+            <tr>
+              <td colSpan="2" style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', padding: "4px 4px 12px 4px" }}><b>योग (Total)</b></td>
+              <td style={{ border: '1px solid black', padding: "4px 0px 12px 0px", textAlign: "center" }}>{totalTheoryMax}</td>
+              <td style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>{data.totalInternalMaxMarks}</td>
+              <td style={{ border: '1px solid black', padding: "4px 0px 12px 0px", textAlign: "center" }}>{totalInternalMax+totalPracticalMax}</td>
+              <td style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>{data.totalExternalMaxMarks}</td>
+              <td style={{ border: '1px solid black', padding: "4px 0px 12px 0px", textAlign: 'center' }}>{totalInternalMax+totalPracticalMax +totalTheoryMax}</td>
+              <td style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>{data.totalPracticalMaxMarks}</td>
+              <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', padding: "4px 0px 12px 0px" }}>{data.totalMarks}</td>
+            </tr>
           </table>
-          <div className="d-block" style={{marginBottom:'12px'}}>सम्पूर्ण  परीक्षाफल - </div>
+          <div className="d-block" style={{ marginBottom: '12px' }}>सम्पूर्ण  परीक्षाफल - </div>
           <table border="2" className="table-bordered" style={{ borderCollapse: 'collapse', fontSize: "0.8rem", padding: "4px" }} width="100%">
             <thead>
               <tr>
@@ -240,25 +262,25 @@ const isPassed = semesterStatuses.length === 4 &&
               </tr>
             </thead>
             <tbody>
-            {renderTotalResultRows()}
-            <tr>
-                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>महायोग </th>
-                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>{data?.OverAllDetails.semMarks}</th>
-                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}> </th>
-                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>{data?.OverAllDetails.totalPracticalMarks} </th>
-                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}> </th>
-                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>{data?.OverAllDetails.total}</th>
-                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}> </th>
-                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>{isPassed ? "P" : "F"} </th>
-            </tr>
+              {renderTotalResultRows()}
+              <tr>
+                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px 0px 12px 0px' }}>महायोग </th>
+                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px 0px 12px 0px' }}>{data?.OverAllDetails.semMarks}</th>
+                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px 0px 12px 0px' }}> </th>
+                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px 0px 12px 0px' }}>{data?.OverAllDetails.totalPracticalMarks} </th>
+                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px 0px 12px 0px' }}> </th>
+                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px 0px 12px 0px' }}>{data?.OverAllDetails.total}</th>
+                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px 0px 12px 0px' }}> </th>
+                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px 0px 12px 0px' }}>{isPassed ? "P" : "F"} </th>
+              </tr>
             </tbody>
-            </table>
+          </table>
         </div>
 
         <div className="footer mt-3" style={{ fontSize: "0.9rem" }}>
-          <div>
+          {/* <div>
             परीक्षाफल - <span id="re"><b>{data.result}</b></span>
-          </div>
+          </div> */}
           <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: "60px" }}>
             <div>
               <div>हस्ताक्षर ज़ाँचकार्ता</div>
