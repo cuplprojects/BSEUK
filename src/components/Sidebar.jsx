@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import { useEffect, useState } from 'react';
 import {
   FiHome,
   FiChevronDown,
@@ -13,7 +14,6 @@ import { FaBuildingColumns } from "react-icons/fa6";
 import { FaList } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
 import { useThemeStore } from '../store/themeStore';
-import { useState } from 'react';
 import { PiCertificateBold } from "react-icons/pi";
 import { GiNotebook } from "react-icons/gi";
 import { MdGroups } from "react-icons/md";
@@ -22,58 +22,73 @@ import Logo from "./../assets/logo.png";
 import { PiStudentBold } from "react-icons/pi";
 import { IoShieldCheckmark } from "react-icons/io5";
 import { FaUsers } from "react-icons/fa";
-
+import isAdminAccess from './../services/isAdminAccess';
+import { useUserStore } from './../store/useUsertoken';
 const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
+
   const location = useLocation();
   const theme = useThemeStore((state) => state.theme);
   const [expandedItems, setExpandedItems] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const { isAuthenticated, isLoading } = useUserStore();
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      const adminStatus = await isAdminAccess();
+      setIsAdmin(adminStatus);
+    };
+    
+    if (isAuthenticated) {
+      checkAdmin();
+    }
+  }, [isAuthenticated]);
 
   const menuItems = [
+    // Common routes for all authenticated users
     { path: "/dashboard", icon: <FiHome className="w-6 h-6" />, label: "Dashboard" },
-    { path: "/users", icon: < FiUsers  className="w-6 h-6" />, label: "Users" ,
-      subItems: [
-        {
-          path: "/users/add",
-          icon: <FiUserPlus className="w-5 h-5" />,
-          label: "Add Users"
-        },
-        {
-          path: "/users/all",
-          icon: <FaUsers  className="w-5 h-5" />,
-          label: "All Users"
-        },
-        // {
-        //   path: "/users/access",
-        //   icon: <FiUserPlus className="w-5 h-5" />,
-        //   label: "Access"
-        // }
-      ]
-    },
-    {
-      path: "candidates", // parent path
-      icon: <PiStudentBold className="w-6 h-6" />,
-      label: "Candidates",
-      subItems: [
-        {
-          path: "/add-candidate",
-          icon: <FiUserPlus className="w-5 h-5" />,
-          label: "Add Candidate"
-        },
-        {
-          path: "/add-bulkcandidates",
-          icon: <FiUpload className="w-5 h-5" />,
-          label: "Import Candidates"
-        }
-      ]
-    },
     { path: "/marks-entry", icon: <GiNotebook className="w-6 h-6" />, label: "Marks Entry" },
     { path: "/certificate-generation", icon: <PiCertificateBold className="w-6 h-6" />, label: "Certificate" },
-    { path: "/add-groups", icon: <MdGroups className="w-6 h-6" />, label: "Groups" },
-    { path: "/add-roles", icon: <IoShieldCheckmark className="w-6 h-6" />, label: "Roles" },
-    { path: "/add-session", icon: <SlCalender className="w-6 h-6" />, label: "Sessions" },
-    { path: "/add-institution", icon: <FaBuildingColumns className="w-6 h-6" />, label: "Institutions" },
-    { path: "/add-category", icon: <FaList className="w-6 h-6" />, label: "Category" },
-  ];
+    
+    // Admin only menu items
+    ...(isAdmin ? [
+      { path: "/users", icon: < FiUsers  className="w-6 h-6" />, label: "Users" ,
+        subItems: [
+          {
+            path: "/users/add",
+            icon: <FiUserPlus className="w-5 h-5" />,
+            label: "Add Users"
+          },
+          {
+            path: "/users/all",
+            icon: <FaUsers  className="w-5 h-5" />,
+            label: "All Users"
+          },
+        ]
+      },
+      {
+        path: "candidates",
+        icon: <PiStudentBold className="w-6 h-6" />,
+        label: "Candidates",
+        subItems: [
+          {
+            path: "/add-candidate",
+            icon: <FiUserPlus className="w-5 h-5" />,
+            label: "Add Candidate"
+          },
+          {
+            path: "/add-bulkcandidates",
+            icon: <FiUpload className="w-5 h-5" />,
+            label: "Import Candidates"
+          }
+        ]
+      },
+      { path: "/add-groups", icon: <MdGroups className="w-6 h-6" />, label: "Groups" },
+      { path: "/add-roles", icon: <IoShieldCheckmark className="w-6 h-6" />, label: "Roles" },
+      { path: "/add-session", icon: <SlCalender className="w-6 h-6" />, label: "Sessions" },
+      { path: "/add-institution", icon: <FaBuildingColumns className="w-6 h-6" />, label: "Institutions" },
+      { path: "/add-category", icon: <FaList className="w-6 h-6" />, label: "Category" },
+    ] : [])
+];
 
   const toggleExpand = (path) => {
     setExpandedItems(prev =>
