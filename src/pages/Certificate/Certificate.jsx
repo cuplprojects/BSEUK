@@ -30,6 +30,7 @@ const Certificate = () => {
   const [showPreview, setShowPreview] = useState(false);
   const [entersession, setEntersession] = useState("");
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
+  const [isPreview, setIsPreview] = useState(false);
 
   const theme = useThemeStore((state) => state.theme);
 
@@ -233,45 +234,45 @@ const Certificate = () => {
       setError("Please enter roll number and select session and semester");
       return;
     }
-
+    setIsPreview(true);
     setLoading(true);
     setError(null);
 
     try {
-      const datatosend = {
-        rollNumber: rollNumber,
-        sessionId: selectedSession,
-        semesterId: selectedSemester,
-      };
-      const auditresult = await API.post(
-        "/StudentsMarksObtaineds/AuditforSingle",
-        datatosend
+      // const datatosend = {
+      //   rollNumber: rollNumber,
+      //   sessionId: selectedSession,
+      //   semesterId: selectedSemester,
+      // };
+      // const auditresult = await API.post(
+      //   "/StudentsMarksObtaineds/AuditforSingle",
+      //   datatosend
+      // );
+      // const data = auditresult.data;
+
+      const response = await API.post(
+        "/StudentsMarksObtaineds/GetStudentResult",
+        {
+          rollNumber,
+          sessionId: parseInt(selectedSession),
+          semesterId: parseInt(selectedSemester),
+        }
       );
-      const data = auditresult.data;
-      if (data) {
-        const response = await API.post(
-          "/StudentsMarksObtaineds/GetStudentResult",
-          {
-            rollNumber,
-            sessionId: parseInt(selectedSession),
-            semesterId: parseInt(selectedSemester),
-          }
-        );
-        const response2 = await API.get(
-          `/StudentsMarksObtaineds/GetAllYearsResult/${rollNumber}`
-        );
+      const response2 = await API.get(
+        `/StudentsMarksObtaineds/GetAllYearsResult/${rollNumber}`
+      );
 
-        const result = response.data;
-        const result2 = response2.data;
+      const result = response.data;
+      const result2 = response2.data;
 
-        const formattedData = formatCertificateData(result, result2);
-        setCertificateData(formattedData);
-        setIsPreviewModalOpen(true);
-      } else {
-        toast.warn(
-          "Insufficient Data to Generate Certificate, Please check not all marks have been entered for the Student"
-        );
-      }
+      const formattedData = formatCertificateData(result, result2);
+      setCertificateData(formattedData);
+      setIsPreviewModalOpen(true);
+      //      else {
+      //   toast.warn(
+      //     "Insufficient Data to Generate Certificate, Please check not all marks have been entered for the Student"
+      //   );
+      // }
     } catch (error) {
       console.error("Error generating preview:", error);
       setError(
@@ -633,8 +634,8 @@ const Certificate = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className={`p-4 rounded-lg ${error.includes("success")
-                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-200"
-                : "bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-200"
+              ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-200"
+              : "bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-200"
               }`}
           >
             {error}
@@ -664,13 +665,13 @@ const Certificate = () => {
         {certificateData && (
           <div className="w-full max-w-4xl">
             {certificateData.semester === "Second Semester" ? (
-              <Template2 data={certificateData} />
+              <Template2 data={certificateData} isPreview={isPreview} />
             ) : certificateData.semester === "Third Semester" ? (
-              <Template3 data={certificateData} />
+              <Template3 data={certificateData} isPreview={isPreview} />
             ) : certificateData.semester === "Fourth Semester" ? (
-              <Template4 data={certificateData} />
+              <Template4 data={certificateData} isPreview={isPreview} />
             ) : (
-              <Template data={certificateData} />
+              <Template data={certificateData} isPreview={isPreview} />
             )}
           </div>
         )}

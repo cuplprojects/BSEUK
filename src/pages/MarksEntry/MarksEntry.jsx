@@ -14,6 +14,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ConfirmationModal from "./ConfirmationModal";
 import * as XLSX from 'xlsx';
+import RemarkModal from './RemarkModal';
+import { Pencil } from 'lucide-react';
 
 const MarksEntry = () => {
   const [sessions, setSessions] = useState([]);
@@ -38,6 +40,8 @@ const MarksEntry = () => {
   const [inputValue, setInputValue] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [question, setQestion] = useState("");
+  const [isRemarkModalOpen, setIsRemarkModalOpen] = useState(false);
+  const [selectedCandidate, setSelectedCandidate] = useState(null);
   const theme = useThemeStore((state) => state.theme);
 
   const cardClass =
@@ -287,6 +291,20 @@ const MarksEntry = () => {
       columnId: columns[nextColIndex]?.id,
     };
   };
+
+  const handleRemarkSubmit = (remarks) => {
+    if (selectedCandidate) {
+      setUpdatedMarks({
+        ...updatedMarks,
+        [selectedCandidate.rowId]: {
+          ...updatedMarks[selectedCandidate.rowId],
+          candidateId: selectedCandidate.candidateId,
+          remark: remarks
+        }
+      });
+    }
+  };
+
   const handleKeyDown = (e, row, columnId, rowIndex, columnIndex) => {
     if (e.key === "Tab") {
       e.preventDefault();
@@ -345,10 +363,10 @@ const MarksEntry = () => {
       columnId === "theoryMarks"
         ? paper.theoryPaperMaxMarks
         : columnId === "internalMarks"
-        ? paper.interalMaxMarks
-        : columnId === "practicalMarks"
-        ? paper.practicalMaxMarks
-        : null;
+          ? paper.interalMaxMarks
+          : columnId === "practicalMarks"
+            ? paper.practicalMaxMarks
+            : null;
 
     if (maxMarks !== null && Number(value) > maxMarks) {
       toast.error(`Marks cannot exceed the maximum marks of ${maxMarks}!`);
@@ -396,6 +414,7 @@ const MarksEntry = () => {
             practicalMarks !== undefined
               ? practicalMarks
               : candidateData.marks?.practicalMarks || 0,
+          remark: updatedMarks[rowId]?.remark || candidateData.marks?.remark || ''
         };
       })
       .filter(Boolean);
@@ -418,6 +437,10 @@ const MarksEntry = () => {
       toast.error("Failed to update marks.");
     }
   };
+
+  useEffect(() => {
+    console.log(updatedMarks)
+  },[updatedMarks])
 
   const markAsAbsent = async (candidateID) => {
     try {
@@ -446,7 +469,7 @@ const MarksEntry = () => {
         semID: selectedFilters.semID,
         sesID: selectedFilters.sesID,
       };
-      
+
       const response = await API.post("StudentsMarksObtaineds/Audit", datatosend);
       const auditData = response.data;
 
@@ -456,7 +479,7 @@ const MarksEntry = () => {
         const rowData = {
           'Roll Number': student.rollNumber
         };
-        
+
         // Add a column for each missing paper with "Missing" as the value
         student.missingPapers.forEach((paper, index) => {
           rowData[`Paper ${index + 1}`] = paper;
@@ -478,7 +501,7 @@ const MarksEntry = () => {
 
       // Save file
       XLSX.writeFile(wb, fileName);
-      
+
       toast.success('Audit report downloaded successfully!');
     } catch (error) {
       console.error('Error generating audit report:', error);
@@ -706,11 +729,10 @@ const MarksEntry = () => {
                       return (
                         <td
                           key={cell.id}
-                          className={`p-3 border ${tableCellClass} ${
-                            row.original.marks?.isAbsent
-                              ? "opacity-50 pointer-events-none"
-                              : ""
-                          }`}
+                          className={`p-3 border ${tableCellClass} ${row.original.marks?.isAbsent
+                            ? "opacity-50 pointer-events-none"
+                            : ""
+                            }`}
                           onClick={() =>
                             !isNonEditable &&
                             handleCellClick(row.id, cell.column.id)
@@ -761,12 +783,27 @@ const MarksEntry = () => {
                           Mark Present
                         </button>
                       ) : (
-                        <button
-                          onClick={() => markAsAbsent(row.original.candidateID)}
-                          className={`px-4 py-2 rounded ${buttonClass}`}
-                        >
-                          Mark Absent
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => {
+                              setSelectedCandidate({
+                                rowId: row.id,
+                                candidateId: row.original.candidateID
+                              });
+                              setIsRemarkModalOpen(true);
+                            }}
+                            className={`p-2 rounded ${buttonClass}`}
+                            title="Add Remarks"
+                          >
+                            <Pencil size={16} />
+                          </button>
+                          <button
+                            onClick={() => markAsAbsent(row.original.candidateID)}
+                            className={`px-4 py-2 rounded ${buttonClass}`}
+                          >
+                            Mark Absent
+                          </button>
+                        </div>
                       )}
                     </td>
                   </tr>
@@ -830,6 +867,15 @@ const MarksEntry = () => {
           isOpen={isModalOpen}
           onConfirm={handleConfirm}
           onCancel={handleCancel}
+        />
+        <RemarkModal
+          isOpen={isRemarkModalOpen}
+          onClose={() => {
+            setIsRemarkModalOpen(false);
+            setSelectedCandidate(null);
+          }}
+          onSubmit={handleRemarkSubmit}
+          initialRemarks={selectedCandidate ? updatedMarks[selectedCandidate.rowId]?.remarks || '' : ''}
         />
       </div>
     </motion.div>

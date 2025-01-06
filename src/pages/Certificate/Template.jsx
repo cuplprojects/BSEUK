@@ -9,9 +9,14 @@ const semesterHindi = {
   "FOURTH SEMESTER": "चतुर्थ सेमेस्टर",
 };
 
-const Certificate = ({ data }) => {
-  const paperType2Count = data?.marks.filter((mark) => mark.paperType === 2).length;
-
+const Certificate = ({ data, isPreview }) => {
+  // const paperType2Count = data?.marks.filter((mark) => mark.paperType === 2).length;
+  const getCellStyle = (value) => ({
+    border: '1px solid black',
+    textAlign: 'center',
+    padding: '4px 0px 12px 0px',
+    backgroundColor: isPreview && !value ? 'red' : 'transparent',
+  });
   const renderTheoryRows = () => {
     return data.marks
       .filter((mark) => mark.type === 1)

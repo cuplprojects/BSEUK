@@ -17,7 +17,7 @@ const semesterIdHindi = {
 };
 
  
-const Certificate2 = ({ data }) => {
+const Certificate2 = ({ data, isPreview }) => {
   const paperType2Count = data?.marks.filter((mark) => mark.paperType === 2).length;
 
   const renderTheoryRows = () => {

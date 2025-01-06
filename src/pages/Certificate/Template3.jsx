@@ -9,7 +9,7 @@ const semesterHindi = {
   "FOURTH SEMESTER": "चतुर्थ सेमेस्टर",
 };
 
-const Certificate3 = ({ data }) => {
+const Certificate3 = ({ data, isPreview }) => {
   const paperType2Count = data?.marks.filter((mark) => mark.paperType === 2).length;
 
   const renderTheoryRows = () => {
