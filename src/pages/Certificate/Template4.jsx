@@ -154,15 +154,15 @@ const isPassed = semesterStatuses.length === 4 &&
         </div>
 
         <section className="mb-4">
-          <div className="row mb-3" style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div className="mb-3" style={{ display: 'grid', gridTemplateColumns: ' 2fr 1fr 1fr' }}>
             <div><b>नाम <br />Name:</b> <span className="ms-2">{data.name}</span></div>
             <div><b>अनुक्रमांक <br />Roll No.:</b> <span className="ms-2">{data.rollNo}</span></div>
             <div><b>वर्ग <br />Group:</b> <span className="ms-2">{data.group}</span></div>
           </div>
 
-          <div className="row mb-3" style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <div><b>माता का नाम <br />Mother's Name:</b> <span className="ms-2">{data.mothersName}</span></div>
-            <div><b>पिता का नाम <br />Father's Name:</b> <span className="ms-2">{data.fathersName}</span></div>
+          <div className="row mb-3" style={{ display: 'grid', gridTemplateColumns: ' 1fr 1fr ' }}>
+            <div style={{}}><b>माता का नाम <br />Mother's Name:</b> <span className="ms-2">{data.mothersName}</span></div>
+            <div style={{}}><b>पिता का नाम <br />Father's Name:</b> <span className="ms-2">{data.fathersName}</span></div>
           </div>
 
           <div className="row">
