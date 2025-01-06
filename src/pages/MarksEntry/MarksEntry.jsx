@@ -473,20 +473,32 @@ const MarksEntry = () => {
       const response = await API.post("StudentsMarksObtaineds/Audit", datatosend);
       const auditData = response.data;
 
-      // Transform the data for Excel
+      // Transform the data for Excel - with null check and error handling
       const excelData = auditData.map(student => {
+        if (!student || !student.rollNumber || !Array.isArray(student.missingPapers)) {
+          return null;
+        }
+
         // Create base object with roll number
         const rowData = {
           'Roll Number': student.rollNumber
         };
 
-        // Add a column for each missing paper with "Missing" as the value
+        // Safely add missing papers
         student.missingPapers.forEach((paper, index) => {
-          rowData[`Paper ${index + 1}`] = paper;
+          if (paper) {
+            rowData[`Missing Paper ${index + 1}`] = paper;
+          }
         });
 
         return rowData;
-      });
+      }).filter(Boolean); // Remove any null entries
+
+      // Only proceed if we have data to export
+      if (excelData.length === 0) {
+        toast.info('No audit data to export');
+        return;
+      }
 
       // Create worksheet
       const ws = XLSX.utils.json_to_sheet(excelData);
