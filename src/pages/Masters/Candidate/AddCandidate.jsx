@@ -219,15 +219,15 @@ const AddCandidate = () => {
                                 Group
                             </label>
                             <select
-                                name="groupId"
-                                value={formData.groupId}
+                                name="group"
+                                value={formData.group}
                                 onChange={handleChange}
                                 required
                                 className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
                             >
                                 <option value="">Select Group</option>
                                 {groups.map(group => (
-                                    <option key={group.groupId} value={group.groupId}>
+                                    <option key={group.groupId} value={group.groupName}>
                                         {group.groupName}
                                     </option>
                                 ))}
