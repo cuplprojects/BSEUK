@@ -108,8 +108,10 @@ const AddCandidate = () => {
 
         const fetchPapers = async (semId) => {
             try {
+                setAvailablePapers([]);
                 const response = await API.get(`Papers/GetBySem/${semId}`);
-                setAvailablePapers(response.data);
+                const papers = response.data.filter(paper => paper.paperCode != 0)
+                setAvailablePapers(papers);
             } catch (error) {
                 console.error("Error fetching papers:", error);
             }
