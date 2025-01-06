@@ -44,6 +44,10 @@ const MarksEntry = () => {
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const theme = useThemeStore((state) => state.theme);
 
+  
+
+
+
   const cardClass =
     theme === "dark"
       ? "bg-black/40 backdrop-blur-xl border-purple-500/20"
@@ -563,21 +567,28 @@ const MarksEntry = () => {
       <div className="flex justify-between items-center">
         <h1 className={`text-3xl font-bold ${textClass}`}>Marks Entry</h1>
         {candidates.length > 0 && (
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             <button
               type="button"
               onClick={handleMarksLock}
-              className={`w-full sm:w-auto px-6 py-2 h-12 rounded-lg font-semibold transition-colors ${buttonClass}`}
+              className={`text-wrap w-full sm:w-auto px-4 sm:px-6 py-2 h-auto min-h-[3rem] rounded-lg font-semibold transition-colors ${buttonClass}`}
             >
-              {/* <FaFileDownload className="inline mr-2" /> */}
-              Lock Marks
+              <span className="block text-sm sm:text-base">
+                Lock Marks for{' '}
+                <span className="whitespace-nowrap">
+                  {semesters[selectedFilters.semID]?.semesterName}
+                </span>{' '}
+                <span className="whitespace-nowrap">
+                  {sessions[selectedFilters.sesID - 1]?.sessionName}
+                </span>
+              </span>
             </button>
             <button
               type="button"
               onClick={handleAudit}
-              className={`w-full sm:w-auto px-6 py-2 h-12 rounded-lg font-semibold transition-colors ${buttonClass}`}
+              className={`w-full sm:w-auto px-4 sm:px-6 py-2 h-auto min-h-[3rem] rounded-lg font-semibold transition-colors ${buttonClass}`}
             >
-              Audit
+              Get Remaining Marks Entry Status
             </button>
           </div>
         )}
