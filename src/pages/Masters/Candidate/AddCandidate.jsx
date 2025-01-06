@@ -108,8 +108,10 @@ const AddCandidate = () => {
 
         const fetchPapers = async (semId) => {
             try {
+                setAvailablePapers([]);
                 const response = await API.get(`Papers/GetBySem/${semId}`);
-                setAvailablePapers(response.data);
+                const papers = response.data.filter(paper => paper.paperCode != 0)
+                setAvailablePapers(papers);
             } catch (error) {
                 console.error("Error fetching papers:", error);
             }
@@ -219,15 +221,15 @@ const AddCandidate = () => {
                                 Group
                             </label>
                             <select
-                                name="groupId"
-                                value={formData.groupId}
+                                name="group"
+                                value={formData.group}
                                 onChange={handleChange}
                                 required
                                 className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
                             >
                                 <option value="">Select Group</option>
                                 {groups.map(group => (
-                                    <option key={group.groupId} value={group.groupId}>
+                                    <option key={group.groupId} value={group.groupName}>
                                         {group.groupName}
                                     </option>
                                 ))}
