@@ -21,7 +21,6 @@ const AddCandidate = () => {
         sesID: "",
         category: "",
         papersOpted: "",
-        groupId: "",  // Added groupId field
     });
 
     const clearFormData = () => {
@@ -38,7 +37,6 @@ const AddCandidate = () => {
             sesID: "",
             category: "",
             papersOpted: "",
-            groupId: "",  // Reset groupId
         });
     };
 
@@ -158,7 +156,6 @@ const AddCandidate = () => {
                 sesID: formData.sesID,
                 category: formData.category,
                 papersOpted: formData.papersOpted,
-                groupId: formData.groupId,  // Added groupId field
             });
             toast.success("Candidate added successfully!");
             clearFormData();
