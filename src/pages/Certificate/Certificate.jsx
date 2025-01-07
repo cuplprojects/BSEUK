@@ -165,7 +165,7 @@ const Certificate = () => {
           internal: mark.internalMarks,
           total: mark.rowTotal,
           isAbsent: mark.isAbsent,
-          pageremark: mark.paperRemarks
+          pageremark: mark.paperRemarks,
         })),
         totalMarks: resultData.totalMarksObtained,
         maxMarks: resultData.totalMaxMarks,
