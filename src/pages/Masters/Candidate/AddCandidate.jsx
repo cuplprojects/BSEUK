@@ -381,7 +381,7 @@ const AddCandidate = () => {
                                                     : 'bg-blue-100 text-blue-700'
                                             }`}
                                         >
-                                            <span className="text-sm">{paper.paperName} ({paper.paperCode})</span>
+                                            <span className="text-sm">({paper.paperCode}){paper.paperName} </span>
                                             <button
                                                 type="button"
                                                 onClick={() => handleRemovePaper(paper)}

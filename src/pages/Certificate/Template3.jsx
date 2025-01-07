@@ -11,6 +11,9 @@ const semesterHindi = {
 
 const Certificate3 = ({ data, isPreview }) => {
   const paperType2Count = data?.marks.filter((mark) => mark.paperType === 2).length;
+  const totalTheoryMax = data.marks.reduce((acc, mark) => acc + mark.theory, 0);
+  const totalInternalMax = data.marks.reduce((acc, mark) => acc + mark.internal, 0);
+  const practicalMax = data.marks.reduce((acc, mark) => acc + mark.practical, 0);
 
   const getCellStyle = (value) => ({
     border: '1px solid black',
@@ -140,19 +143,19 @@ const Certificate3 = ({ data, isPreview }) => {
 
         <section className="mb-4">
           <div className="mb-3" style={{ display: 'grid', gridTemplateColumns: ' 2fr 1fr 1fr' }}>
-            <div><b>नाम <br />Name:</b> <span className="ms-2">{data.name}</span></div>
+            <div><b>नाम <br />Name:</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.name}</span></div>
             <div><b>अनुक्रमांक <br />Roll No.:</b> <span className="ms-2">{data.rollNo}</span></div>
             <div><b>वर्ग <br />Group:</b> <span className="ms-2">{data.group}</span></div>
           </div>
 
           <div className="row mb-3" style={{ display: 'grid', gridTemplateColumns: ' 1fr 1fr ' }}>
-            <div style={{}}><b>माता का नाम <br />Mother's Name:</b> <span className="ms-2">{data.mothersName}</span></div>
-            <div style={{}}><b>पिता का नाम <br />Father's Name:</b> <span className="ms-2">{data.fathersName}</span></div>
+            <div style={{}}><b>माता का नाम <br />Mother's Name:</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.mothersName}</span></div>
+            <div style={{}}><b>पिता का नाम <br />Father's Name:</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.fathersName}</span></div>
           </div>
 
           <div className="row">
             <div className="col-md-12">
-              <b>संस्थान का नाम <br />Institution's Name:</b> <span className="ms-2">{data.institutionName}</span>
+              <b>संस्थान का नाम <br />Institution's Name:</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.institutionName}</span>
             </div>
           </div>
         </section>
@@ -165,7 +168,7 @@ const Certificate3 = ({ data, isPreview }) => {
                 <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>प्रश्न पत्र का नाम</th>
                 <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>अधिकतम अंक</th>
                 <th colSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>सैद्धांतिक</th>
-                <th colSpan="2" rowSpan={2} className="text-center" style={{ border: '1px solid black', padding: '4px' }}>क्रियात्मक / प्रयोगात्मक</th>
+                <th colSpan="2" rowSpan={3} className="text-center" style={{ border: '1px solid black', padding: '4px' }}>क्रियात्मक / प्रयोगात्मक</th>
                 <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>योग</th>
                 <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>परीक्षाफल</th>
               </tr>
@@ -178,8 +181,8 @@ const Certificate3 = ({ data, isPreview }) => {
                 <th className="text-center" style={{ border: '1px solid black', padding: '4px' }}>प्राप्तांक</th>
                 <th className="text-center" style={{ border: '1px solid black', padding: '4px' }}>पूर्णांक</th>
                 <th className="text-center" style={{ border: '1px solid black', padding: '4px' }}>प्राप्तांक</th>
-                <th className="text-center" style={{ border: '1px solid black', padding: '4px' }}>पूर्णांक</th>
-                <th className="text-center" style={{ border: '1px solid black', padding: '4px' }}>प्राप्तांक</th>
+                {/* <th className="text-center" style={{ border: '1px solid black', padding: '4px' }}>पूर्णांक</th> */}
+                {/* <th className="text-center" style={{ border: '1px solid black', padding: '4px' }}>प्राप्तांक</th> */}
               </tr>
             </thead>
             <tbody>
@@ -190,12 +193,13 @@ const Certificate3 = ({ data, isPreview }) => {
                 <td colSpan="2" style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', padding: "4px 4px 12px 4px" }}><b>योग (Total)</b></td>
                 <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center' }}>{data.maxMarks}</td>
                 <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.totalInternalMaxMarks}</td>
-                <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.totalInternalMarksObtained}</td>
+                <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px",textAlign: 'center' }}>{totalTheoryMax}</td>
                 <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.totalExternalMaxMarks}</td>
-                <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.totalExternalMarksObtained}</td>
-                <td colSpan="2" style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.totalPracticalMaxMarks}</td>
+                <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px",textAlign: 'center' }}>{totalInternalMax}</td>
+                {/* <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.totalExternalMaxMarks}</td> */}
+                <td colSpan={2} style={{ border: '1px solid black', padding: "4px  0px 12px 0px",textAlign: 'center' }}>{practicalMax}</td>
                 <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', padding: "4px  0px 12px 0px" }}>{data.totalMarks}</td>
-                <td></td>
+                <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', padding: "4px  0px 12px 0px" }}></td>
               </tr>
             </tbody>
           </table>

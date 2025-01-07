@@ -18,6 +18,11 @@ const Certificate2 = ({ data, isPreview }) => {
     backgroundColor: isPreview && !value ? '#fa968e' : 'transparent',
   });
 
+  console.log(data.marks);
+  const totalTheoryMax = data.marks.reduce((acc, mark) => acc + mark.theory, 0);
+  const totalInternalMax = data.marks.reduce((acc, mark) => acc + mark.internal, 0);
+  const practicalMax = data.marks.reduce((acc, mark) => acc + mark.practical, 0);
+
 
   const renderTheoryRows = () => {
     return data.marks
@@ -138,19 +143,19 @@ const renderInternshipRows = () => {
 
         <section className="mb-4">
           <div className="mb-3" style={{ display: 'grid', gridTemplateColumns: ' 2fr 1fr 1fr' }}>
-            <div><b>नाम <br />Name:</b> <span className="ms-2">{data.name}</span></div>
+            <div><b>नाम <br />Name:</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.name}</span></div>
             <div><b>अनुक्रमांक <br />Roll No.:</b> <span className="ms-2">{data.rollNo}</span></div>
             <div><b>वर्ग <br />Group:</b> <span className="ms-2">{data.group}</span></div>
           </div>
 
           <div className="row mb-3" style={{ display: 'grid', gridTemplateColumns: ' 1fr 1fr ' }}>
-            <div style={{}}><b>माता का नाम <br />Mother's Name:</b> <span className="ms-2">{data.mothersName}</span></div>
-            <div style={{}}><b>पिता का नाम <br />Father's Name:</b> <span className="ms-2">{data.fathersName}</span></div>
+            <div style={{}}><b>माता का नाम <br />Mother's Name:</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.mothersName}</span></div>
+            <div style={{}}><b>पिता का नाम <br />Father's Name:</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.fathersName}</span></div>
           </div>
 
           <div className="row">
             <div className="col-md-12">
-              <b>संस्थान का नाम <br />Institution's Name:</b> <span className="ms-2">{data.institutionName}</span>
+              <b>संस्थान का नाम <br />Institution's Name:</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.institutionName}</span>
             </div>
           </div>
         </section>
@@ -186,10 +191,10 @@ const renderInternshipRows = () => {
                 <td colSpan="2" style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', padding: "4px 4px 12px 4px" }}><b>योग (Total)</b></td>
                 <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px" ,textAlign: 'center',}}>{data.maxMarks}</td>
                 <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.totalInternalMaxMarks}</td>
-                <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.totalInternalMarksObtained}</td>
+                <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign:"center" }}>{totalTheoryMax}</td>
                 <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.totalExternalMaxMarks}</td>
-                <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.totalExternalMarksObtained}</td>
-                <td colSpan="2" style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.totalPracticalMaxMarks}</td>
+                <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign:"center" }}>{totalInternalMax}</td>
+                <td colSpan="2" style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign:"center" }}>{practicalMax}</td>
                 <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', padding: "4px  0px 12px 0px" }}>{data.totalMarks}</td>
                 <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}></td>
               </tr>
