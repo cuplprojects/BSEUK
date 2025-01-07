@@ -310,24 +310,7 @@ const AddCandidate = () => {
                             </select>
                         </div>
 
-                        <div>
-                            <label className={`block text-sm font-medium mb-2 ${textClass}`}>
-                                Semester
-                            </label>
-                            <select
-                                name="semID"
-                                value={formData.semID}
-                                onChange={handleChange}
-                                className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
-                            >
-                                <option value="">Select Semester</option>
-                                {semesters.map((sem) => (
-                                    <option key={sem.semID} value={sem.semID}>
-                                        {sem.semesterName}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
+                       
 
                         <div>
                             <label className={`block text-sm font-medium mb-2 ${textClass}`}>
@@ -343,6 +326,24 @@ const AddCandidate = () => {
                                 {sessions.map((session) => (
                                     <option key={session.sesID} value={session.sesID}>
                                         {session.sessionName}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div>
+                            <label className={`block text-sm font-medium mb-2 ${textClass}`}>
+                                Semester
+                            </label>
+                            <select
+                                name="semID"
+                                value={formData.semID}
+                                onChange={handleChange}
+                                className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
+                            >
+                                <option value="">Select Semester</option>
+                                {semesters.map((sem) => (
+                                    <option key={sem.semID} value={sem.semID}>
+                                        {sem.semesterName}
                                     </option>
                                 ))}
                             </select>
@@ -423,7 +424,7 @@ const AddCandidate = () => {
                                                                     : 'hover:bg-blue-50'
                                                             }`}
                                                         >
-                                                            <span>{paper.paperName} ({paper.paperCode})</span>
+                                                            <span>({paper.paperCode}) - {paper.paperName} </span>
                                                             {isSelected && (
                                                                 <CheckIcon className={`h-4 w-4 ${
                                                                     theme === 'dark' 

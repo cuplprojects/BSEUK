@@ -57,7 +57,7 @@ const NewFormComponent = () => {
 
   const handleDownloadTemplate = () => {
     // Use the imported Excel file
-    const templatePath = "public/excel/candidates.xlsx";
+    const templatePath = "excel/candidates.xlsx";
 
     // Create a link element
     const link = document.createElement("a");
