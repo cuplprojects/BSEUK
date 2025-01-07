@@ -34,8 +34,8 @@ const Certificate3 = ({ data, isPreview }) => {
           <td style={getCellStyle(mark.isAbsent ? 'A' : mark.theory)}>{mark.isAbsent ? 'A' : mark.theory}</td>
           <td style={getCellStyle(mark.internalMax)}>{mark.internalMax}</td>
           <td style={getCellStyle(mark.isAbsent ? 'A' : mark.internal)}>{mark.isAbsent ? 'A' : mark.internal}</td>
-          <td style={getCellStyle('-')}>-</td>
-          <td style={getCellStyle('-')}>-</td>
+          {/* <td style={getCellStyle('-')}>-</td> */}
+          <td colSpan={2} style={getCellStyle('-')}>-</td>
           <td style={getCellStyle(mark.isAbsent ? "A" : mark.total)}>{mark.isAbsent ? "A" : mark.total}</td>
           <td style={getCellStyle(mark.pageremark === "उत्तीर्ण" ? "P" : "F")}>{mark.pageremark === "उत्तीर्ण" ? "P" : "F"}</td>
         </tr>
@@ -57,8 +57,8 @@ const Certificate3 = ({ data, isPreview }) => {
         <td style={getCellStyle('-')}>-</td>
         <td style={getCellStyle('-')}>-</td>
         <td style={getCellStyle('-')}>-</td>
-        <td style={getCellStyle(mark.maxMarks)}>{mark.maxMarks}</td>
-        <td style={getCellStyle(mark.isAbsent ? "A" : mark.practical)}>{mark.isAbsent ? "A" : mark.practical}</td>
+        {/* <td style={getCellStyle(mark.maxMarks)}>{mark.maxMarks}</td> */}
+        <td colSpan={2} style={getCellStyle(mark.isAbsent ? "A" : mark.practical)}>{mark.isAbsent ? "A" : mark.practical}</td>
         <td style={getCellStyle(mark.isAbsent ? "A" : mark.total)}>{mark.isAbsent ? "A" : mark.total}</td>
         <td style={getCellStyle(mark.pageremark === "उत्तीर्ण" ? "P" : "F")}>{mark.pageremark === "उत्तीर्ण" ? "P" : "F"}</td>
       </tr>
