@@ -40,7 +40,7 @@ const Certificate2 = ({ data }) => {
       .map((mark, index) => (
         <tr key={index}>
 
-          <td colSpan={mark.code === 47 ? 2 : 0} style={{ border: '1px solid black', textAlign: 'left', padding: '4px  0px 12px 5px' }}>{mark.code === 47 ? "" : mark.code} {mark.code === 47 ? "" : "-"} {mark.name}</td>
+          <td colSpan={mark.code === 1001 ? 2 : 0} style={{ border: '1px solid black', textAlign: 'left', padding: '4px  0px 12px 5px' }}>{mark.code === 1001 ? "" : String(mark.code).padStart(3, '0')} {mark.code === 1001 ? "" : "-"} {mark.name}</td>
           <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.theoryMax}</td>
           <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.theory}</td>
           <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.internalMax}</td>
@@ -138,8 +138,8 @@ const Certificate2 = ({ data }) => {
           </b>
         </div>
         <header className="text-center mb-3">
-          <div>
-            <h4 className="text-danger" style={{ fontSize: "1.1rem", marginBottom: "0.3rem", fontWeight: 'bold' }}>उत्‍तराखण्‍ड विद्यालयी शिक्षा परिषद</h4>
+        <div>
+            <h4 className="text-danger" style={{ fontSize: "1.1rem", marginBottom: "0.3rem", fontWeight: 'bold' }}>उत्तराखण्ड विद्यालयी शिक्षा परिषद्</h4>
             <h4 style={{ fontSize: "1.1rem", marginBottom: "0.3rem", fontWeight: 'bold' }}>BOARD OF SCHOOL EDUCATION UTTARAKHAND</h4>
           </div>
         </header>
@@ -151,35 +151,34 @@ const Certificate2 = ({ data }) => {
         <div className="text-center mb-3">
           <h4 style={{ fontSize: "1.1rem", marginBottom: "0.3rem", fontWeight: 'bold' }}>प्रारम्भिक शिक्षा में द्विवर्षीय डिप्लोमा</h4>
           <h4 style={{ fontSize: "1.1rem", marginBottom: "0.3rem", fontWeight: 'bold' }}>
-            TWO-YEAR DIPLOMA IN ELEMENTARY EDUCATION - {data.entersession || data.session}
-            {/* {data.session.split('-')[0]} */}
+            TWO-YEAR DIPLOMA IN ELEMENTARY EDUCATION - {data.entersession || data.session.split('-')[0]}
           </h4>
         </div>
 
         <div className="text-center mb-3">
-          <h5 style={{ fontSize: "1rem", marginBottom: "0.3rem" }}>अंक विवरण : <span id="sem-hindi">
+          <h5 style={{ fontSize: "1rem", marginBottom: "0.3rem" }}>अंक विवरणिका : <span id="sem-hindi">
             {semesterHindi[data.semester.toUpperCase()]}
           </span></h5>
-          <h5 style={{ fontSize: "1rem", marginBottom: "0.3rem", fontWeight: 'bold', textTransform:"upperCase" }}>
+          <h5 style={{ fontSize: "1rem", marginBottom: "0.3rem", fontWeight: 'bold', textTransform: 'upperCase' }}>
             <u>MARKS STATEMENT : {data.semester}</u>
           </h5>
         </div>
 
         <section className="mb-4">
           <div className="mb-3" style={{ display: 'grid', gridTemplateColumns: ' 2fr 1fr 1fr' }}>
-            <div><b>नाम <br />Name:</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.name}</span></div>
-            <div><b>अनुक्रमांक <br />Roll No.:</b> <span className="ms-2">{data.rollNo}</span></div>
-            <div><b>वर्ग <br />Group:</b> <span className="ms-2">{data.group}</span></div>
+            <div><b>नाम <br />Name</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.name}</span></div>
+            <div><b>अनुक्रमांक <br />Roll No.</b> <span className="ms-2">{data.rollNo}</span></div>
+            <div><b>वर्ग <br />Group</b> <span className="ms-2">{data.group}</span></div>
           </div>
 
           <div className="row mb-3" style={{ display: 'grid', gridTemplateColumns: ' 1fr 1fr ' }}>
-            <div style={{}}><b>माता का नाम <br />Mother's Name:</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.mothersName}</span></div>
-            <div style={{}}><b>पिता का नाम <br />Father's Name:</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.fathersName}</span></div>
+            <div style={{}}><b>माता का नाम <br />Mother's Name</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.mothersName}</span></div>
+            <div style={{}}><b>पिता का नाम <br />Father's Name</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.fathersName}</span></div>
           </div>
 
           <div className="row">
             <div className="col-md-12">
-              <b>संस्थान का नाम <br />Institution's Name:</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.institutionName}</span>
+              <b>संस्थान का नाम <br />Institution's Name</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.institutionName}</span>
             </div>
           </div>
         </section>
@@ -216,7 +215,6 @@ const Certificate2 = ({ data }) => {
                 <span
                   style={{
                     display: 'inline-block',
-                    transform: 'rotate(-90deg)',
                     transformOrigin: 'center',
                     whiteSpace: 'nowrap',
                     position: 'absolute',
@@ -282,13 +280,13 @@ const Certificate2 = ({ data }) => {
             परीक्षाफल - <span id="re"><b>{data.result}</b></span>
           </div> */}
           <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: "60px" }}>
-            <div>
-              <div>हस्ताक्षर ज़ाँचकार्ता</div>
+          <div>
+              <div>हस्ताक्षर जाँचकर्ता</div>
               <div>दिनांक -</div>
-            </div>
+            </div> 
             <div>
-              <div>हस्ताक्षर प्रचार्य</div>
-              <div>सील/मोहर</div>
+              <div>हस्ताक्षर प्राचार्य</div>
+              <div>सील/मुहर</div>
             </div>
           </div>
         </div>
