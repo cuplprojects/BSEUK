@@ -298,17 +298,17 @@ const Certificate = () => {
     setError(null);
 
     try {
-      // const datatosend = {
-      //   rollNumber: rollNumber,
-      //   sessionId: selectedSession,
-      //   semesterId: selectedSemester,
-      // };
-      // const auditresult = await API.post(
-      //   "/StudentsMarksObtaineds/AuditforSingle",
-      //   datatosend
-      // );
-      // const data = auditresult.data;
-      // if (data) {
+      const datatosend = {
+        rollNumber: rollNumber,
+        sessionId: selectedSession,
+        semesterId: selectedSemester,
+      };
+      const auditresult = await API.post(
+        "/StudentsMarksObtaineds/AuditforSingle",
+        datatosend
+      );
+      const data = auditresult.data;
+      if (data) {
         const response = await API.post(
           "/StudentsMarksObtaineds/GetStudentResult",
           {
@@ -329,11 +329,11 @@ const Certificate = () => {
           `Certificate_${result.studentDetails.rollNo}_${result.studentDetails.sem}.pdf`
         );
         setShowPreview(false);
-      // } else {
-      //   toast.warn(
-      //     "Insufficient Data to Generate Certificate, Please check not all marks have been entered for the Student"
-      //   );
-      // }
+      } else {
+        toast.warn(
+          "Insufficient Data to Generate Certificate, Please check not all marks have been entered for the Student"
+        );
+      }
     } catch (error) {
       console.error("Error generating certificate:", error);
       setError(
