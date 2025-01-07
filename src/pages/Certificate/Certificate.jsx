@@ -186,7 +186,7 @@ const Certificate = () => {
         session: studentDetails.session,
         semester: studentDetails.sem,
         marks: resultData.marksDetails.map((mark) => ({
-          code: mark.paperID,
+          code: mark.paperCode,
           type: mark.paperType,
           name: mark.paperName,
           maxMarks: mark.rowMaxTotal,

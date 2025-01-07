@@ -218,19 +218,27 @@ const MarksEntry = () => {
     }
   }, [selectedFilters.semID]);
 
+  useEffect(() => {
+    fetchCandidates(selectedFilters.paperID);
+  },[selectedFilters]);
+
   const fetchCandidates = async (paperID) => {
     setLoading(true);
     setError(null);
     setCandidates([]);
     try {
-      const response = await API.get(
-        `StudentsMarksObtaineds/GetStudentPaperMarks/${paperID}`
+      const datatosend = {
+        paperID: paperID,
+        sesID: selectedFilters.sesID,
+      }
+      const response = await API.post(
+        `StudentsMarksObtaineds/GetStudentPaperMarks`, datatosend
       );
       setCandidates(response.data);
       // toast.success(`${response.data.length} candidates loaded successfully!`);
     } catch (error) {
       console.error("Error fetching candidates:", error);
-      toast.error("Failed to fetch candidates data.");
+      // toast.error("Failed to fetch candidates data.");
     } finally {
       setLoading(false);
     }

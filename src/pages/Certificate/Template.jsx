@@ -24,7 +24,7 @@ const Certificate = ({ data, isPreview }) => {
       .filter((mark) => mark.type === 1)
       .map((mark, index) => (
         <tr key={index}>
-          <td style={getCellStyle(mark.code)}>{mark.code}</td>
+          <td style={getCellStyle(mark.code)}>{String(mark.code).padStart(3, '0')}</td>
           <td style={getCellStyle(mark.name)}>{mark.name}</td>
           <td style={getCellStyle(mark.maxMarks)}>{mark.maxMarks}</td>
           <td style={getCellStyle(mark.theoryMax)}>{mark.theoryMax}</td>
@@ -89,7 +89,7 @@ const Certificate = ({ data, isPreview }) => {
         </div>
         <header className="text-center mb-3">
           <div>
-            <h4 className="text-danger" style={{ fontSize: "1.1rem", marginBottom: "0.3rem", fontWeight: 'bold' }}>उत्‍तराखण्‍ड विद्यालयी शिक्षा परिषद</h4>
+            <h4 className="text-danger" style={{ fontSize: "1.1rem", marginBottom: "0.3rem", fontWeight: 'bold' }}>उत्तराखण्ड विद्यालयी शिक्षा परिषद्</h4>
             <h4 style={{ fontSize: "1.1rem", marginBottom: "0.3rem", fontWeight: 'bold' }}>BOARD OF SCHOOL EDUCATION UTTARAKHAND</h4>
           </div>
         </header>
@@ -101,13 +101,12 @@ const Certificate = ({ data, isPreview }) => {
         <div className="text-center mb-3">
           <h4 style={{ fontSize: "1.1rem", marginBottom: "0.3rem", fontWeight: 'bold' }}>प्रारम्भिक शिक्षा में द्विवर्षीय डिप्लोमा</h4>
           <h4 style={{ fontSize: "1.1rem", marginBottom: "0.3rem", fontWeight: 'bold' }}>
-            TWO-YEAR DIPLOMA IN ELEMENTARY EDUCATION - {data.entersession || data.session}
-            {/* {data.session.split('-')[0]} */}
+            TWO-YEAR DIPLOMA IN ELEMENTARY EDUCATION - {data.entersession || data.session.split('-')[0]}
           </h4>
         </div>
 
         <div className="text-center mb-3">
-          <h5 style={{ fontSize: "1rem", marginBottom: "0.3rem" }}>अंक विवरण : <span id="sem-hindi">
+          <h5 style={{ fontSize: "1rem", marginBottom: "0.3rem" }}>अंक विवरणिका : <span id="sem-hindi">
             {semesterHindi[data.semester.toUpperCase()]}
           </span></h5>
           <h5 style={{ fontSize: "1rem", marginBottom: "0.3rem", fontWeight: 'bold', textTransform: 'upperCase' }}>
@@ -117,19 +116,19 @@ const Certificate = ({ data, isPreview }) => {
 
         <section className="mb-4">
           <div className="mb-3" style={{ display: 'grid', gridTemplateColumns: ' 2fr 1fr 1fr' }}>
-            <div><b>नाम <br />Name:</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.name}</span></div>
-            <div><b>अनुक्रमांक <br />Roll No.:</b> <span className="ms-2">{data.rollNo}</span></div>
-            <div><b>वर्ग <br />Group:</b> <span className="ms-2">{data.group}</span></div>
+            <div><b>नाम <br />Name</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.name}</span></div>
+            <div><b>अनुक्रमांक <br />Roll No.</b> <span className="ms-2">{data.rollNo}</span></div>
+            <div><b>वर्ग <br />Group</b> <span className="ms-2">{data.group}</span></div>
           </div>
 
           <div className="row mb-3" style={{ display: 'grid', gridTemplateColumns: ' 1fr 1fr ' }}>
-            <div style={{}}><b>माता का नाम <br />Mother's Name:</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.mothersName}</span></div>
-            <div style={{}}><b>पिता का नाम <br />Father's Name:</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.fathersName}</span></div>
+            <div style={{}}><b>माता का नाम <br />Mother's Name</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.mothersName}</span></div>
+            <div style={{}}><b>पिता का नाम <br />Father's Name</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.fathersName}</span></div>
           </div>
 
           <div className="row">
             <div className="col-md-12">
-              <b>संस्थान का नाम <br />Institution's Name:</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.institutionName}</span>
+              <b>संस्थान का नाम <br />Institution's Name</b> <span className="ms-2" style={{textTransform:"upperCase"}}>{data.institutionName}</span>
             </div>
           </div>
         </section>
@@ -138,8 +137,8 @@ const Certificate = ({ data, isPreview }) => {
           <table border="2" className="table-bordered" style={{ borderCollapse: 'collapse', fontSize: "0.8rem", padding: "4px" }}>
             <thead>
               <tr>
-                <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>प्रश्न पत्र कोड</th>
-                <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>प्रश्न पत्र का नाम</th>
+                <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>प्रश्नपत्र कोड</th>
+                <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>प्रश्नपत्र का नाम</th>
                 <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>अधिकतम अंक</th>
                 <th colSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>सैद्धांतिक</th>
                 <th colSpan="2" rowSpan={2} className="text-center" style={{ border: '1px solid black', padding: '4px' }}>क्रियात्मक / प्रयोगात्मक</th>
@@ -181,12 +180,12 @@ const Certificate = ({ data, isPreview }) => {
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: "60px" }}>
             <div>
-              <div>हस्ताक्षर ज़ाँचकार्ता</div>
+              <div>हस्ताक्षर जाँचकर्ता</div>
               <div>दिनांक -</div>
-            </div>
+            </div> 
             <div>
-              <div>हस्ताक्षर प्रचार्य</div>
-              <div>सील/मोहर</div>
+              <div>हस्ताक्षर प्राचार्य</div>
+              <div>सील/मुहर</div>
             </div>
           </div>
         </div>
