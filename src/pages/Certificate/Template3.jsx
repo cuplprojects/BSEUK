@@ -136,7 +136,7 @@ const Certificate3 = ({ data, isPreview }) => {
           <h5 style={{ fontSize: "1rem", marginBottom: "0.3rem" }}>अंक विवरण : <span id="sem-hindi">
             {semesterHindi[data.semester.toUpperCase()]}
           </span></h5>
-          <h5 style={{ fontSize: "1rem", marginBottom: "0.3rem", fontWeight: 'bold' }}>
+          <h5 style={{ fontSize: "1rem", marginBottom: "0.3rem", fontWeight: 'bold', textTransform: 'upperCase' }}>
             <u>MARKS STATEMENT : {data.semester}</u>
           </h5>
         </div>
