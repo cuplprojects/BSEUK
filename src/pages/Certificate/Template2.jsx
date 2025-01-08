@@ -198,14 +198,16 @@ const Certificate2 = ({ data, isPreview }) => {
               <div className="">
                 <b>नाम <br />Name</b>{" "}
                 <span className="ms-2" style={{ textTransform: "upperCase" }}>
-                  {data.name}
+                  <b>{data.name}</b>
                 </span>
               </div>
               <div><b>अनुक्रमांक <br />Roll No.</b>{" "}
-                <span className="ms-2">{data.rollNo}</span>
+                <span className="ms-2"><b>{data.rollNo}</b></span>
               </div>
               <div><b>वर्ग<br />Group</b>{" "}
-                <span className="ms-2">{data.group}</span>
+                <span className="ms-2">
+                  <b>{data.group}</b>
+                  </span>
               </div>
             </div>
 
@@ -219,7 +221,7 @@ const Certificate2 = ({ data, isPreview }) => {
                   Mother's Name
                 </b>{" "}
                 <span className="ms-2" style={{ textTransform: "upperCase" }}>
-                  {data.mothersName}
+                  <b>{data.mothersName}</b>
                 </span>
               </div>
               <div style={{}}>
@@ -228,7 +230,7 @@ const Certificate2 = ({ data, isPreview }) => {
                   Father's Name
                 </b>{" "}
                 <span className="ms-2" style={{ textTransform: "upperCase" }}>
-                  {data.fathersName}
+                  <b>{data.fathersName}</b>
                 </span>
               </div>
             </div>
@@ -240,7 +242,7 @@ const Certificate2 = ({ data, isPreview }) => {
                   Institution's Name
                 </b>{" "}
                 <span className="ms-2" style={{ textTransform: "upperCase" }}>
-                  {data.institutionName}
+                  <b>{data.institutionName}</b>
                 </span>
               </div>
             </div>
@@ -296,7 +298,7 @@ const Certificate2 = ({ data, isPreview }) => {
                   <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center' }}>{data.totalExternalMaxMarks}</td>
                   <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: "center" }}>{totalInternalMax}</td>
                   <td colSpan="2" style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: "center" }}>{practicalMax}</td>
-                  <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', padding: "4px  0px 12px 0px" }}>{data.totalMarks}</td>
+                  <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', padding: "4px  0px 12px 0px" , fontSize: "1rem",}}>{data.totalMarks}</td>
                   <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center' }}></td>
                 </tr>
               </tbody>
