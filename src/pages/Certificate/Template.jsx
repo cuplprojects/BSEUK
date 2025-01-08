@@ -89,13 +89,14 @@ const Certificate = ({ data, isPreview }) => {
           right: 0,
           bottom: 0,
           backgroundImage: `url(${logo})`,
-          backgroundSize: "75%",
-          backgroundPosition: "center 45%",
+          backgroundSize: "600px 700px", // Replace with your desired width and height in pixels
+          backgroundPosition: "center 50%",
           backgroundRepeat: "no-repeat",
           opacity: 0.25,
           zIndex: -1,
         }}
       />
+
 
       <div
         className="container border p-1  border-4 border-black"
@@ -198,7 +199,7 @@ const Certificate = ({ data, isPreview }) => {
               <div><b>वर्ग<br />Group</b>{" "}
                 <span className="ms-2">
                   <b>{data.group}</b>
-                  </span>
+                </span>
               </div>
             </div>
 
