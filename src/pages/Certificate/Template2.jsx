@@ -298,7 +298,7 @@ const Certificate2 = ({ data, isPreview }) => {
                   <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center' }}>{data.totalExternalMaxMarks}</td>
                   <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: "center" }}>{totalInternalMax}</td>
                   <td colSpan="2" style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: "center" }}>{practicalMax}</td>
-                  <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', padding: "4px  0px 12px 0px" }}>{data.totalMarks}</td>
+                  <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', padding: "4px  0px 12px 0px" , fontSize: "1rem",}}>{data.totalMarks}</td>
                   <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center' }}></td>
                 </tr>
               </tbody>
