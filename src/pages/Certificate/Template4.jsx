@@ -41,13 +41,13 @@ const Certificate2 = ({ data }) => {
         <tr key={index}>
 
           <td colSpan={mark.code === 1001 ? 2 : 0} style={{ border: '1px solid black', textAlign: 'left', padding: '4px  0px 12px 5px' }}>{mark.code === 1001 ? "" : String(mark.code).padStart(3, '0')} {mark.code === 1001 ? "" : "-"} {mark.name}</td>
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.theoryMax}</td>
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.theory}</td>
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.internalMax}</td>
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.internal}</td>
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.maxMarks}</td>
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.total}</td>
-          <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.pageremark === "उत्तीर्ण" ? "P" : "F"}</td>
+          <td style={{ border: '1px solid black', padding: '4px  0px 12px 0px' }}>{mark.theoryMax}</td>
+          <td style={{ border: '1px solid black', padding: '4px  0px 12px 0px' }}>{mark.theory}</td>
+          <td style={{ border: '1px solid black', padding: '4px  0px 12px 0px' }}>{mark.internalMax}</td>
+          <td style={{ border: '1px solid black', padding: '4px  0px 12px 0px' }}>{mark.internal}</td>
+          <td style={{ border: '1px solid black', padding: '4px  0px 12px 0px' }}>{mark.maxMarks}</td>
+          <td style={{ border: '1px solid black', padding: '4px  0px 12px 0px' }}>{mark.total}</td>
+          <td style={{ border: '1px solid black', padding: '4px  0px 12px 0px' }}>{mark.pageremark === "उत्तीर्ण" ? "P" : "F"}</td>
         </tr>
       ));
   };
@@ -56,14 +56,14 @@ const Certificate2 = ({ data }) => {
     const practicalMarks = data.marks.filter((mark) => mark.type === 2);
     return practicalMarks.map((mark, index) => (
       <tr key={index}>
-        <td colSpan="2" style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.name}</td>
-        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>-</td>
-        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>-</td>
-        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.maxMarks}</td>
-        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.practical}</td>
-        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.maxMarks}</td>
-        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.total}</td>
-        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.pageremark === "उत्तीर्ण" ? "P" : "F"}</td>
+        <td colSpan="2" style={{ border: '1px solid black', padding: '4px  0px 12px 0px' }}>{mark.name}</td>
+        <td style={{ border: '1px solid black', padding: '4px  0px 12px 0px' }}>-</td>
+        <td style={{ border: '1px solid black', padding: '4px  0px 12px 0px' }}>-</td>
+        <td style={{ border: '1px solid black', padding: '4px  0px 12px 0px' }}>{mark.maxMarks}</td>
+        <td style={{ border: '1px solid black', padding: '4px  0px 12px 0px' }}>{mark.practical}</td>
+        <td style={{ border: '1px solid black', padding: '4px  0px 12px 0px' }}>{mark.maxMarks}</td>
+        <td style={{ border: '1px solid black', padding: '4px  0px 12px 0px' }}>{mark.total}</td>
+        <td style={{ border: '1px solid black', padding: '4px  0px 12px 0px' }}>{mark.pageremark === "उत्तीर्ण" ? "P" : "F"}</td>
       </tr>
     ));
   }
@@ -72,32 +72,32 @@ const Certificate2 = ({ data }) => {
     const dataLength = data?.OverAllDetails.results.length;
     return data?.OverAllDetails.results.map((mark, index) => (
       <tr>
-        <td style={{ border: '1px solid black', textAlign: 'center', padding: "4px 0px 12px 0px" }}>
+        <td style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>
           {semesterIdHindi[`${mark?.semID}`]}
         </td>
         {/* ------------------------------------------------------ */}
-        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>
+        <td style={{ border: '1px solid black', padding: '4px  0px 12px 0px' }}>
           {mark.semID === 4 ? "-" : mark.totalTheoryMaxMarks + mark.totalInternalMaxMarks}
         </td>
 
-        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>
+        <td style={{ border: '1px solid black', padding: '4px  0px 12px 0px' }}>
           {mark.semID === 4 ? "-" : mark.totalTheoryMarks + mark.totalInternalMarks}
         </td>
         {/* ------------------------------------------------------ */}
-        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>
+        <td style={{ border: '1px solid black', padding: '4px  0px 12px 0px' }}>
           {mark.semID === 4 ? mark.overallTotalMaxMarks : mark.totalPracticalMaxMarks}
         </td>
 
-        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.semID === 4 ? mark.overallTotalMarks : mark.totalPracticalMarks}</td>
+        <td style={{ border: '1px solid black', padding: '4px  0px 12px 0px' }}>{mark.semID === 4 ? mark.overallTotalMarks : mark.totalPracticalMarks}</td>
         {/* ------------------------------------------------------ */}
-        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.overallTotalMaxMarks}</td>
+        <td style={{ border: '1px solid black', padding: '4px  0px 12px 0px' }}>{mark.overallTotalMaxMarks}</td>
 
-        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.overallTotalMarks}</td>
+        <td style={{ border: '1px solid black', padding: '4px  0px 12px 0px' }}>{mark.overallTotalMarks}</td>
         {/* --------------------------------------------------------- */}
-        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.status === "Pass" ? "P" : "F"}</td>
+        <td style={{ border: '1px solid black', padding: '4px  0px 12px 0px' }}>{mark.status === "Pass" ? "P" : "F"}</td>
 
         {index === 0 && (
-          <td rowSpan={dataLength + 1} style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px',fontSize:'30px' }}>{mark.status === "Pass" ? "उत्तीर्ण" : "असफल"}</td>
+          <td rowSpan={dataLength + 1} style={{ border: '1px solid black', padding: '4px  0px 12px 0px',fontSize:'30px' }}>{mark.status === "Pass" ? "उत्तीर्ण" : "असफल"}</td>
         )}
       </tr>
     ));
@@ -316,14 +316,14 @@ const Certificate2 = ({ data }) => {
               {renderPracticalRows()}
             </tbody>
             <tr>
-              <td colSpan="2" style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', padding: "4px 4px 12px 4px" }}><b>योग (Total)</b></td>
-              <td style={{ border: '1px solid black',textAlign: 'center', padding: "4px 0px 12px 0px", textAlign: "center" }}>{totalTheoryMax}</td>
-              <td style={{ border: '1px solid black',textAlign: 'center', padding: "4px 0px 12px 0px" }}>{data.totalInternalMaxMarks}</td>
-              <td style={{ border: '1px solid black',textAlign: 'center', padding: "4px 0px 12px 0px", textAlign: "center" }}>{totalInternalMax+totalPracticalMax}</td>
-              <td style={{ border: '1px solid black',textAlign: 'center', padding: "4px 0px 12px 0px" }}>{data.totalExternalMaxMarks}</td>
-              <td style={{ border: '1px solid black',textAlign: 'center', padding: "4px 0px 12px 0px", textAlign: 'center' }}>{totalInternalMax+totalPracticalMax +totalTheoryMax}</td>
-              <td style={{ border: '1px solid black',textAlign: 'center', padding: "4px 0px 12px 0px" }}>{data.totalPracticalMaxMarks}</td>
-              <td style={{ border: '1px solid black',textAlign: 'center', textAlign: 'center', fontWeight: 'bold', padding: "4px 0px 12px 0px" }}>{data.totalMarks}</td>
+              <td colSpan="2" style={{ border: '1px solid black', fontWeight: 'bold', padding: "4px 4px 12px 4px" }}><b>योग (Total)</b></td>
+              <td style={{ border: '1px solid black',padding: "4px 0px 12px 0px", textAlign: "center" }}>{totalTheoryMax}</td>
+              <td style={{ border: '1px solid black',padding: "4px 0px 12px 0px" }}>{data.totalInternalMaxMarks}</td>
+              <td style={{ border: '1px solid black',padding: "4px 0px 12px 0px", textAlign: "center" }}>{totalInternalMax+totalPracticalMax}</td>
+              <td style={{ border: '1px solid black',padding: "4px 0px 12px 0px" }}>{data.totalExternalMaxMarks}</td>
+              <td style={{ border: '1px solid black',padding: "4px 0px 12px 0px", textAlign: 'center' }}>{totalInternalMax+totalPracticalMax +totalTheoryMax}</td>
+              <td style={{ border: '1px solid black',padding: "4px 0px 12px 0px" }}>{data.totalPracticalMaxMarks}</td>
+              <td style={{ border: '1px solid black',fontWeight: 'bold', padding: "4px 0px 12px 0px" }}>{data.totalMarks}</td>
             </tr>
           </table>
           <div className="d-block" style={{ marginBottom: '12px' }}> <b>सम्पूर्ण  परीक्षाफल - </b> </div>
