@@ -98,8 +98,8 @@ const Certificate2 = ({ data, isPreview }) => {
           right: 0,
           bottom: 0,
           backgroundImage: `url(${logo})`,
-          backgroundSize: "75%",
-          backgroundPosition: "center 45%",
+          backgroundSize: "600px 700px", // Replace with your desired width and height in pixels
+          backgroundPosition: "center 50%",
           backgroundRepeat: "no-repeat",
           opacity: 0.25,
           zIndex: -1,
