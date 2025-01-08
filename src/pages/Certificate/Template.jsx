@@ -13,8 +13,9 @@ const Certificate = ({ data, isPreview }) => {
   // const paperType2Count = data?.marks.filter((mark) => mark.paperType === 2).length;
   const getCellStyle = (value) => ({
     border: "1px solid black",
-    textAlign: "center",
-    padding: "4px 0px 12px 0px",
+    textAlign: "left",
+    padding: "4px 0px 6px 0px",
+    fontSize: "0.9rem",
     backgroundColor: isPreview && !value ? "#FF474C" : "transparent",
   });
 
@@ -23,23 +24,26 @@ const Certificate = ({ data, isPreview }) => {
       .filter((mark) => mark.type === 1)
       .map((mark, index) => (
         <tr key={index}>
-          <td style={getCellStyle(mark.code)}>
-            {String(mark.code).padStart(3, "0")}
+          <td style={{ border: "1px solid black", padding: "4px 0px 12px 2px", textAlign: "center" }}>
+            <center>{String(mark.code).padStart(3, "0")}</center>
+
           </td>
-          <td style={getCellStyle(mark.name)}>{mark.name}</td>
-          <td style={getCellStyle(mark.maxMarks)}>{mark.maxMarks}</td>
-          <td style={getCellStyle(mark.theoryMax)}>{mark.theoryMax}</td>
-          <td style={getCellStyle(mark.isAbsent ? "A" : mark.theory)}>
-            {mark.isAbsent ? "A" : mark.theory}
+          <td style={{ border: "1px solid black", padding: "4px 0px 12px 2px", textAlign: "left" }}>{mark.name}</td>
+          <td style={getCellStyle(mark.maxMarks)}><center>{mark.maxMarks}</center></td>
+          <td style={getCellStyle(mark.theoryMax)}><center>{mark.theoryMax}</center></td>
+          <td style={getCellStyle(mark.isAbsent ? "A" : mark.theory)}><center>{mark.isAbsent ? "A" : mark.theory}</center>
+
           </td>
-          <td style={getCellStyle(mark.internalMax)}>{mark.internalMax}</td>
+          <td style={getCellStyle(mark.internalMax)}><center>{mark.internalMax}</center></td>
           <td style={getCellStyle(mark.isAbsent ? "A" : mark.internal)}>
-            {mark.isAbsent ? "A" : mark.internal}
+            <center> {mark.isAbsent ? "A" : mark.internal}</center>
+
           </td>
-          <td style={getCellStyle("-")}>-</td>
-          <td style={getCellStyle("-")}>-</td>
+          <td style={getCellStyle("-")}><center>-</center></td>
+          <td style={getCellStyle("-")}><center>-</center></td>
           <td style={getCellStyle(mark.isAbsent ? "A" : mark.total)}>
-            {mark.isAbsent ? "A" : mark.total}
+            <center>{mark.isAbsent ? "A" : mark.total}</center>
+
           </td>
         </tr>
       ));
@@ -52,30 +56,31 @@ const Certificate = ({ data, isPreview }) => {
         {index === 0 && (
           <td
             rowSpan={practicalMarks.length}
-            style={getCellStyle("अभ्यास क्रम")}
+            style={{ verticalAlign: "top", border: "1px solid black", padding: "4px 0px 12px 0px", textAlign: "center" }}
           >
-            <div style={{verticalAlign:"top"}}><b> अभ्यास <br /> क्रम</b></div>
+            <b> अभ्यास <br /> क्रम</b>
           </td>
         )}
-        <td style={getCellStyle(mark.name)}>{mark.name}</td>
-        <td style={getCellStyle(mark.maxMarks)}>{mark.maxMarks}</td>
-        <td style={getCellStyle("-")}>-</td>
-        <td style={getCellStyle("-")}>-</td>
-        <td style={getCellStyle("-")}>-</td>
-        <td style={getCellStyle("-")}>-</td>
-        <td style={getCellStyle(mark.maxMarks)}>{mark.maxMarks}</td>
+        <td style={{ border: "1px solid black", padding: "4px 0px 12px 2px", textAlign: "left" }}>{mark.name}</td>
+        <td style={getCellStyle(mark.maxMarks)}><center>{mark.maxMarks}</center></td>
+        <td style={getCellStyle("-")}><center>-</center></td>
+        <td style={getCellStyle("-")}><center>-</center></td>
+        <td style={getCellStyle("-")}><center>-</center></td>
+        <td style={getCellStyle("-")}><center>-</center></td>
+        <td style={getCellStyle(mark.maxMarks)}><center>{mark.maxMarks}</center></td>
         <td style={getCellStyle(mark.isAbsent ? "A" : mark.practical)}>
-          {mark.isAbsent ? "A" : mark.practical}
+          <center>{mark.isAbsent ? "A" : mark.practical}</center>
         </td>
         <td style={getCellStyle(mark.isAbsent ? "A" : mark.total)}>
-          {mark.isAbsent ? "A" : mark.total}
+          <center>{mark.isAbsent ? "A" : mark.total}</center>
+
         </td>
       </tr>
     ));
   };
 
   return (
-    <div className="p-4 outer-border" style={{ position: "relative" }}>
+    <div className="p-4 " style={{ position: "relative", fontFamily: "Times New Roman, serif" }}>
       <div
         style={{
           position: "absolute",
@@ -84,395 +89,384 @@ const Certificate = ({ data, isPreview }) => {
           right: 0,
           bottom: 0,
           backgroundImage: `url(${logo})`,
-          backgroundSize: "contain",
-          backgroundPosition: "center",
+          backgroundSize: "75%",
+          backgroundPosition: "center 45%",
           backgroundRepeat: "no-repeat",
-          opacity: 0.2,
+          opacity: 0.25,
           zIndex: -1,
         }}
       />
 
       <div
-        className="container border border-5 p-4 pb-5"
+        className="container border p-1  border-4 border-black"
         style={{ width: "21cm", fontSize: "0.9rem" }}
       >
-        <div>
-          <b style={{ fontSize: "0.8rem" }}>
-            Sr. No.<span>{String(data.sno).padStart(3, "0")}</span>
-          </b>
-        </div>
-        <header className="text-center mb-3">
+        <div style={{ border: "3px solid", padding: "5px 4px 10px 4px" }}>
           <div>
-            <h4
-              className="text-danger"
+            <b style={{ fontSize: "1.1rem" }}>
+              Sr. No.<span>{String(data.sno).padStart(3, "0")}</span>
+            </b>
+          </div>
+          <header className="text-center mb-3">
+            <div>
+              <h4
+                className="text-danger"
+                style={{
+                  fontSize: "1.8rem",
+                  marginBottom: "0.3rem",
+                  fontWeight: "bold",
+                }}
+              >
+                उत्तराखण्ड विद्यालयी शिक्षा परिषद्
+              </h4>
+              <h4
+                style={{
+                  fontSize: "1.8rem",
+                  marginBottom: "0.3rem",
+                  fontWeight: "bold",
+                }}
+              >
+                BOARD OF SCHOOL EDUCATION UTTARAKHAND
+              </h4>
+            </div>
+          </header>
+          <div className="text-center mb-">
+            <img
+              src={logo}
+              alt="Logo"
+              className="logo"
               style={{
-                fontSize: "1.1rem",
+                height: "120px",
+                width: "120px",
+                display: "block",
+                marginLeft: "auto",
+                marginRight: "auto",
+              }}
+            />
+          </div>
+          <div className="text-center mb-3">
+            <h4
+              style={{
+                fontSize: "1.5rem",
                 marginBottom: "0.3rem",
                 fontWeight: "bold",
               }}
             >
-              उत्तराखण्ड विद्यालयी शिक्षा परिषद्
+              प्रारम्भिक शिक्षा में द्विवर्षीय डिप्लोमा
             </h4>
             <h4
               style={{
-                fontSize: "1.1rem",
+                fontSize: "1.5rem",
                 marginBottom: "0.3rem",
                 fontWeight: "bold",
               }}
             >
-              BOARD OF SCHOOL EDUCATION UTTARAKHAND
+              TWO-YEAR DIPLOMA IN ELEMENTARY EDUCATION -{" "}
+              {data.entersession || data.session.split("-")[0]}
             </h4>
           </div>
-        </header>
-
-        <div className="text-center mb-2">
-          <img
-            src={logo}
-            alt="Logo"
-            className="logo"
-            style={{
-              height: "80px",
-              display: "block",
-              marginLeft: "auto",
-              marginRight: "auto",
-            }}
-          />
-        </div>
-
-        <div className="text-center mb-3">
-          <h4
-            style={{
-              fontSize: "1.1rem",
-              marginBottom: "0.3rem",
-              fontWeight: "bold",
-            }}
-          >
-            प्रारम्भिक शिक्षा में द्विवर्षीय डिप्लोमा
-          </h4>
-          <h4
-            style={{
-              fontSize: "1.1rem",
-              marginBottom: "0.3rem",
-              fontWeight: "bold",
-            }}
-          >
-            TWO-YEAR DIPLOMA IN ELEMENTARY EDUCATION -{" "}
-            {data.entersession || data.session.split("-")[0]}
-          </h4>
-        </div>
-
-        <div className="text-center mb-3">
-          <h5 style={{ fontSize: "1rem", marginBottom: "0.3rem" }}>
-            अंक विवरणिका :{" "}
-            <span id="sem-hindi">
-              {semesterHindi[data.semester.toUpperCase()]}
-            </span>
-          </h5>
-          <h5
-            style={{
-              fontSize: "1rem",
-              marginBottom: "0.3rem",
-              fontWeight: "bold",
-              textTransform: "upperCase",
-            }}
-          >
-            <u>MARKS STATEMENT : {data.semester}</u>
-          </h5>
-        </div>
-
-        <section className="mb-4">
-          <div
-            className="mb-3"
-            style={{ display: "grid", gridTemplateColumns: " 2fr 1fr 1fr" }}
-          >
-            <div>
-              <b>
-                नाम <br />
-                Name
-              </b>{" "}
-              <span className="ms-2" style={{ textTransform: "upperCase" }}>
-                {data.name}
+          <div className="text-center mb-3">
+            <h5 style={{ fontSize: "1.2rem", marginBottom: "0.3rem" }}>
+              अंक विवरणिका :{" "}
+              <span id="sem-hindi">
+                {semesterHindi[data.semester.toUpperCase()]}
               </span>
-            </div>
-            <div>
-              <b>
-                अनुक्रमांक <br />
-                Roll No.
-              </b>{" "}
-              <span className="ms-2">{data.rollNo}</span>
-            </div>
-            <div>
-              <b>
-                वर्ग <br />
-                Group
-              </b>{" "}
-              <span className="ms-2">{data.group}</span>
-            </div>
+            </h5>
+            <h5
+              style={{
+                fontSize: "1.2rem",
+                marginBottom: "0.3rem",
+                fontWeight: "bold",
+                textTransform: "upperCase",
+              }}
+            >
+              <u>MARKS STATEMENT : {data.semester}</u>
+            </h5>
           </div>
 
-          <div
-            className="row mb-3"
-            style={{ display: "grid", gridTemplateColumns: " 1fr 1fr " }}
-          >
-            <div style={{}}>
-              <b>
-                माता का नाम <br />
-                Mother's Name
-              </b>{" "}
-              <span className="ms-2" style={{ textTransform: "upperCase" }}>
-                {data.mothersName}
-              </span>
+          <section className="mb-4">
+            <div className="mb-3" style={{ display: "grid", gridTemplateColumns: " 2fr 1fr 1fr" }}>
+              <div className="">
+                <b>नाम <br />Name</b>{" "}
+                <span className="ms-2" style={{ textTransform: "upperCase" }}>
+                  {data.name}
+                </span>
+              </div>
+              <div><b>अनुक्रमांक <br />Roll No.</b>{" "}
+                <span className="ms-2">{data.rollNo}</span>
+              </div>
+              <div><b>वर्ग<br />Group</b>{" "}
+                <span className="ms-2">{data.group}</span>
+              </div>
             </div>
-            <div style={{}}>
-              <b>
-                पिता का नाम <br />
-                Father's Name
-              </b>{" "}
-              <span className="ms-2" style={{ textTransform: "upperCase" }}>
-                {data.fathersName}
-              </span>
+
+            <div
+              className="row mb-3"
+              style={{ display: "grid", gridTemplateColumns: " 1fr 1fr " }}
+            >
+              <div style={{}}>
+                <b>
+                  माता का नाम <br />
+                  Mother's Name
+                </b>{" "}
+                <span className="ms-2" style={{ textTransform: "upperCase" }}>
+                  {data.mothersName}
+                </span>
+              </div>
+              <div style={{}}>
+                <b>
+                  पिता का नाम <br />
+                  Father's Name
+                </b>{" "}
+                <span className="ms-2" style={{ textTransform: "upperCase" }}>
+                  {data.fathersName}
+                </span>
+              </div>
             </div>
-          </div>
 
-          <div className="row">
-            <div className="col-md-12">
-              <b>
-                संस्थान का नाम <br />
-                Institution's Name
-              </b>{" "}
-              <span className="ms-2" style={{ textTransform: "upperCase" }}>
-                {data.institutionName}
-              </span>
+            <div className="row">
+              <div className="col-md-12">
+                <b>
+                  संस्थान का नाम <br />
+                  Institution's Name
+                </b>{" "}
+                <span className="ms-2" style={{ textTransform: "upperCase" }}>
+                  {data.institutionName}
+                </span>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+          <div className="responsive">
+            <table
+              border="5px"
+              className="table-bordered"
+              style={{
+                borderCollapse: "collapse",
+                fontSize: "0.8rem",
+                padding: "4px",
+                border: "2px solid black",
+              }}
+            >
+              <thead>
+                <tr>
+                  <th
+                    rowSpan="4"
+                    className="text-center"
+                    style={{ border: "1px solid black", padding: "4px 3px 12px 3px" }}
+                    width="6%"
+                  >
+                    प्रश्नपत्र कोड
+                  </th>
+                  <th
+                    rowSpan="4"
+                    className="text-center"
+                    style={{ border: "1px solid black", padding: "4px 3px 12px 3px" }}
+                    width="50%"
+                  >
+                    प्रश्नपत्र का नाम
+                  </th>
+                  <th
+                    rowSpan="4"
+                    className="text-center"
+                    style={{ border: "1px solid black", padding: "4px 3px 12px 3px" }}
+                  >
+                    अधिकतम अंक
+                  </th>
+                  <th
+                    colSpan="4"
+                    className="text-center"
+                    style={{ border: "1px solid black", padding: "4px 3px 12px 3px" }}
+                  >
+                    सैद्धांतिक
+                  </th>
+                  <th
+                    colSpan="2"
+                    rowSpan={2}
+                    className="text-center"
+                    style={{ border: "1px solid black", padding: "4px 3px 12px 3px" }}
+                  >
+                    क्रियात्मक / प्रयोगात्मक
+                  </th>
+                  <th
+                    rowSpan="4"
+                    className="text-center"
+                    style={{ border: "1px solid black", padding: "4px 3px 12px 3px", width: "8%" }}
+                  >
+                    योग
+                  </th>
+                </tr>
+                <tr>
+                  <th
+                    colSpan="2"
+                    className="text-center"
+                    style={{ border: "1px solid black", padding: "4px 3px 12px 3px" }}
+                  >
+                    बाह्य
+                  </th>
+                  <th
+                    colSpan="2"
+                    className="text-center"
+                    style={{ border: "1px solid black", padding: "4px 3px 12px 3px" }}
+                  >
+                    आंतरिक
+                  </th>
+                </tr>
+                <tr>
+                  <th
+                    className="text-center"
+                    style={{ border: "1px solid black", padding: "4px 3px 12px 3px" }}
+                  >
+                    पूर्णांक
+                  </th>
+                  <th
+                    className="text-center"
+                    style={{ border: "1px solid black", padding: "4px 3px 12px 3px" }}
+                  >
+                    प्राप्तांक
+                  </th>
+                  <th
+                    className="text-center"
+                    style={{ border: "1px solid black", padding: "4px 3px 12px 3px" }}
+                  >
+                    पूर्णांक
+                  </th>
+                  <th
+                    className="text-center"
+                    style={{ border: "1px solid black", padding: "4px 3px 12px 3px" }}
+                  >
+                    प्राप्तांक
+                  </th>
+                  <th
+                    className="text-center"
+                    style={{ border: "1px solid black", padding: "4px 3px 12px 3px" }}
+                  >
+                    पूर्णांक
+                  </th>
+                  <th
+                    className="text-center"
+                    style={{ border: "1px solid black", padding: "4px 3px 12px 3px" }}
+                  >
+                    प्राप्तांक
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {renderTheoryRows()}
+                {renderPracticalRows()}
+                <tr>
+                  <td
+                    colSpan="2"
+                    style={{
+                      border: "1px solid black",
+                      textAlign: "left",
+                      fontWeight: "bold",
+                      padding: "4px 4px 12px 4px",
+                      fontSize: "1rem",
 
-        <div className="responsive">
-          <table
-            border="2"
-            className="table-bordered"
-            style={{
-              borderCollapse: "collapse",
-              fontSize: "0.8rem",
-              padding: "4px",
-            }}
-          >
-            <thead>
-              <tr>
-                <th
-                  rowSpan="4"
-                  className="text-center"
-                  style={{ border: "1px solid black", padding: "4px" }}
-                >
-                  प्रश्नपत्र कोड
-                </th>
-                <th
-                  rowSpan="4"
-                  className="text-center"
-                  style={{ border: "1px solid black", padding: "4px" }}
-                >
-                  प्रश्नपत्र का नाम
-                </th>
-                <th
-                  rowSpan="4"
-                  className="text-center"
-                  style={{ border: "1px solid black", padding: "4px" }}
-                >
-                  अधिकतम अंक
-                </th>
-                <th
-                  colSpan="4"
-                  className="text-center"
-                  style={{ border: "1px solid black", padding: "4px" }}
-                >
-                  सैद्धांतिक
-                </th>
-                <th
-                  colSpan="2"
-                  rowSpan={2}
-                  className="text-center"
-                  style={{ border: "1px solid black", padding: "4px" }}
-                >
-                  क्रियात्मक / प्रयोगात्मक
-                </th>
-                <th
-                  rowSpan="4"
-                  className="text-center"
-                  style={{ border: "1px solid black", padding: "4px", width: "8%" }}
-                >
-                  योग
-                </th>
-              </tr>
-              <tr>
-                <th
-                  colSpan="2"
-                  className="text-center"
-                  style={{ border: "1px solid black", padding: "4px" }}
-                >
-                  बाह्य
-                </th>
-                <th
-                  colSpan="2"
-                  className="text-center"
-                  style={{ border: "1px solid black", padding: "4px" }}
-                >
-                  आंतरिक
-                </th>
-              </tr>
-              <tr>
-                <th
-                  className="text-center"
-                  style={{ border: "1px solid black", padding: "4px" }}
-                >
-                  पूर्णांक
-                </th>
-                <th
-                  className="text-center"
-                  style={{ border: "1px solid black", padding: "4px" }}
-                >
-                  प्राप्तांक
-                </th>
-                <th
-                  className="text-center"
-                  style={{ border: "1px solid black", padding: "4px" }}
-                >
-                  पूर्णांक
-                </th>
-                <th
-                  className="text-center"
-                  style={{ border: "1px solid black", padding: "4px" }}
-                >
-                  प्राप्तांक
-                </th>
-                <th
-                  className="text-center"
-                  style={{ border: "1px solid black", padding: "4px" }}
-                >
-                  पूर्णांक
-                </th>
-                <th
-                  className="text-center"
-                  style={{ border: "1px solid black", padding: "4px" }}
-                >
-                  प्राप्तांक
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {renderTheoryRows()}
-              {renderPracticalRows()}
-              <tr>
-                <td
-                  colSpan="2"
-                  style={{
-                    border: "1px solid black",
-                    textAlign: "center",
-                    fontWeight: "bold",
-                    padding: "4px 4px 12px 4px",
-                  }}
-                >
-                  <b>योग (Total)</b>
-                </td>
-                <td
-                  style={{
-                    border: "1px solid black",
-                    padding: "4px 0px 12px 0px",
-                    textAlign: "center",
-                  }}
-                >
-                  {data.maxMarks}
-                </td>
-                <td
-                  style={{
-                    border: "1px solid black",
-                    padding: "4px 0px 12px 0px",
-                    textAlign: "center",
-                  }}
-                >
-                  {data.totalExternalMaxMarks}
-                </td>
-                <td
-                  style={{
-                    border: "1px solid black",
-                    padding: "4px 0px 12px 0px",
-                    textAlign: "center",
-                  }}
-                >
-                  {data.totalExternalMarksObtained}
-                </td>
-                <td
-                  style={{
-                    border: "1px solid black",
-                    padding: "4px 0px 12px 0px",
-                    textAlign: "center",
-                  }}
-                >
-                  {data.totalInternalMaxMarks}
-                </td>
-                <td
-                  style={{
-                    border: "1px solid black",
-                    padding: "4px 0px 12px 0px",
-                    textAlign: "center",
-                  }}
-                >
-                  {data.totalInternalMarksObtained}
-                </td>
-                <td
-                  style={{
-                    border: "1px solid black",
-                    padding: "4px 0px 12px 0px",
-                    textAlign: "center",
-                  }}
-                >
-                  {data.totalPracticalMaxMarks}
-                </td>
-                <td
-                  style={{
-                    border: "1px solid black",
-                    padding: "4px 0px 12px 0px",
-                    textAlign: "center",
-                  }}
-                >
-                  {data.totalPracticalMarksObtained}
-                </td>
-                <td
-                  style={{
-                    border: "1px solid black",
-                    textAlign: "center",
-                    fontWeight: "bold",
-                    padding: "4px 0px 12px 0px",
-                  }}
-                >
-                  {data.totalMarks}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div className="footer mt-3" style={{ fontSize: "0.9rem" }}>
-          <div>
-            परीक्षाफल -{" "}
-            <span id="re">
-              <b>{data.result}</b>
-            </span>
+                    }}
+                  >
+                    <b>योग (TOTAL)</b>
+                  </td>
+                  <td
+                    style={{
+                      border: "1px solid black",
+                      padding: "4px 0px 12px 0px",
+                      textAlign: "center",
+                    }}
+                  >
+                    {data.maxMarks}
+                  </td>
+                  <td
+                    style={{
+                      border: "1px solid black",
+                      padding: "4px 0px 12px 0px",
+                      textAlign: "center",
+                    }}
+                  >
+                    {data.totalExternalMaxMarks}
+                  </td>
+                  <td
+                    style={{
+                      border: "1px solid black",
+                      padding: "4px 0px 12px 0px",
+                      textAlign: "center",
+                    }}
+                  >
+                    {data.totalExternalMarksObtained}
+                  </td>
+                  <td
+                    style={{
+                      border: "1px solid black",
+                      padding: "4px 0px 12px 0px",
+                      textAlign: "center",
+                    }}
+                  >
+                    {data.totalInternalMaxMarks}
+                  </td>
+                  <td
+                    style={{
+                      border: "1px solid black",
+                      padding: "4px 0px 12px 0px",
+                      textAlign: "center",
+                    }}
+                  >
+                    {data.totalInternalMarksObtained}
+                  </td>
+                  <td
+                    style={{
+                      border: "1px solid black",
+                      padding: "4px 0px 12px 0px",
+                      textAlign: "center",
+                    }}
+                  >
+                    {data.totalPracticalMaxMarks}
+                  </td>
+                  <td
+                    style={{
+                      border: "1px solid black",
+                      padding: "4px 0px 12px 0px",
+                      textAlign: "center",
+                    }}
+                  >
+                    {data.totalPracticalMarksObtained}
+                  </td>
+                  <td
+                    style={{
+                      border: "1px solid black",
+                      textAlign: "center",
+                      fontWeight: "bold",
+                      padding: "4px 0px 12px 0px",
+                    }}
+                  >
+                    {data.totalMarks}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              width: "100%",
-              marginTop: "60px",
-            }}
-          >
+          <div className="footer mt-3" style={{ fontSize: "0.9rem" }}>
             <div>
-              <div>हस्ताक्षर जाँचकर्ता</div>
-              <div>दिनांक -</div>
+              परीक्षाफल -{" "}
+              <span id="re">
+                <b>{data.result}</b>
+              </span>
             </div>
-            <div>
-              <div>हस्ताक्षर प्राचार्य</div>
-              <div>सील/मुहर</div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                width: "100%",
+                marginTop: "60px",
+              }}
+            >
+              <div>
+                <div>हस्ताक्षर जाँचकर्ता</div>
+                <div>दिनांक -</div>
+              </div>
+              <div>
+                <div>हस्ताक्षर प्राचार्य</div>
+                <div>सील/मुहर</div>
+              </div>
             </div>
           </div>
         </div>
