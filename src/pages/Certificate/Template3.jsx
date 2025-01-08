@@ -10,7 +10,6 @@ const semesterHindi = {
 };
 
 const Certificate3 = ({ data, isPreview }) => {
-  const paperType2Count = data?.marks.filter((mark) => mark.paperType === 2).length;
   const totalTheoryMax = data.marks.reduce((acc, mark) => acc + mark.theory, 0);
   const totalInternalMax = data.marks.reduce((acc, mark) => acc + mark.internal, 0);
   const practicalMax = data.marks.reduce((acc, mark) => acc + mark.practical, 0);
