@@ -189,14 +189,16 @@ const Certificate = ({ data, isPreview }) => {
               <div className="">
                 <b>नाम <br />Name</b>{" "}
                 <span className="ms-2" style={{ textTransform: "upperCase" }}>
-                  {data.name}
+                  <b>{data.name}</b>
                 </span>
               </div>
               <div><b>अनुक्रमांक <br />Roll No.</b>{" "}
-                <span className="ms-2">{data.rollNo}</span>
+                <span className="ms-2"><b>{data.rollNo}</b></span>
               </div>
               <div><b>वर्ग<br />Group</b>{" "}
-                <span className="ms-2">{data.group}</span>
+                <span className="ms-2">
+                  <b>{data.group}</b>
+                  </span>
               </div>
             </div>
 
@@ -210,7 +212,7 @@ const Certificate = ({ data, isPreview }) => {
                   Mother's Name
                 </b>{" "}
                 <span className="ms-2" style={{ textTransform: "upperCase" }}>
-                  {data.mothersName}
+                  <b>{data.mothersName}</b>
                 </span>
               </div>
               <div style={{}}>
@@ -219,7 +221,7 @@ const Certificate = ({ data, isPreview }) => {
                   Father's Name
                 </b>{" "}
                 <span className="ms-2" style={{ textTransform: "upperCase" }}>
-                  {data.fathersName}
+                  <b>{data.fathersName}</b>
                 </span>
               </div>
             </div>
@@ -231,7 +233,7 @@ const Certificate = ({ data, isPreview }) => {
                   Institution's Name
                 </b>{" "}
                 <span className="ms-2" style={{ textTransform: "upperCase" }}>
-                  {data.institutionName}
+                  <b>{data.institutionName}</b>
                 </span>
               </div>
             </div>
