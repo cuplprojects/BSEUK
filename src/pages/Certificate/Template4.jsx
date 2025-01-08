@@ -270,7 +270,7 @@ const Certificate2 = ({ data }) => {
             </div>
           </section>
 
-        <div className="responsive" style={{ border: '1px solid black' }}>
+        <div className="responsive" >
           <table border="2" className="table-bordered" width="100%" style={{ borderCollapse: 'collapse', fontSize: "0.8rem", padding: "4px" }}>
             <thead>
               <tr>
