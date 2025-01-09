@@ -56,7 +56,7 @@ const Certificate2 = ({ data }) => {
     const practicalMarks = data.marks.filter((mark) => mark.type === 2);
     return practicalMarks.map((mark, index) => (
       <tr key={index}>
-        <td colSpan="2" style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.name}</td>
+        <td colSpan="2" style={{ border: '1px solid black', textAlign: 'left', padding: '4px  0px 12px 12px' }}>{mark.name}</td>
         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>-</td>
         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>-</td>
         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.maxMarks}</td>
@@ -72,7 +72,7 @@ const Certificate2 = ({ data }) => {
     const dataLength = data?.OverAllDetails.results.length;
     return data?.OverAllDetails.results.map((mark, index) => (
       <tr>
-        <td style={{ border: '1px solid black', textAlign: 'center', padding: "4px 0px 12px 0px" }}>
+        <td style={{ border: '1px solid black', textAlign: 'left', padding: "4px 0px 12px 12px" }}>
           {semesterIdHindi[`${mark?.semID}`]}
         </td>
         {/* ------------------------------------------------------ */}
@@ -316,14 +316,14 @@ const Certificate2 = ({ data }) => {
               {renderPracticalRows()}
             </tbody>
             <tr>
-              <td colSpan="2" style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', padding: "4px 4px 12px 4px" }}><b>योग (Total)</b></td>
-              <td style={{ border: '1px solid black',textAlign: 'center', padding: "4px 0px 12px 0px", textAlign: "center" }}>{totalTheoryMax}</td>
+              <td colSpan="2" style={{ border: '1px solid black', textAlign: 'left', fontWeight: 'bold', padding: "4px 4px 12px 4px" }}><b>चतुर्थ सेमेस्टर के प्राप्तांकों का योग</b></td>
+              <td style={{ border: '1px solid black',textAlign: 'center', padding: "4px 0px 12px 0px"}}>{totalTheoryMax}</td>
               <td style={{ border: '1px solid black',textAlign: 'center', padding: "4px 0px 12px 0px" }}>{data.totalInternalMaxMarks}</td>
-              <td style={{ border: '1px solid black',textAlign: 'center', padding: "4px 0px 12px 0px", textAlign: "center" }}>{totalInternalMax+totalPracticalMax}</td>
+              <td style={{ border: '1px solid black',textAlign: 'center', padding: "4px 0px 12px 0px"}}>{totalInternalMax+totalPracticalMax}</td>
               <td style={{ border: '1px solid black',textAlign: 'center', padding: "4px 0px 12px 0px" }}>{data.totalExternalMaxMarks}</td>
-              <td style={{ border: '1px solid black',textAlign: 'center', padding: "4px 0px 12px 0px", textAlign: 'center' }}>{totalInternalMax+totalPracticalMax +totalTheoryMax}</td>
+              <td style={{ border: '1px solid black',textAlign: 'center', padding: "4px 0px 12px 0px" }}>{totalInternalMax+totalPracticalMax +totalTheoryMax}</td>
               <td style={{ border: '1px solid black',textAlign: 'center', padding: "4px 0px 12px 0px" }}>{data.totalPracticalMaxMarks}</td>
-              <td style={{ border: '1px solid black',textAlign: 'center', textAlign: 'center', fontWeight: 'bold', padding: "4px 0px 12px 0px" }}>{data.totalMarks}</td>
+              <td style={{ border: '1px solid black',textAlign: 'center',  fontWeight: 'bold', padding: "4px 0px 12px 0px" }}>{data.totalMarks}</td>
             </tr>
           </table>
           <div className="d-block" style={{ marginBottom: '12px' }}> <b>सम्पूर्ण  परीक्षाफल - </b> </div>
@@ -350,7 +350,7 @@ const Certificate2 = ({ data }) => {
             <tbody>
               {renderTotalResultRows()}
               <tr>
-                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px 0px 12px 0px' }}>महायोग </th>
+                <th colSpan="" className="text-left" style={{ border: '1px solid black', padding: '4px 0px 12px 12px' }}>महायोग </th>
                 <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px 0px 12px 0px' }}>{data?.OverAllDetails.semMarks}</th>
                 <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px 0px 12px 0px' }}> </th>
                 <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px 0px 12px 0px' }}>{data?.OverAllDetails.totalPracticalMarks} </th>
