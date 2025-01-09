@@ -97,7 +97,7 @@ const Certificate2 = ({ data }) => {
         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.status === "Pass" ? "P" : "F"}</td>
 
         {index === 0 && (
-          <td rowSpan={dataLength + 1} style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px',fontSize:'30px' }}>{mark.status === "Pass" ? "उत्तीर्ण" : "असफल"}</td>
+          <td rowSpan={dataLength + 1} style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px',fontSize:'30px' }}>{mark.status === "Pass" ? "उत्तीर्ण" : "Incomplete"}</td>
         )}
       </tr>
     ));
