@@ -16,6 +16,8 @@ import ConfirmationModal from "./ConfirmationModal";
 import * as XLSX from 'xlsx';
 import RemarkModal from './RemarkModal';
 import { Pencil } from 'lucide-react';
+import PassKeyModal from './PassKeyModal';
+import  isAdminAccess  from './../../services/isAdminAccess';
 
 const MarksEntry = () => {
   const [sessions, setSessions] = useState([]);
@@ -42,6 +44,7 @@ const MarksEntry = () => {
   const [question, setQestion] = useState("");
   const [isRemarkModalOpen, setIsRemarkModalOpen] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const theme = useThemeStore((state) => state.theme);
 
   const cardClass =
@@ -71,6 +74,13 @@ const MarksEntry = () => {
       ? "border-purple-500/20 hover:bg-purple-900/30"
       : "border-blue-200 hover:bg-blue-50";
 
+  useEffect(() => {
+    const checkAdminAccess = async () => {
+      const adminAccess = await isAdminAccess();
+      setIsAdmin(adminAccess);
+    };
+    checkAdminAccess();
+  }, []);
 
   // Table Columns
   const getColumns = async (paperID) => {
@@ -217,7 +227,7 @@ const MarksEntry = () => {
 
   useEffect(() => {
     fetchCandidates(selectedFilters.paperID);
-  },[selectedFilters]);
+  }, [selectedFilters]);
 
   const fetchCandidates = async (paperID) => {
     setLoading(true);
@@ -398,6 +408,9 @@ const MarksEntry = () => {
       return;
     }
 
+    if(isAdmin){
+      console.log('is admin')
+    }
 
     const marksToSubmit = Object.keys(updatedMarks)
       .map((rowId) => {
@@ -450,7 +463,7 @@ const MarksEntry = () => {
 
   useEffect(() => {
     console.log(updatedMarks)
-  },[updatedMarks])
+  }, [updatedMarks])
 
   const markAsAbsent = async (candidateID) => {
     try {
