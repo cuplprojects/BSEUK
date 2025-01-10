@@ -44,10 +44,6 @@ const MarksEntry = () => {
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const theme = useThemeStore((state) => state.theme);
 
-  
-
-
-
   const cardClass =
     theme === "dark"
       ? "bg-black/40 backdrop-blur-xl border-purple-500/20"
@@ -74,6 +70,7 @@ const MarksEntry = () => {
     theme === "dark"
       ? "border-purple-500/20 hover:bg-purple-900/30"
       : "border-blue-200 hover:bg-blue-50";
+
 
   // Table Columns
   const getColumns = async (paperID) => {
