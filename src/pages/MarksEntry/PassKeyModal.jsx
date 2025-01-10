@@ -5,6 +5,7 @@ const PassKeyModal = ({ isOpen, onClose, onSubmit }) => {
 
   const handleSubmit = () => {
     onSubmit(passKey);
+    setPassKey('');
   };
 
   if (!isOpen) return null;
