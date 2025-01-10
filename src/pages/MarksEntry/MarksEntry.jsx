@@ -398,6 +398,7 @@ const MarksEntry = () => {
       return;
     }
 
+
     const marksToSubmit = Object.keys(updatedMarks)
       .map((rowId) => {
         const { candidateId, theoryMarks, internalMarks, practicalMarks } =
