@@ -227,8 +227,8 @@ const Certificate3 = ({ data, isPreview }) => {
             <table border="2" className="table-bordered" style={{ borderCollapse: 'collapse', fontSize: "0.8rem", padding: "4px" }}>
               <thead>
                 <tr>
-                  <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>प्रश्नपत्र कोड</th>
-                  <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>प्रश्नपत्र का नाम</th>
+                  <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>प्रश्‍न्पत्र कोड</th>
+                  <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>प्रश्‍न्पत्र का नाम</th>
                   <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>अधिकतम अंक</th>
                   <th colSpan="4" className="text-center" style={{ border: '1px solid black' , padding: "4px 3px 12px 3px"  }}>सैद्धांतिक</th>
                   <th colSpan="2" rowSpan={3} className="text-center" style={{ border: '1px solid black', padding: '4px' }}>क्रिया० / प्रयो० / प्राप्तांक</th>

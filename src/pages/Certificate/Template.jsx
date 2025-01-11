@@ -258,7 +258,7 @@ const Certificate = ({ data, isPreview }) => {
                     style={{ border: "1px solid black", padding: "4px 3px 12px 3px" }}
                     width="6%"
                   >
-                    प्रश्नपत्र कोड
+                    प्रश्‍न्पत्र कोड
                   </th>
                   <th
                     rowSpan="4"
@@ -266,7 +266,7 @@ const Certificate = ({ data, isPreview }) => {
                     style={{ border: "1px solid black", padding: "4px 3px 12px 3px" }}
                     width="50%"
                   >
-                    प्रश्नपत्र का नाम
+                    प्रश्‍न्पत्र का नाम
                   </th>
                   <th
                     rowSpan="4"
