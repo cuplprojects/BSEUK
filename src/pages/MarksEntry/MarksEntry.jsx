@@ -661,6 +661,25 @@ const MarksEntry = () => {
     }
   };
 
+  // useEffect for the keyboard shortcut to submit on ctrl + enter
+  // useEffect(() => {
+  //   const handleKeyPress = (e) => {
+  //     // Check if Ctrl (or Cmd on Mac) + Enter is pressed
+  //     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+  //       e.preventDefault(); // Prevent default behavior
+  //       handleSubmit();
+  //     }
+  //   };
+
+  //   // Add event listener
+  //   document.addEventListener('keydown', handleKeyPress);
+
+  //   // Cleanup
+  //   return () => {
+  //     document.removeEventListener('keydown', handleKeyPress);
+  //   };
+  // }, [updatedMarks]); // Add dependencies that handleSubmit uses
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}

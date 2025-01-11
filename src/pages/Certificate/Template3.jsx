@@ -252,9 +252,9 @@ const Certificate3 = ({ data, isPreview }) => {
                 <tr>
                   <td colSpan="2" style={{ border: '1px solid black', textAlign: 'left', fontWeight: 'bold', padding: "4px 4px 12px 4px" ,fontSize: "1rem", }}><b>योग (Total)</b></td>
                   <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center' }}>{data.maxMarks}</td>
-                  <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.totalInternalMaxMarks}</td>
+                  <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center' }}>{data.totalInternalMaxMarks}</td>
                   <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center' }}>{totalTheoryMax}</td>
-                  <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.totalExternalMaxMarks}</td>
+                  <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center' }}>{data.totalExternalMaxMarks}</td>
                   <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center' }}>{totalInternalMax}</td>
                   {/* <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.totalExternalMaxMarks}</td> */}
                   <td colSpan={2} style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center' }}>{practicalMax}</td>
