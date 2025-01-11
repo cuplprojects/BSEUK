@@ -21,12 +21,21 @@ const Certificate2 = ({ data }) => {
   const paperType2Count = data?.marks.filter((mark) => mark.paperType === 2).length;
 
   console.log(data.marks);
+  console.log("Overall Details",data.OverAllDetails);
   const totalTheoryMax = data.marks.reduce((acc, mark) => acc + mark.theoryMax, 0);
   const totalInternalMax = data.marks.reduce((acc, mark) => acc + mark.internalMax, 0);
   const totalPracticalMax = data.marks.filter((mark) => mark.type === 2).reduce((acc, mark) => acc + mark.maxMarks, 0);
+  const totalInternal = data.marks.reduce((acc, mark) => acc + mark.internal, 0);
+  const totalTheory = data.marks.reduce((acc, mark) => acc + mark.theory, 0);
+  const totalPractical = data.marks.reduce((acc, mark) => acc + mark.practical, 0);
+
+  console.log(totalTheory);
+  console.log(totalInternal)
   console.log(totalInternalMax);
   console.log(totalTheoryMax);
   console.log(totalPracticalMax);
+  console.log(totalPractical);
+  
   const getCellStyle = (value) => ({
     border: '1px solid black',
     textAlign: 'center',
@@ -278,14 +287,14 @@ const Certificate2 = ({ data }) => {
                 <th colSpan="2" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>बाह्य आकलन</th>
                 <th colSpan="2" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>आंतरिक आकालन</th>
                 <th rowSpan="2" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>योग पूर्णांक</th>
-                <th rowSpan="2" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>योग प्रप्तांक</th>
-                <th rowSpan="2" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>प्रतिक्षाफल</th>
+                <th rowSpan="2" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>योग प्राप्तांक</th>
+                <th rowSpan="2" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>परीक्षाफल</th>
               </tr>
               <tr>
                 <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>अधिकतम अंक</th>
-                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>प्रप्तांक</th>
+                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>प्राप्तांक</th>
                 <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>अधिकतम अंक</th>
-                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>प्रप्तांक</th>
+                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>प्राप्तांक</th>
               </tr>
             </thead>
             <tbody>
@@ -318,12 +327,12 @@ const Certificate2 = ({ data }) => {
             <tr>
               <td colSpan="2" style={{ border: '1px solid black', textAlign: 'left', fontWeight: 'bold', padding: "4px 4px 12px 4px" }}><b>चतुर्थ सेमेस्टर के प्राप्तांकों का योग</b></td>
               <td style={{ border: '1px solid black',textAlign: 'center', padding: "4px 0px 12px 0px"}}>{totalTheoryMax}</td>
-              <td style={{ border: '1px solid black',textAlign: 'center', padding: "4px 0px 12px 0px" }}>{data.totalInternalMaxMarks}</td>
+              <td style={{ border: '1px solid black',textAlign: 'center', padding: "4px 0px 12px 0px" }}>{data.totalExternalMarksObtained}</td>
               <td style={{ border: '1px solid black',textAlign: 'center', padding: "4px 0px 12px 0px"}}>{totalInternalMax+totalPracticalMax}</td>
-              <td style={{ border: '1px solid black',textAlign: 'center', padding: "4px 0px 12px 0px" }}>{data.totalExternalMaxMarks}</td>
+              <td style={{ border: '1px solid black',textAlign: 'center', padding: "4px 0px 12px 0px" }}>{totalInternal+totalPractical}</td>
               <td style={{ border: '1px solid black',textAlign: 'center', padding: "4px 0px 12px 0px" }}>{totalInternalMax+totalPracticalMax +totalTheoryMax}</td>
-              <td style={{ border: '1px solid black',textAlign: 'center', padding: "4px 0px 12px 0px" }}>{data.totalPracticalMaxMarks}</td>
               <td style={{ border: '1px solid black',textAlign: 'center',  fontWeight: 'bold', padding: "4px 0px 12px 0px" }}>{data.totalMarks}</td>
+              <td style={{ border: '1px solid black',textAlign: 'center', padding: "4px 0px 12px 0px" }}></td>
             </tr>
           </table>
           <div className="d-block" style={{ marginBottom: '12px' }}> <b>सम्पूर्ण  परीक्षाफल - </b> </div>
@@ -340,11 +349,11 @@ const Certificate2 = ({ data }) => {
               </tr>
               <tr>
                 <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>पूर्णांक</th>
-                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>प्रप्तांक</th>
+                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>प्राप्तांक</th>
                 <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>पूर्णांक</th>
-                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>प्रप्तांक</th>
+                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>प्राप्तांक</th>
                 <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>पूर्णांक</th>
-                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>प्रप्तांक</th>
+                <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>प्राप्तांक</th>
               </tr>
             </thead>
             <tbody>
