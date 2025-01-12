@@ -6,16 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faFileImport, faCalendarAlt, faChartBar, faCertificate, faPencilAlt, faBook, faBuilding, faList } from '@fortawesome/free-solid-svg-icons';
 import { PiCertificateFill } from "react-icons/pi";
 import { IoShieldCheckmark } from "react-icons/io5";
-import {
-  FiHome,
-  FiChevronDown,
-  FiChevronLeft,
-  FiChevronRight,
-  FiX,
-  FiUsers,
-  FiUserPlus,
-  FiUpload
-} from "react-icons/fi";
+import {FiEdit} from "react-icons/fi";
 import { IoPersonAddSharp } from "react-icons/io5";
 import isAdminAccess from './../services/isAdminAccess';
 import { useUserStore } from './../store/useUsertoken';
@@ -104,6 +95,11 @@ const adminActions = [
     label: 'Import Candidates',
     link: '/add-bulkcandidates',
     icon: <FontAwesomeIcon icon={faFileImport} className={textClass} />
+  },
+  {
+    label: 'Edit Candidates',
+    link: '/edit-candidate',
+    icon: <FiEdit className={textClass} />
   },
   {
     label: 'Create Session',
