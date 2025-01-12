@@ -669,20 +669,22 @@ const MarksEntry = () => {
         sesID: selectedFilters.sesID,
       };
 
-      // Make API call with responseType blob to handle file download
+      // Get session and semester names
+      const sessionName = sessions.find(s => s.sesID == selectedFilters.sesID)?.sessionName || '';
+      const semesterName = semesters.find(s => s.semID == selectedFilters.semID)?.semesterName || '';
+      const date = new Date().toISOString().split('T')[0];
+
       const response = await API.post("StudentsMarksObtaineds/GetFormatedAudit", datatosend, {
         responseType: 'blob'
       });
 
-      // Create a blob URL and trigger download
       const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       
-      // Generate filename with current date
-      const date = new Date().toISOString().split('T')[0];
-      link.download = `marks_report_${date}.xlsx`;
+      // Create filename with all required details
+      link.download = `Marks_Entry_${sessionName}_${semesterName}_${date}.xlsx`;
       
       document.body.appendChild(link);
       link.click();
