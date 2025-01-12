@@ -18,6 +18,7 @@ import RemarkModal from './RemarkModal';
 import { Pencil } from 'lucide-react';
 import PassKeyModal from './PassKeyModal';
 import isAdminAccess from './../../services/isAdminAccess';
+import { FaFileDownload } from "react-icons/fa";
 
 const MarksEntry = () => {
   const [sessions, setSessions] = useState([]);
@@ -661,6 +662,40 @@ const MarksEntry = () => {
     }
   };
 
+  const handleDownload = async () => {
+    try {
+      const datatosend = {
+        semID: selectedFilters.semID,
+        sesID: selectedFilters.sesID,
+      };
+
+      // Make API call with responseType blob to handle file download
+      const response = await API.post("StudentsMarksObtaineds/GetFormatedAudit", datatosend, {
+        responseType: 'blob'
+      });
+
+      // Create a blob URL and trigger download
+      const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      
+      // Generate filename with current date
+      const date = new Date().toISOString().split('T')[0];
+      link.download = `marks_report_${date}.xlsx`;
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      toast.success('Marks report downloaded successfully!');
+    } catch (error) {
+      console.error('Error downloading marks report:', error);
+      toast.error('Failed to download marks report');
+    }
+  };
+
   // useEffect for the keyboard shortcut to submit on ctrl + enter
   // useEffect(() => {
   //   const handleKeyPress = (e) => {
@@ -723,6 +758,14 @@ const MarksEntry = () => {
               className={`w-full sm:w-auto px-4 sm:px-6 py-2 h-auto min-h-[3rem] rounded-lg font-semibold transition-colors ${buttonClass}`}
             >
               Get Remaining Marks Entry Status
+            </button>
+            <button
+              type="button"
+              onClick={handleDownload}
+              disabled={!selectedFilters.semID || !selectedFilters.sesID}
+              className={`w-full sm:w-auto px-4 sm:px-6 py-2 h-auto min-h-[3rem] rounded-lg font-semibold transition-colors ${buttonClass} ${(!selectedFilters.semID || !selectedFilters.sesID) ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              <FaFileDownload size={26}/>
             </button>
           </div>
         )}
