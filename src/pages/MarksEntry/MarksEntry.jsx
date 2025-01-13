@@ -89,12 +89,13 @@ const MarksEntry = () => {
   useEffect(() => {
     const checkPassKey = async () => {
       try {
-        const res = await API.get(`/LockStatus/getbysessionandsemester`, 
+        const res = await API.post(`/LockStatus/getbysessionandsemester`, 
           {
             "sesID": selectedFilters?.sesID,
             "semID": selectedFilters?.semID
           }
          );
+         console.log(res.data)
          setIsTableLocked(res.data?.isLocked);
       }
       catch (error) {
@@ -106,6 +107,7 @@ const MarksEntry = () => {
     }
   },[selectedFilters.sesID, selectedFilters.semID]);
 
+
   // Table Columns
   const getColumns = async (paperID) => {
     if (candidates.length === 0) return [];
@@ -115,7 +117,7 @@ const MarksEntry = () => {
     setPaper(response.data);
 
     const paperType = response.data.paperType;
-
+  
     if (paperType === 1) {
       return [
         {
