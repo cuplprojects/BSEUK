@@ -89,7 +89,7 @@ const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
         ]
       },
       { path: "/add-groups", icon: <MdGroups className="w-6 h-6" />, label: "Groups" },
-      { path: "/add-roles", icon: <IoShieldCheckmark className="w-6 h-6" />, label: "Roles" },
+      // { path: "/add-roles", icon: <IoShieldCheckmark className="w-6 h-6" />, label: "Roles" },
       { path: "/add-session", icon: <SlCalender className="w-6 h-6" />, label: "Sessions" },
       { path: "/add-institution", icon: <FaBuildingColumns className="w-6 h-6" />, label: "Institutions" },
       { path: "/add-category", icon: <FaList className="w-6 h-6" />, label: "Category" },

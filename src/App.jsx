@@ -118,7 +118,7 @@ function App() {
               <Route path="add-groups" element={<Groups />} />
               <Route path="add-session" element={<AddSession />} />
               <Route path="add-institution" element={<Institution />} />
-              <Route path="add-roles" element={<Roles />} />
+              {/* <Route path="add-roles" element={<Roles />} /> */}
               <Route path="add-category" element={<Category />} />
               <Route path="users">
                 <Route index element={<Navigate to="add" replace />} />
