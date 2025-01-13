@@ -16,8 +16,8 @@ const Certificate3 = ({ data, isPreview }) => {
 
   const getCellStyle = (value) => ({
     border: '1px solid black',
-    textAlign: 'center',
-    padding: '4px 0px 12px 0px',
+    textAlign: 'left',
+    padding: '4px 0px 12px 5px',
     backgroundColor: isPreview && !value ? '#fa968e' : 'transparent',
   });
 
@@ -26,16 +26,16 @@ const Certificate3 = ({ data, isPreview }) => {
       .filter((mark) => mark.type === 1)
       .map((mark, index) => (
         <tr key={index}>
-          <td style={getCellStyle(mark.code)}>{String(mark.code).padStart(3, '0')}</td>
+          <td style={getCellStyle(mark.code)}><center>{String(mark.code).padStart(3, '0')}</center></td>
           <td style={getCellStyle(mark.name)}><div style={{textAlign:"left",padding:"0px 0px 0px 3px"}}>{mark.name}</div></td>
-          <td style={getCellStyle(mark.maxMarks)}>{mark.maxMarks}</td>
-          <td style={getCellStyle(mark.theoryMax)}>{mark.theoryMax}</td>
-          <td style={getCellStyle(mark.isAbsent ? 'A' : mark.theory)}>{mark.isAbsent ? 'A' : mark.theory}</td>
-          <td style={getCellStyle(mark.internalMax)}>{mark.internalMax}</td>
-          <td style={getCellStyle(mark.isAbsent ? 'A' : mark.internal)}>{mark.isAbsent ? 'A' : mark.internal}</td>
-          <td colSpan={2} style={getCellStyle('-')}>-</td>
-          <td style={getCellStyle(mark.isAbsent ? "A" : mark.total)}>{mark.isAbsent ? "A" : mark.total}</td>
-          <td style={getCellStyle(mark.pageremark === "उत्तीर्ण" ? "P" : "F")}>{mark.pageremark === "उत्तीर्ण" ? "P" : "F"}</td>
+          <td style={getCellStyle(mark.maxMarks)}><center>{mark.maxMarks}</center></td>
+          <td style={getCellStyle(mark.theoryMax)}><center>{mark.theoryMax}</center></td>
+          <td style={getCellStyle(mark.isAbsent ? 'A' : mark.theory)}><center>{mark.isAbsent ? 'A' : mark.theory}</center></td>
+          <td style={getCellStyle(mark.internalMax)}><center>{mark.internalMax}</center></td>
+          <td style={getCellStyle(mark.isAbsent ? 'A' : mark.internal)}><center>{mark.isAbsent ? 'A' : mark.internal}</center></td>
+          <td colSpan={2} style={getCellStyle('-')}><center>-</center></td>
+          <td style={getCellStyle(mark.isAbsent ? "A" : mark.total)}><center>{mark.isAbsent ? "A" : mark.total}</center></td>
+          <td style={getCellStyle(mark.pageremark === "उत्तीर्ण" ? "P" : "F")}><center>{mark.pageremark === "उत्तीर्ण" ? "P" : "F"}</center></td>
         </tr>
       ));
   };
@@ -50,15 +50,15 @@ const Certificate3 = ({ data, isPreview }) => {
           </td>
         )}
         <td style={getCellStyle(mark.name)}>{mark.name}</td>
-        <td style={getCellStyle(mark.maxMarks)}>{mark.maxMarks}</td>
-        <td style={getCellStyle('-')}>-</td>
-        <td style={getCellStyle('-')}>-</td>
-        <td style={getCellStyle('-')}>-</td>
-        <td style={getCellStyle('-')}>-</td>
+        <td style={getCellStyle(mark.maxMarks)}><center>{mark.maxMarks}</center></td>
+        <td style={getCellStyle('-')}><center>-</center></td>
+        <td style={getCellStyle('-')}><center>-</center></td>
+        <td style={getCellStyle('-')}><center>-</center></td>
+        <td style={getCellStyle('-')}><center>-</center></td>
         {/* <td style={getCellStyle(mark.maxMarks)}>{mark.maxMarks}</td> */}
-        <td colSpan={2} style={getCellStyle(mark.isAbsent ? "A" : mark.practical)}>{mark.isAbsent ? "A" : mark.practical}</td>
-        <td style={getCellStyle(mark.isAbsent ? "A" : mark.total)}>{mark.isAbsent ? "A" : mark.total}</td>
-        <td style={getCellStyle(mark.pageremark === "उत्तीर्ण" ? "P" : "F")}>{mark.pageremark === "उत्तीर्ण" ? "P" : "F"}</td>
+        <td colSpan={2} style={getCellStyle(mark.isAbsent ? "A" : mark.practical)}><center>{mark.isAbsent ? "A" : mark.practical}</center></td>
+        <td style={getCellStyle(mark.isAbsent ? "A" : mark.total)}><center>{mark.isAbsent ? "A" : mark.total}</center></td>
+        <td style={getCellStyle(mark.pageremark === "उत्तीर्ण" ? "P" : "F")}><center>{mark.pageremark === "उत्तीर्ण" ? "P" : "F"}</center></td>
       </tr>
     ));
   }
@@ -227,8 +227,8 @@ const Certificate3 = ({ data, isPreview }) => {
             <table border="2" className="table-bordered" style={{ borderCollapse: 'collapse', fontSize: "0.8rem", padding: "4px" }}>
               <thead>
                 <tr>
-                  <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>प्रश्नपत्र कोड</th>
-                  <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>प्रश्नपत्र का नाम</th>
+                  <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>प्रश्‍न्पत्र कोड</th>
+                  <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>प्रश्‍न्पत्र का नाम</th>
                   <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>अधिकतम अंक</th>
                   <th colSpan="4" className="text-center" style={{ border: '1px solid black' , padding: "4px 3px 12px 3px"  }}>सैद्धांतिक</th>
                   <th colSpan="2" rowSpan={3} className="text-center" style={{ border: '1px solid black', padding: '4px' }}>क्रिया० / प्रयो० / प्राप्तांक</th>
@@ -252,9 +252,9 @@ const Certificate3 = ({ data, isPreview }) => {
                 <tr>
                   <td colSpan="2" style={{ border: '1px solid black', textAlign: 'left', fontWeight: 'bold', padding: "4px 4px 12px 4px" ,fontSize: "1rem", }}><b>योग (Total)</b></td>
                   <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center' }}>{data.maxMarks}</td>
-                  <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.totalInternalMaxMarks}</td>
+                  <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center' }}>{data.totalInternalMaxMarks}</td>
                   <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center' }}>{totalTheoryMax}</td>
-                  <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.totalExternalMaxMarks}</td>
+                  <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center' }}>{data.totalExternalMaxMarks}</td>
                   <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center' }}>{totalInternalMax}</td>
                   {/* <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.totalExternalMaxMarks}</td> */}
                   <td colSpan={2} style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center' }}>{practicalMax}</td>

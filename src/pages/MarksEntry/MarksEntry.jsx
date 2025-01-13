@@ -16,6 +16,9 @@ import ConfirmationModal from "./ConfirmationModal";
 import * as XLSX from 'xlsx';
 import RemarkModal from './RemarkModal';
 import { Pencil } from 'lucide-react';
+import PassKeyModal from './PassKeyModal';
+import isAdminAccess from './../../services/isAdminAccess';
+import { FaFileDownload } from "react-icons/fa";
 
 const MarksEntry = () => {
   const [sessions, setSessions] = useState([]);
@@ -42,11 +45,11 @@ const MarksEntry = () => {
   const [question, setQestion] = useState("");
   const [isRemarkModalOpen, setIsRemarkModalOpen] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [passkey, setPasskey] = useState('');
+  const [isTableLocked, setIsTableLocked] = useState(false);
+  const [isPassKeyModalOpen, setIsPassKeyModalOpen] = useState(false);
   const theme = useThemeStore((state) => state.theme);
-
-  
-
-
 
   const cardClass =
     theme === "dark"
@@ -75,6 +78,36 @@ const MarksEntry = () => {
       ? "border-purple-500/20 hover:bg-purple-900/30"
       : "border-blue-200 hover:bg-blue-50";
 
+  useEffect(() => {
+    const checkAdminAccess = async () => {
+      const adminAccess = await isAdminAccess();
+      setIsAdmin(adminAccess);
+    };
+    checkAdminAccess();
+  }, []);
+
+  useEffect(() => {
+    const checkPassKey = async () => {
+      try {
+        const res = await API.post(`/LockStatus/getbysessionandsemester`, 
+          {
+            "sesID": selectedFilters?.sesID,
+            "semID": selectedFilters?.semID
+          }
+         );
+         console.log(res.data)
+         setIsTableLocked(res.data?.isLocked);
+      }
+      catch (error) {
+        console.error(error);
+      }
+    };
+    if (selectedFilters?.sesID && selectedFilters?.semID) {
+      checkPassKey();
+    }
+  },[selectedFilters.sesID, selectedFilters.semID]);
+
+
   // Table Columns
   const getColumns = async (paperID) => {
     if (candidates.length === 0) return [];
@@ -84,7 +117,7 @@ const MarksEntry = () => {
     setPaper(response.data);
 
     const paperType = response.data.paperType;
-
+  
     if (paperType === 1) {
       return [
         {
@@ -220,7 +253,7 @@ const MarksEntry = () => {
 
   useEffect(() => {
     fetchCandidates(selectedFilters.paperID);
-  },[selectedFilters]);
+  }, [selectedFilters]);
 
   const fetchCandidates = async (paperID) => {
     setLoading(true);
@@ -395,12 +428,10 @@ const MarksEntry = () => {
     });
   };
 
-  const handleSubmit = async () => {
-    if (Object.keys(updatedMarks).length === 0) {
-      toast.info("No marks to update!");
-      return;
-    }
-
+  const submitwithpasskey = async (p) => {
+    console.log("submitingdata")
+    // Use Admin-specific URL if a pass is provided
+    console.log("passentered", p);
     const marksToSubmit = Object.keys(updatedMarks)
       .map((rowId) => {
         const { candidateId, theoryMarks, internalMarks, practicalMarks } =
@@ -434,7 +465,7 @@ const MarksEntry = () => {
     try {
       toast.promise(
         Promise.all(
-          marksToSubmit.map((mark) => API.post("/StudentsMarksObtaineds", mark))
+          marksToSubmit.map((mark) => API.post(`/StudentsMarksObtaineds/Admin/${p}`, mark))
         ),
         {
           pending: "Updating marks...",
@@ -448,11 +479,90 @@ const MarksEntry = () => {
       console.error("Error updating marks:", error);
       toast.error("Failed to update marks.");
     }
+    finally {
+      setPasskey('');
+    }
+
+  }
+
+  const handleSubmit = async () => {
+    console.log("submitingdata")
+
+    // Check if there are marks to update
+    if (Object.keys(updatedMarks).length === 0) {
+      toast.info("No marks to update!");
+      return;
+    }
+
+    // Define the base API URL
+    let postdataurl = `/StudentsMarksObtaineds`;
+
+    // Handle Admin-specific logic
+    if (isAdmin && isTableLocked) {
+      if (!passkey) {
+        setIsPassKeyModalOpen(true);
+        return;
+      }
+
+    }
+
+    // Submit data using the constructed URL
+    const marksToSubmit = Object.keys(updatedMarks)
+      .map((rowId) => {
+        const { candidateId, theoryMarks, internalMarks, practicalMarks } =
+          updatedMarks[rowId];
+        const candidateData = candidates.find(
+          (candidate) => candidate.candidateID === candidateId
+        );
+        if (!candidateData) return null;
+
+        return {
+          smoID: candidateData.smoID || 0,
+          candidateID: candidateData.candidateID,
+          paperID: selectedFilters.paperID,
+          theoryPaperMarks:
+            theoryMarks !== undefined
+              ? theoryMarks
+              : candidateData.marks?.theoryPaperMarks || 0,
+          interalMarks:
+            internalMarks !== undefined
+              ? internalMarks
+              : candidateData.marks?.interalMarks || 0,
+          practicalMarks:
+            practicalMarks !== undefined
+              ? practicalMarks
+              : candidateData.marks?.practicalMarks || 0,
+          remark: updatedMarks[rowId]?.remark || candidateData.marks?.remark || ''
+        };
+      })
+      .filter(Boolean);
+
+    try {
+      toast.promise(
+        Promise.all(
+          marksToSubmit.map((mark) => API.post(postdataurl, mark))
+        ),
+        {
+          pending: "Updating marks...",
+          success: "Marks updated successfully!",
+          error: "Failed to update marks",
+        }
+      );
+
+      fetchCandidates(selectedFilters.paperID);
+    } catch (error) {
+      console.error("Error updating marks:", error);
+      toast.error("Failed to update marks.");
+    }
+
+    // Reset the passkey
+    setPasskey('');
   };
+
 
   useEffect(() => {
     console.log(updatedMarks)
-  },[updatedMarks])
+  }, [updatedMarks])
 
   const markAsAbsent = async (candidateID) => {
     try {
@@ -554,6 +664,61 @@ const MarksEntry = () => {
     }
   };
 
+  const handleDownload = async () => {
+    try {
+      const datatosend = {
+        semID: selectedFilters.semID,
+        sesID: selectedFilters.sesID,
+      };
+
+      // Get session and semester names
+      const sessionName = sessions.find(s => s.sesID == selectedFilters.sesID)?.sessionName || '';
+      const semesterName = semesters.find(s => s.semID == selectedFilters.semID)?.semesterName || '';
+      const date = new Date().toISOString().split('T')[0];
+
+      const response = await API.post("StudentsMarksObtaineds/GetFormatedAudit", datatosend, {
+        responseType: 'blob'
+      });
+
+      const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      
+      // Create filename with all required details
+      link.download = `Marks_Entry_${sessionName}_${semesterName}_${date}.xlsx`;
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      toast.success('Marks report downloaded successfully!');
+    } catch (error) {
+      console.error('Error downloading marks report:', error);
+      toast.error('Failed to download marks report');
+    }
+  };
+
+  // useEffect for the keyboard shortcut to submit on ctrl + enter
+  // useEffect(() => {
+  //   const handleKeyPress = (e) => {
+  //     // Check if Ctrl (or Cmd on Mac) + Enter is pressed
+  //     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+  //       e.preventDefault(); // Prevent default behavior
+  //       handleSubmit();
+  //     }
+  //   };
+
+  //   // Add event listener
+  //   document.addEventListener('keydown', handleKeyPress);
+
+  //   // Cleanup
+  //   return () => {
+  //     document.removeEventListener('keydown', handleKeyPress);
+  //   };
+  // }, [updatedMarks]); // Add dependencies that handleSubmit uses
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -584,10 +749,10 @@ const MarksEntry = () => {
               <span className="block text-sm sm:text-base">
                 Lock Marks for{' '}
                 <span className="whitespace-nowrap">
-                  {semesters[selectedFilters.semID]?.semesterName}
+                  {semesters.find(s => s.semID === parseInt(selectedFilters.semID))?.semesterName || ''}
                 </span>{' '}
                 <span className="whitespace-nowrap">
-                  {sessions[selectedFilters.sesID - 1]?.sessionName}
+                  {sessions.find(s => s.sesID === parseInt(selectedFilters.sesID))?.sessionName || ''}
                 </span>
               </span>
             </button>
@@ -597,6 +762,14 @@ const MarksEntry = () => {
               className={`w-full sm:w-auto px-4 sm:px-6 py-2 h-auto min-h-[3rem] rounded-lg font-semibold transition-colors ${buttonClass}`}
             >
               Get Remaining Marks Entry Status
+            </button>
+            <button
+              type="button"
+              onClick={handleDownload}
+              disabled={!selectedFilters.semID || !selectedFilters.sesID}
+              className={`w-full sm:w-auto px-4 sm:px-6 py-2 h-auto min-h-[3rem] rounded-lg font-semibold transition-colors ${buttonClass} ${(!selectedFilters.semID || !selectedFilters.sesID) ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              <FaFileDownload size={26}/>
             </button>
           </div>
         )}
@@ -885,7 +1058,7 @@ const MarksEntry = () => {
 
             <div className="p-4">
               <button
-                onClick={handleSubmit}
+                onClick={() => handleSubmit()}
                 className={`w-full px-6 py-2 rounded-lg transition-colors ${buttonClass}`}
               >
                 Submit
@@ -907,6 +1080,14 @@ const MarksEntry = () => {
           }}
           onSubmit={handleRemarkSubmit}
           initialRemarks={selectedCandidate ? updatedMarks[selectedCandidate.rowId]?.remarks || '' : ''}
+        />
+        <PassKeyModal
+          isOpen={isPassKeyModalOpen}
+          onClose={() => setIsPassKeyModalOpen(false)}
+          onSubmit={(key) => {
+            submitwithpasskey(key);
+            setIsPassKeyModalOpen(false)
+          }}
         />
       </div>
     </motion.div>

@@ -8,7 +8,8 @@ import {
   FiX,
   FiUsers,
   FiUserPlus,
-  FiUpload
+  FiUpload,
+  FiEdit
 } from "react-icons/fi";
 import { FaBuildingColumns } from "react-icons/fa6";
 import { FaList } from "react-icons/fa6";
@@ -79,6 +80,11 @@ const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
             path: "/add-bulkcandidates",
             icon: <FiUpload className="w-5 h-5" />,
             label: "Import Candidates"
+          },
+          {
+            path: "/edit-candidate",
+            icon: <FiEdit className="w-5 h-5" />,
+            label: "Edit Candidate"
           }
         ]
       },

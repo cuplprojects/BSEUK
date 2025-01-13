@@ -18,6 +18,7 @@ import AddUsers from './pages/Masters/Users/Tabs/AddUsers';
 import Roles from './pages/Masters/Roles/Roles';
 import Users from './pages/Masters/Users/Users';
 import AllUsers from './pages/Masters/Users/Tabs/AllUsers';
+import EditCandidate from './pages/Masters/Candidate/EditCandidate';
 import { useEffect, useState } from 'react';
 import isAdminAccess from './services/isAdminAccess';
 // Protected Route Component
@@ -113,6 +114,7 @@ function App() {
             <>
               <Route path="add-candidate" element={<AddCandidate />} />
               <Route path="add-bulkcandidates" element={<BulkCandidates />} />
+              <Route path="edit-candidate" element={<EditCandidate />} />
               <Route path="add-groups" element={<Groups />} />
               <Route path="add-session" element={<AddSession />} />
               <Route path="add-institution" element={<Institution />} />

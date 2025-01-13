@@ -31,6 +31,7 @@ const Certificate = () => {
   const [entersession, setEntersession] = useState("");
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [isPreview, setIsPreview] = useState(false);
+  const [isLocked, setIsLocked] = useState(true);
 
   const theme = useThemeStore((state) => state.theme);
 
@@ -71,7 +72,30 @@ const Certificate = () => {
     fetchData();
   }, []);
 
-  useEffect(() => { });
+  useEffect(() => {
+    const checkLockStatus = async () => {
+      if (selectedSession && selectedSemester) {
+        try {
+          const response = await API.post('/LockStatus/getbysessionandsemester', {
+            sesID: parseInt(selectedSession),
+            semID: parseInt(selectedSemester)
+          });
+          console.log('Lock status response:', response.data);
+          setIsLocked(response.data.isLocked);
+        } catch (error) {
+          console.error('Error checking lock status:', error);
+          setIsLocked(false);
+        }
+      }
+    };
+
+    console.log('Selected Session:', selectedSession);
+    console.log('Selected Semester:', selectedSemester);
+    
+    if (selectedSession && selectedSemester) {
+      checkLockStatus();
+    }
+  }, [selectedSession, selectedSemester]);
 
   const formatCertificateData = (result, result2) => {
     const studentDetails = result.studentDetails;
@@ -599,11 +623,11 @@ const Certificate = () => {
             </button>
             <button
               onClick={handleSingleDownload}
-              disabled={loading}
+              disabled={loading || !isLocked}
               className={`w-full px-6 py-2 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 mt-5 ${buttonClass} disabled:opacity-50`}
             >
               {loading ? <FiLoader className="animate-spin" /> : <FiDownload />}
-              Download Certificate
+              {!isLocked ? 'Download Locked' : 'Download Certificate'}
             </button>
           </div>
 
@@ -648,11 +672,11 @@ const Certificate = () => {
           </div>
           <button
             onClick={handleBulkDownload}
-            disabled={loading}
+            disabled={loading || !isLocked}
             className={`w-full px-6 py-2 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 ${bulkButtonClass} disabled:opacity-50`}
           >
             {loading ? <FiLoader className="animate-spin" /> : <FiDownload />}
-            Download All Certificates
+            {!isLocked ? 'Download Locked' : 'Download All Certificates'}
           </button>
         </div>
 

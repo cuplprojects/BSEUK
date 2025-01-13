@@ -207,7 +207,7 @@ const Certificate2 = ({ data, isPreview }) => {
               <div><b>वर्ग<br />Group</b>{" "}
                 <span className="ms-2">
                   <b>{data.group}</b>
-                  </span>
+                </span>
               </div>
             </div>
 
@@ -252,8 +252,8 @@ const Certificate2 = ({ data, isPreview }) => {
             <table border="2" className="table-bordered" style={{ borderCollapse: 'collapse', fontSize: "0.8rem", padding: "4px" }}>
               <thead>
                 <tr>
-                  <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: "4px 3px 12px 3px" }}>प्रश्नपत्र कोड</th>
-                  <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: "4px 3px 12px 3px", width: '50%' }}>प्रश्नपत्र का नाम</th>
+                  <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: "4px 3px 12px 3px" }}>प्रश्‍न्पत्र कोड</th>
+                  <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: "4px 3px 12px 3px", width: '50%' }}>प्रश्‍न्पत्र का नाम</th>
                   <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: "4px 3px 12px 3px" }}>अधिकतम अंक</th>
                   <th colSpan="4" className="text-center" style={{ border: '1px solid black', padding: "4px 3px 12px 3px" }}>सैद्धांतिक</th>
                   <th colSpan="2" rowSpan={3} className="text-center" style={{ border: '1px solid black', padding: "4px 3px 12px 3px" }}>क्रिया०/प्रयो०/विद्यालय अनुभव प्राप्तांक  </th>
@@ -263,7 +263,7 @@ const Certificate2 = ({ data, isPreview }) => {
                     whiteSpace: 'nowrap',
                     position: 'absolute',
                     transform: 'translate(-45%, -40%) rotate(-90deg)',
-                    padding:'0px 0px 10px 0px'
+                    padding: '0px 0px 10px 0px'
                   }}>प्राप्तांकों का <br /> योग</span></th>
                   <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: "4px 3px 12px 3px", width: '7%' }}>
                     <span style={{
@@ -272,7 +272,7 @@ const Certificate2 = ({ data, isPreview }) => {
                       whiteSpace: 'nowrap',
                       position: 'absolute',
                       transform: 'translate(-50%, -40%) rotate(-90deg)',
-                      padding:'0px 0px 10px 0px'
+                      padding: '0px 0px 10px 0px'
                     }}>परीक्षाफल</span></th>
                 </tr>
                 <tr>
@@ -293,12 +293,12 @@ const Certificate2 = ({ data, isPreview }) => {
                 <tr>
                   <td colSpan="2" style={{ border: '1px solid black', textAlign: 'left', fontWeight: 'bold', padding: "4px 4px 12px 4px" }}><b>योग (Total)</b></td>
                   <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center', }}><b>{data.maxMarks}</b></td>
-                  <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center' }}>{data.totalInternalMaxMarks}</td>
-                  <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: "center" }}>{totalTheoryMax}</td>
                   <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center' }}>{data.totalExternalMaxMarks}</td>
+                  <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: "center" }}>{totalTheoryMax}</td>
+                  <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center' }}>{data.totalInternalMaxMarks}</td>
                   <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: "center" }}>{totalInternalMax}</td>
                   <td colSpan="2" style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: "center" }}>{practicalMax}</td>
-                  <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', padding: "4px  0px 12px 0px" , fontSize: "1rem",}}>{data.totalMarks}</td>
+                  <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', padding: "4px  0px 12px 0px", fontSize: "1rem", }}>{data.totalMarks}</td>
                   <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center' }}></td>
                 </tr>
               </tbody>
