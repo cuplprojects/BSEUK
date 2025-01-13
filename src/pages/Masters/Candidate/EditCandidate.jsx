@@ -106,7 +106,7 @@ const EditCandidate = () => {
       const response = await API.get(
         `Candidates/GetByDetails/${searchFilters.rollNumber}/${searchFilters.sesID}/${searchFilters.semID}`
       );
-      
+      console.log(response.data)
       const candidateData = {
         candidateID: response.data.candidateID,
         candidateName: response.data.candidateName,
@@ -125,8 +125,15 @@ const EditCandidate = () => {
       setFormData(candidateData);
       
       if (candidateData.papersOpted) {
-        const paperIds = candidateData.papersOpted.split(',').map(Number);
-        setSelectedPapers(paperIds);
+        const response = await API.get(`Papers/GetBySem/${searchFilters.semID}`);
+        const papers = response.data;
+        
+        const paperCodes = candidateData.papersOpted.split(',').map(Number);
+        const matchedPaperIds = papers
+          .filter(paper => paperCodes.includes(paper.paperCode))
+          .map(paper => paper.paperID);
+        
+        setSelectedPapers(matchedPaperIds);
       }
 
       toast.success("Candidate found successfully!");
@@ -160,15 +167,20 @@ const EditCandidate = () => {
     }));
   };
 
-  const handlePaperChange = (paperId) => {
+  const handlePaperChange = (paper) => {
     setSelectedPapers(prev => {
-      const newSelection = prev.includes(paperId)
-        ? prev.filter(id => id !== paperId)
-        : [...prev, paperId];
+      const newSelection = prev.includes(paper.paperID)
+        ? prev.filter(id => id !== paper.paperID)
+        : [...prev, paper.paperID];
+      
+      const selectedPaperCodes = availablePapers
+        .filter(p => newSelection.includes(p.paperID))
+        .map(p => p.paperCode)
+        .join(',');
       
       setFormData(prev => ({
         ...prev,
-        papersOpted: newSelection.join(',')
+        papersOpted: selectedPaperCodes
       }));
 
       return newSelection;
@@ -504,7 +516,7 @@ const EditCandidate = () => {
                         type="checkbox"
                         id={`paper-${paper.paperID}`}
                         checked={selectedPapers.includes(paper.paperID)}
-                        onChange={() => handlePaperChange(paper.paperID)}
+                        onChange={() => handlePaperChange(paper)}
                         disabled={!isDataFetched}
                         className="mr-2"
                       />
