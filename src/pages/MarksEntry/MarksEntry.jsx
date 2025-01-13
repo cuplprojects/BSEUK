@@ -749,10 +749,10 @@ const MarksEntry = () => {
               <span className="block text-sm sm:text-base">
                 Lock Marks for{' '}
                 <span className="whitespace-nowrap">
-                  {semesters[selectedFilters.semID]?.semesterName}
+                  {semesters.find(s => s.semID === parseInt(selectedFilters.semID))?.semesterName || ''}
                 </span>{' '}
                 <span className="whitespace-nowrap">
-                  {sessions[selectedFilters.sesID - 1]?.sessionName}
+                  {sessions.find(s => s.sesID === parseInt(selectedFilters.sesID))?.sessionName || ''}
                 </span>
               </span>
             </button>
