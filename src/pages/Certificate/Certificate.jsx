@@ -113,6 +113,7 @@ const Certificate = () => {
         institutionName: studentDetails.institutionName,
         session: studentDetails.session,
         semester: studentDetails.sem,
+        awardsheetnumber: studentDetails.awardsheetnumber,
         marks: resultData.marksDetails.map((mark) => ({
           code: mark.paperCode,
           type: mark.paperType,
@@ -150,6 +151,7 @@ const Certificate = () => {
         institutionName: studentDetails.institutionName,
         session: studentDetails.session,
         semester: studentDetails.sem,
+        awardsheetnumber: studentDetails.awardsheetnumber,
         marks: resultData.marksDetails.map((mark) => ({
           code: mark.paperCode,
           type: mark.paperType,
@@ -188,6 +190,7 @@ const Certificate = () => {
         institutionName: studentDetails.institutionName,
         session: studentDetails.session,
         semester: studentDetails.sem,
+        awardsheetnumber: studentDetails.awardsheetnumber,
         marks: resultData.marksDetails.map((mark) => ({
           code: mark.paperCode,
           type: mark.paperType,
@@ -226,6 +229,7 @@ const Certificate = () => {
         group: studentDetails.group,
         session: studentDetails.session,
         semester: studentDetails.sem,
+        awardsheetnumber: studentDetails.awardsheetnumber,
         marks: resultData.marksDetails.map((mark) => ({
           code: mark.paperCode,
           type: mark.paperType,

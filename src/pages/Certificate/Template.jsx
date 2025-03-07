@@ -105,7 +105,8 @@ const Certificate = ({ data, isPreview }) => {
         <div style={{ border: "3px solid", padding: "5px 4px 10px 4px" }}>
           <div>
             <b style={{ fontSize: "1.1rem" }}>
-              Sr. No.<span>{String(data.sno).padStart(3, "0")}</span>
+              {/* Sr. No.<span>{String(data.sno).padStart(3, "0")}</span> */}
+              Sr. No.<span>{awardsheetnumber}</span>
             </b>
           </div>
           <header className="text-center mb-3">
