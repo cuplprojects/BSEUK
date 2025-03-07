@@ -350,37 +350,61 @@ const Certificate = () => {
         sessionId: selectedSession,
         semesterId: selectedSemester,
       };
-      const auditresult = await API.post(
-        "/StudentsMarksObtaineds/AuditforSingle",
-        datatosend
+      //-----------------------------------------------------
+      // const auditresult = await API.post(
+      //   "/StudentsMarksObtaineds/AuditforSingle",
+      //   datatosend
+      // );
+      // const data = auditresult.data;
+      //------------------------------------------------------
+      const response = await API.post(
+        "/StudentsMarksObtaineds/GetStudentResult",
+        {
+          rollNumber,
+          sessionId: parseInt(selectedSession),
+          semesterId: parseInt(selectedSemester),
+        }
       );
-      const data = auditresult.data;
-      if (data) {
-        const response = await API.post(
-          "/StudentsMarksObtaineds/GetStudentResult",
-          {
-            rollNumber,
-            sessionId: parseInt(selectedSession),
-            semesterId: parseInt(selectedSemester),
-          }
-        );
-        const response2 = await API.get(
-          `/StudentsMarksObtaineds/GetAllYearsResult/${rollNumber}`
-        );
+      const response2 = await API.get(
+        `/StudentsMarksObtaineds/GetAllYearsResult/${rollNumber}`
+      );
 
-        const result = response.data;
-        const result2 = response2.data;
+      const result = response.data;
+      const result2 = response2.data;
 
-        const pdf = await generatePDF(result, result2);
-        pdf.save(
-          `Certificate_${result.studentDetails.rollNo}_${result.studentDetails.sem}.pdf`
-        );
-        setShowPreview(false);
-      } else {
-        toast.warn(
-          "Insufficient Data to Generate Certificate, Please check not all marks have been entered for the Student"
-        );
-      }
+      const pdf = await generatePDF(result, result2);
+      pdf.save(
+        `Certificate_${result.studentDetails.rollNo}_${result.studentDetails.sem}.pdf`
+      );
+      setShowPreview(false);
+      //------------------------------------------------------
+      // if (data) {
+      //   const response = await API.post(
+      //     "/StudentsMarksObtaineds/GetStudentResult",
+      //     {
+      //       rollNumber,
+      //       sessionId: parseInt(selectedSession),
+      //       semesterId: parseInt(selectedSemester),
+      //     }
+      //   );
+      //   const response2 = await API.get(
+      //     `/StudentsMarksObtaineds/GetAllYearsResult/${rollNumber}`
+      //   );
+
+      //   const result = response.data;
+      //   const result2 = response2.data;
+
+      //   const pdf = await generatePDF(result, result2);
+      //   pdf.save(
+      //     `Certificate_${result.studentDetails.rollNo}_${result.studentDetails.sem}.pdf`
+      //   );
+      //   setShowPreview(false);
+      // } else {
+      //   toast.warn(
+      //     "Insufficient Data to Generate Certificate, Please check not all marks have been entered for the Student"
+      //   );
+      // }
+      //------------------------------------------------------
     } catch (error) {
       console.error("Error generating certificate:", error);
       setError(
