@@ -230,6 +230,7 @@ const Certificate = () => {
         session: studentDetails.session,
         semester: studentDetails.sem,
         awardsheetnumber: studentDetails.awardsheetnumber,
+        rank: studentDetails.rank,
         marks: resultData.marksDetails.map((mark) => ({
           code: mark.paperCode,
           type: mark.paperType,

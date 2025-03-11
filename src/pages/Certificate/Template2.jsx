@@ -114,7 +114,7 @@ const Certificate2 = ({ data, isPreview }) => {
           <div>
             <b style={{ fontSize: "1.1rem" }}>
               {/* Sr. No.<span>{String(data.sno).padStart(3, "0")}</span> */}
-              Sr. No.<span>{awardsheetnumber}</span>
+              Sr. No.<span>{data.awardsheetnumber}</span>
             </b>
           </div>
           <header className="text-center mb-3">
