@@ -22,7 +22,7 @@ const Certificate2 = ({ data, isPreview }) => {
 
   console.log( data.mark);
 
-  console.log("Overall Details", data.OverAllDetails);
+  // console.log("Overall Details", data.OverAllDetails);
   const totalTheoryMax = data.marks.reduce((acc, mark) => acc + mark.theoryMax, 0);
   const totalInternalMax = data.marks.reduce((acc, mark) => acc + mark.internalMax, 0);
   const totalPracticalMax = data.marks.filter((mark) => mark.type === 2).reduce((acc, mark) => acc + mark.maxMarks, 0);
