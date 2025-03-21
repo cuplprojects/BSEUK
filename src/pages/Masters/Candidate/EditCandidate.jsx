@@ -521,7 +521,7 @@ const EditCandidate = () => {
                         className="mr-2"
                       />
                       <label htmlFor={`paper-${paper.paperID}`} className={textClass}>
-                        {paper.paperName}
+                        {paper.paperName} - {paper.paperCode}
                       </label>
                     </div>
                   ))}

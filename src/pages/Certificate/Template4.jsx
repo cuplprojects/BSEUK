@@ -110,20 +110,20 @@ const Certificate2 = ({ data, isPreview }) => {
         </td>
         {/* ------------------------------------------------------ */}
         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>
-          {mark.semID === 4 ? mark.overallTotalMaxMarks -120 : mark.totalPracticalMaxMarks}
+          {mark.semID === 4 ? mark.overallTotalMaxMarks : mark.totalPracticalMaxMarks}
         </td>
         {/* ------------------------------------------------------ */}
 
         {/* ------------------------------------------------------ */}
         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.semID === 4 ? mark.overallTotalMarks : mark.totalPracticalMarks}</td>
         {/* ------------------------------------------------------ */}
-        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.overallTotalMaxMarks - 120}</td>
+        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.overallTotalMaxMarks}</td>
         {/* ------------------------------------------------------ */}
 
         {/* ------------------------------------------------------ */}
         <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.overallTotalMarks}</td>
         {/* ------------------------------------------------------ */}
-        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.status === "Pass" ? "P" : "F"}</td>
+        <td style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px' }}>{mark.status === "Pass" ? "PASS" : "FAIL"}</td>
         {/* ------------------------------------------------------ */}
         {index === 0 && (
           <td rowSpan={dataLength + 1} style={{ border: '1px solid black', textAlign: 'center', padding: '4px  0px 12px 0px', fontSize: '30px' }}>{mark.status === "Pass" ? (
@@ -314,7 +314,7 @@ const Certificate2 = ({ data, isPreview }) => {
                 <tr>
                   <th rowSpan="2" colSpan="2" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>विषय / विद्यालय अनुभव <br />Subject / School Internship</th>
                   <th colSpan="2" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>बाह्य आकलन</th>
-                  <th colSpan="2" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>आंतरिक आकालन</th>
+                  <th colSpan="2" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>आंतरिक आकलन</th>
                   <th rowSpan="2" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>योग पूर्णांक</th>
                   <th rowSpan="2" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>योग प्राप्तांक</th>
                   <th rowSpan="2" className="text-center" style={{ border: '1px solid black', padding: "4px 0px 12px 0px" }}>परीक्षाफल</th>
@@ -391,11 +391,11 @@ const Certificate2 = ({ data, isPreview }) => {
                   <th colSpan="" className="text-left" style={{ border: '1px solid black', padding: '4px 0px 12px 12px' }}>महायोग </th>
                   <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px 0px 12px 0px' }}>{data?.OverAllDetails.semMarks}</th>
                   <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px 0px 12px 0px' }}>{grandInternal} </th>
-                  <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px 0px 12px 0px' }}>{data?.OverAllDetails.totalPracticalMarks -120} </th>
+                  <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px 0px 12px 0px' }}>{data?.OverAllDetails.totalPracticalMarks} </th>
                   <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px 0px 12px 0px' }}> {grandPractical}</th>
-                  <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px 0px 12px 0px' }}>{data?.OverAllDetails.total -120}</th>
+                  <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px 0px 12px 0px' }}>{data?.OverAllDetails.total}</th>
                   <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px 0px 12px 0px' }}> {grandTotal}</th>
-                  <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px 0px 12px 0px' }}>{isPassed ? "P" : "F"} </th>
+                  <th colSpan="" className="text-center" style={{ border: '1px solid black', padding: '4px 0px 12px 0px' }}>{isPassed ? "PASS" : "FAIL"} </th>
                 </tr>
               </tbody>
             </table>
