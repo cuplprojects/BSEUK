@@ -81,11 +81,11 @@ const adminActions = [
     link: '/users/add',
     icon: <FontAwesomeIcon icon={faUser} className={textClass} />
   },
-  {
-    label: 'Roles',
-    link: '/add-roles',
-    icon: <IoShieldCheckmark className={textClass} />
-  },
+  // {
+  //   label: 'Roles',
+  //   link: '/add-roles',
+  //   icon: <IoShieldCheckmark className={textClass} />
+  // },
   {
     label: 'Add Candidates',
     link: '/add-candidate',
