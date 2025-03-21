@@ -17,6 +17,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useThemeStore } from "../../store/themeStore";
 import { FaEye } from "react-icons/fa";
 import PreviewModal from "./PreviewModal";
+import { FaLock } from "react-icons/fa";
 
 const Certificate = () => {
   const [sessions, setSessions] = useState([]);
@@ -85,7 +86,7 @@ const Certificate = () => {
               semID: parseInt(selectedSemester),
             }
           );
-          console.log("Lock status response:", response.data);
+          // console.log("Lock status response:", response.data);
           setIsLocked(response.data.isLocked);
         } catch (error) {
           console.error("Error checking lock status:", error);
@@ -94,8 +95,8 @@ const Certificate = () => {
       }
     };
 
-    console.log("Selected Session:", selectedSession);
-    console.log("Selected Semester:", selectedSemester);
+    // console.log("Selected Session:", selectedSession);
+    // console.log("Selected Semester:", selectedSemester);
 
     if (selectedSession && selectedSemester) {
       checkLockStatus();
@@ -106,7 +107,7 @@ const Certificate = () => {
     const studentDetails = result.studentDetails;
     const resultData = studentDetails.result;
     const OverAllDetails = result2;
-    console.log(resultData);
+    // console.log(resultData);
     if (studentDetails.sem === "First Semester") {
       return {
         sno: studentDetails.candidateID,
@@ -767,10 +768,12 @@ const Certificate = () => {
           </div>
           <button
             onClick={handleBulkDownload}
-            disabled={loading || !isLocked}
+            // disabled={loading || !isLocked}
+            disabled={true}
             className={`w-full px-6 py-2 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 ${bulkButtonClass} disabled:opacity-50`}
           >
-            {loading ? <FiLoader className="animate-spin" /> : <FiDownload />}
+            {/* {loading ? <FiLoader className="animate-spin" /> : <FiDownload />} */}
+            {<FaLock />}
             {!isLocked ? "Download Locked" : "Download All Certificates"}
           </button>
         </div>
