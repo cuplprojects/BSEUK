@@ -17,7 +17,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { useThemeStore } from "../../store/themeStore";
 import { FaEye } from "react-icons/fa";
 import PreviewModal from "./PreviewModal";
-import { FaLock } from "react-icons/fa";
 
 const Certificate = () => {
   const [sessions, setSessions] = useState([]);
@@ -86,7 +85,7 @@ const Certificate = () => {
               semID: parseInt(selectedSemester),
             }
           );
-          // console.log("Lock status response:", response.data);
+          console.log("Lock status response:", response.data);
           setIsLocked(response.data.isLocked);
         } catch (error) {
           console.error("Error checking lock status:", error);
@@ -95,8 +94,8 @@ const Certificate = () => {
       }
     };
 
-    // console.log("Selected Session:", selectedSession);
-    // console.log("Selected Semester:", selectedSemester);
+    console.log("Selected Session:", selectedSession);
+    console.log("Selected Semester:", selectedSemester);
 
     if (selectedSession && selectedSemester) {
       checkLockStatus();
@@ -107,7 +106,7 @@ const Certificate = () => {
     const studentDetails = result.studentDetails;
     const resultData = studentDetails.result;
     const OverAllDetails = result2;
-    // console.log(resultData);
+    console.log(resultData);
     if (studentDetails.sem === "First Semester") {
       return {
         sno: studentDetails.candidateID,
@@ -270,6 +269,7 @@ const Certificate = () => {
 
   const generatePDF = async (result, result2, options = {}) => {
     const data = formatCertificateData(result, result2);
+    console.log(data)
     setCertificateData(data);
     setShowPreview(true);
 
@@ -292,8 +292,7 @@ const Certificate = () => {
 
     // Add the image to the PDF with compression
     pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, pageHeight, "", "FAST");
-
-    return pdf;
+    return { pdf, fileName: `Certificate_${data.rollNo}.pdf` };
   };
 
   const handlePreview = async () => {
@@ -385,14 +384,10 @@ const Certificate = () => {
       );
 
       const result = response.data;
-      console.log(result);
       const result2 = response2.data;
-      console.log(result2);
 
-      const pdf = await generatePDF(result, result2, { quality: "low" });
-      pdf.save(
-        `Certificate_${result.studentDetails.rollNo}_${result.studentDetails.sem}.pdf`
-      );
+      const {pdf, fileName} = await generatePDF(result, result2, { quality: 'low' });
+      pdf.save(fileName);
       setShowPreview(false);
       //------------------------------------------------------
       // if (data) {
@@ -432,180 +427,262 @@ const Certificate = () => {
     }
   };
 
+  // const handleBulkDownload = async () => {
+  //   if (!selectedSession || !selectedSemester) {
+  //     setError("Please select both session and semester");
+  //     return;
+  //   }
+
+  //   setLoading(true);
+  //   setError(null);
+
+  //   try {
+  //     // Fetch the list of candidates
+  //     const candidatesResponse = await API.post("/Candidates/GetStudents", {
+  //       sesID: parseInt(selectedSession),
+  //       semID: parseInt(selectedSemester),
+  //     });
+
+  //     const candidates = candidatesResponse.data;
+  //     const pdfPromises = candidates.map(async (candidate) => {
+  //       try {
+  //         const datatosend = {
+  //           rollNumber: candidate.rollNumber,
+  //           sessionId: parseInt(selectedSession),
+  //           semesterId: parseInt(selectedSemester),
+  //         };
+  //         const auditresult = await API.post(
+  //           "/StudentsMarksObtaineds/AuditforSingle",
+  //           datatosend
+  //         );
+  //         const data = auditresult.data;
+  //         if (data) {
+  //           const resultResponse = await API.post(
+  //             "/StudentsMarksObtaineds/GetStudentResult",
+  //             {
+  //               rollNumber: candidate.rollNumber,
+  //               sessionId: parseInt(selectedSession),
+  //               semesterId: parseInt(selectedSemester),
+  //             }
+  //           );
+  //           const response2 = await API.get(
+  //             `/StudentsMarksObtaineds/GetAllYearsResult/${rollNumber}`
+  //           );
+
+  //           if (
+  //             resultResponse.data.message &&
+  //             resultResponse.data.message === "No scores found for the student."
+  //           ) {
+  //             console.warn(
+  //               `Skipping candidate ${candidate.rollNumber}: No scores found.`
+  //             );
+  //             return {
+  //               rollNumber: candidate.rollNumber,
+  //               reason: "No scores found",
+  //             };
+  //           }
+
+  //           const result = resultResponse.data;
+  //           const result2 = response2.data;
+  //           const pdf = await generatePDF(result, result2, { quality: 'low' });
+  //           return { pdf, rollNumber: candidate.rollNumber };
+  //         } else {
+  //           console.warn(
+  //             `Skipping candidate ${candidate.rollNumber}: Incomplete data.`
+  //           );
+  //           return {
+  //             rollNumber: candidate.rollNumber,
+  //             reason: "Incomplete data",
+  //           };
+  //         }
+  //       } catch (error) {
+  //         if (error.response && error.response.status === 404) {
+  //           console.warn(
+  //             `Skipping candidate ${candidate.rollNumber}: Data not found.`
+  //           );
+  //           return {
+  //             rollNumber: candidate.rollNumber,
+  //             reason: "Data not found",
+  //           };
+  //         }
+  //         console.error(
+  //           `Error processing candidate ${candidate.rollNumber}:`,
+  //           error
+  //         );
+  //         throw error;
+  //       }
+  //     });
+
+  //     const results = await Promise.all(pdfPromises);
+
+  //     // Filter out valid PDFs and skipped candidates
+  //     const pdfs = results.filter((result) => result?.pdf);
+  //     const skipped = results.filter((result) => !result?.pdf);
+
+  //     // Generate and download the ZIP file
+  //     if (pdfs.length > 0) {
+  //       const zip = new JSZip();
+  //       pdfs.forEach(({ pdf, rollNumber }) => {
+  //         zip.file(`Certificate_${rollNumber}.pdf`, pdf.output("blob"), {
+  //           binary: true,
+  //         });
+  //       });
+
+  //       const zipBlob = await zip.generateAsync({ type: "blob" });
+  //       const zipUrl = URL.createObjectURL(zipBlob);
+  //       const a = document.createElement("a");
+  //       a.href = zipUrl;
+  //       a.download = `Certificates_${selectedSession}_${selectedSemester}.zip`;
+  //       document.body.appendChild(a);
+  //       a.click();
+  //       document.body.removeChild(a);
+  //     }
+
+  //     // Generate the Excel file for skipped candidates
+  //     if (skipped.length > 0) {
+  //       const worksheet = XLSX.utils.json_to_sheet(
+  //         skipped.map((skip) => ({
+  //           RollNumber: skip.rollNumber,
+  //           Reason: skip.reason,
+  //         }))
+  //       );
+  //       const workbook = XLSX.utils.book_new();
+  //       XLSX.utils.book_append_sheet(workbook, worksheet, "SkippedCandidates");
+
+  //       // Correct type usage: 'array' for generating blob
+  //       const excelBuffer = XLSX.write(workbook, {
+  //         bookType: "xlsx",
+  //         type: "array",
+  //       });
+
+  //       const excelBlob = new Blob([excelBuffer], {
+  //         type: "application/octet-stream",
+  //       });
+
+  //       const excelUrl = URL.createObjectURL(excelBlob);
+  //       const a = document.createElement("a");
+  //       a.href = excelUrl;
+  //       a.download = `SkippedCandidates_${selectedSession}_${selectedSemester}.xlsx`;
+  //       document.body.appendChild(a);
+  //       a.click();
+  //       document.body.removeChild(a);
+  //     }
+
+  //     setError("Certificates and skipped list generated successfully!");
+  //   } catch (error) {
+  //     console.error("Error generating certificates:", error);
+  //     setError("Failed to generate certificates. Please try again.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleBulkDownload = async () => {
     if (!selectedSession || !selectedSemester) {
       setError("Please select both session and semester");
       return;
     }
-
+  
     setLoading(true);
     setError(null);
-
+  
     try {
-      // Fetch the list of candidates
       const candidatesResponse = await API.post("/Candidates/GetStudents", {
         sesID: parseInt(selectedSession),
         semID: parseInt(selectedSemester),
       });
-
+  
       const candidates = candidatesResponse.data;
-
-      // Group candidates by dist_Code
-      const groupedByDistCode = candidates.reduce((acc, candidate) => {
-        const distCode = candidate.dist_Code || "unknown"; // Use "unknown" for candidates without a dist_code
-        if (!acc[distCode]) {
-          acc[distCode] = [];
-        }
-        acc[distCode].push(candidate);
-        return acc;
-      }, {});
-
-      // Process each group of candidates
-      for (const distCode in groupedByDistCode) {
-        const batchCandidates = groupedByDistCode[distCode];
-        const batchSize = 50; // Define the batch size
-        const batches = []; // Array to hold batches
-
-        // Split candidates into batches
-        for (let i = 0; i < batchCandidates.length; i += batchSize) {
-          batches.push(batchCandidates.slice(i, i + batchSize));
-        }
-
-        for (const batch of batches) {
-          const pdfPromises = batch.map(async (candidate) => {
-            try {
-              const datatosend = {
-                rollNumber: candidate.rollNumber,
-                sessionId: parseInt(selectedSession),
-                semesterId: parseInt(selectedSemester),
-              };
-              const auditresult = await API.post(
-                "/StudentsMarksObtaineds/AuditforSingle",
-                datatosend
-              );
-              const data = auditresult.data;
-              if (data) {
-                const resultResponse = await API.post(
-                  "/StudentsMarksObtaineds/GetStudentResult",
-                  {
-                    rollNumber: candidate.rollNumber,
-                    sessionId: parseInt(selectedSession),
-                    semesterId: parseInt(selectedSemester),
-                  }
-                );
-                const response2 = await API.get(
-                  `/StudentsMarksObtaineds/GetAllYearsResult/${candidate.rollNumber}`
-                );
-
-                if (
-                  resultResponse.data.message &&
-                  resultResponse.data.message ===
-                    "No scores found for the student."
-                ) {
-                  console.warn(
-                    `Skipping candidate ${candidate.rollNumber}: No scores found.`
-                  );
-                  return {
-                    rollNumber: candidate.rollNumber,
-                    reason: "No scores found",
-                  };
-                }
-
-                const result = resultResponse.data;
-                const result2 = response2.data;
-
-                const pdf = await generatePDF(result, result2, {
-                  quality: "low",
-                }); // Adjust quality parameter
-                return { pdf, rollNumber: candidate.rollNumber };
-              } else {
-                console.warn(
-                  `Skipping candidate ${candidate.rollNumber}: Incomplete data.`
-                );
-                return {
-                  rollNumber: candidate.rollNumber,
-                  reason: "Incomplete data",
-                };
-              }
-            } catch (error) {
-              if (error.response && error.response.status === 404) {
-                console.warn(
-                  `Skipping candidate ${candidate.rollNumber}: Data not found.`
-                );
-                return {
-                  rollNumber: candidate.rollNumber,
-                  reason: "Data not found",
-                };
-              }
-              console.error(
-                `Error processing candidate ${candidate.rollNumber}:`,
-                error
-              );
-              throw error;
-            }
-          });
-
-          const results = await Promise.all(pdfPromises);
-
-          // Filter out valid PDFs and skipped candidates
-          const pdfs = results.filter((result) => result?.pdf);
-          const skipped = results.filter((result) => !result?.pdf);
-
-          // Generate and download the ZIP file for the current batch
-          if (pdfs.length > 0) {
-            const zip = new JSZip();
-            pdfs.forEach(({ pdf, rollNumber }) => {
-              zip.file(`Certificate_${rollNumber}.pdf`, pdf.output("blob"), {
-                binary: true,
-              });
-            });
-
-            const zipBlob = await zip.generateAsync({ type: "blob" });
-            const zipUrl = URL.createObjectURL(zipBlob);
-            const a = document.createElement("a");
-            a.href = zipUrl;
-            a.download = `Certificates_${selectedSession}_${selectedSemester}_${distCode}.zip`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+      const results = [];
+  
+      // Process candidates sequentially instead of using Promise.all
+      for (const candidate of candidates) {
+        try {
+          const datatosend = {
+            rollNumber: candidate.rollNumber,
+            sessionId: parseInt(selectedSession),
+            semesterId: parseInt(selectedSemester),
+          };
+  
+          const auditresult = await API.post(
+            "/StudentsMarksObtaineds/AuditforSingle",
+            datatosend
+          );
+  
+          if (!auditresult.data) {
+            results.push({ rollNumber: candidate.rollNumber, reason: "Incomplete data" });
+            continue;
           }
-
-          // Generate the Excel file for skipped candidates
-          if (skipped.length > 0) {
-            const worksheet = XLSX.utils.json_to_sheet(
-              skipped.map((skip) => ({
-                RollNumber: skip.rollNumber,
-                Reason: skip.reason,
-              }))
-            );
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(
-              workbook,
-              worksheet,
-              "SkippedCandidates"
-            );
-
-            // Correct type usage: 'array' for generating blob
-            const excelBuffer = XLSX.write(workbook, {
-              bookType: "xlsx",
-              type: "array",
-            });
-
-            const excelBlob = new Blob([excelBuffer], {
-              type: "application/octet-stream",
-            });
-
-            const excelUrl = URL.createObjectURL(excelBlob);
-            const a = document.createElement("a");
-            a.href = excelUrl;
-            a.download = `SkippedCandidates_${selectedSession}_${selectedSemester}.xlsx`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+  
+          const resultResponse = await API.post(
+            "/StudentsMarksObtaineds/GetStudentResult",
+            datatosend
+          );
+  
+          if (resultResponse.data.message === "No scores found for the student.") {
+            results.push({ rollNumber: candidate.rollNumber, reason: "No scores found" });
+            continue;
+          }
+  
+          const result = resultResponse.data;
+          const response2 = await API.get(
+            `/StudentsMarksObtaineds/GetAllYearsResult/${candidate.rollNumber}`
+          );
+          const result2 = response2.data;
+  
+          const { pdf, fileName } = await generatePDF(result, result2, { quality: 'low' });
+          results.push({ candidate, pdf, fileName });
+  
+        } catch (error) {
+          if (error.response?.status === 404) {
+            results.push({ rollNumber: candidate.rollNumber, reason: "Data not found" });
+          } else {
+            console.error(`Error processing candidate ${candidate.rollNumber}:`, error);
+            results.push({ rollNumber: candidate.rollNumber, reason: "Processing error" });
           }
         }
       }
-
+  
+      const pdfs = results.filter((result) => result.pdf);
+      const skipped = results.filter((result) => !result.pdf);
+  
+      if (pdfs.length > 0) {
+        const zip = new JSZip();
+        pdfs.forEach(({ pdf, fileName }) => {
+          zip.file(fileName, pdf.output("blob"), {
+            binary: true,
+          });
+        });
+  
+        const zipBlob = await zip.generateAsync({ type: "blob" });
+        const zipUrl = URL.createObjectURL(zipBlob);
+        const a = document.createElement("a");
+        a.href = zipUrl;
+        a.download = `Certificates_${selectedSession}_${selectedSemester}.zip`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(zipUrl);
+      }
+  
+      if (skipped.length > 0) {
+        const worksheet = XLSX.utils.json_to_sheet(skipped);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "SkippedCandidates");
+  
+        const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+        const excelBlob = new Blob([excelBuffer], { type: "application/octet-stream" });
+        const excelUrl = URL.createObjectURL(excelBlob);
+  
+        const a = document.createElement("a");
+        a.href = excelUrl;
+        a.download = `SkippedCandidates_${selectedSession}_${selectedSemester}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(excelUrl);
+      }
+  
       setError("Certificates and skipped list generated successfully!");
     } catch (error) {
       console.error("Error generating certificates:", error);
@@ -614,6 +691,7 @@ const Certificate = () => {
       setLoading(false);
     }
   };
+  
 
   return (
     <motion.div
@@ -768,12 +846,10 @@ const Certificate = () => {
           </div>
           <button
             onClick={handleBulkDownload}
-            // disabled={loading || !isLocked}
-            disabled={true}
+            disabled={loading || !isLocked}
             className={`w-full px-6 py-2 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 ${bulkButtonClass} disabled:opacity-50`}
           >
-            {/* {loading ? <FiLoader className="animate-spin" /> : <FiDownload />} */}
-            {<FaLock />}
+            {loading ? <FiLoader className="animate-spin" /> : <FiDownload />}
             {!isLocked ? "Download Locked" : "Download All Certificates"}
           </button>
         </div>
