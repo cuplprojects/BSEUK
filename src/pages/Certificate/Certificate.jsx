@@ -284,7 +284,7 @@ const Certificate = () => {
     });
 
     // Convert canvas to a data URL with lower quality
-    const imgData = canvas.toDataURL("image/jpeg", 0.7); // Use JPEG with quality 0.7
+    const imgData = canvas.toDataURL("image/jpeg", 1); // Use JPEG with quality 0.7
 
     const pdf = new jsPDF("p", "mm", "a4");
     const pageWidth = pdf.internal.pageSize.getWidth();

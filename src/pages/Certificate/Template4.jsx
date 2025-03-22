@@ -412,11 +412,8 @@ const Certificate2 = ({ data, isPreview }) => {
             {/* ------------------------------------------------------------------ */}
           </div>
 
-          <div className="footer mt-3" style={{ fontSize: "0.9rem" }}>
-            {/* <div>
-            परीक्षाफल - <span id="re"><b>{data.result}</b></span>
-          </div> */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', width: '90%', margin: "65px 10px 10px 10px" }}>
+          <div className="footer " style={{ fontSize: "0.9rem" }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', width: '90%', margin: "65px 10px 10px 10px",marginTop:"100px" }}>
               <div>
                 <div style={{ color: "#C00000" }}>हस्ताक्षर जाँचकर्ता</div>
                 <div style={{ color: "#C00000" }}>दिनांक -</div>
