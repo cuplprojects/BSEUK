@@ -92,12 +92,10 @@ const Certificate = ({ data, isPreview }) => {
           backgroundSize: "600px 700px", // Replace with your desired width and height in pixels
           backgroundPosition: "center 50%",
           backgroundRepeat: "no-repeat",
-          opacity: 0.25,
+          opacity: 0.20,
           zIndex: -1,
         }}
       />
-
-
       <div
         className="container border p-1  border-4 border-black"
         style={{ width: "21cm", fontSize: "0.9rem" }}

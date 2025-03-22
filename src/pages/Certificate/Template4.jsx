@@ -162,7 +162,7 @@ const Certificate2 = ({ data, isPreview }) => {
           backgroundSize: "75%",
           backgroundPosition: "center 45%",
           backgroundRepeat: "no-repeat",
-          opacity: 0.25,
+          opacity: 0.20,
           zIndex: -1,
         }}
       />

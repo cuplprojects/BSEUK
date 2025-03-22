@@ -101,7 +101,7 @@ const Certificate2 = ({ data, isPreview }) => {
           backgroundSize: "600px 700px", // Replace with your desired width and height in pixels
           backgroundPosition: "center 50%",
           backgroundRepeat: "no-repeat",
-          opacity: 0.25,
+          opacity: 0.20,
           zIndex: -1,
         }}
       />
