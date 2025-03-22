@@ -15,7 +15,6 @@ const Certificate = ({ data, isPreview }) => {
     border: "1px solid black",
     textAlign: "left",
     padding: "4px 0px 6px 0px",
-    fontSize: "0.9rem",
     backgroundColor: isPreview && !value ? "#FF474C" : "transparent",
     fontSize: "20px"
   });
