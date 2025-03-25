@@ -15,8 +15,8 @@ const Certificate = ({ data, isPreview }) => {
     border: "1px solid black",
     textAlign: "left",
     padding: "4px 0px 6px 0px",
-    fontSize: "0.9rem",
     backgroundColor: isPreview && !value ? "#FF474C" : "transparent",
+    fontSize: "20px"
   });
 
   const renderTheoryRows = () => {
@@ -92,12 +92,10 @@ const Certificate = ({ data, isPreview }) => {
           backgroundSize: "600px 700px", // Replace with your desired width and height in pixels
           backgroundPosition: "center 50%",
           backgroundRepeat: "no-repeat",
-          opacity: 0.25,
+          opacity: 0.20,
           zIndex: -1,
         }}
       />
-
-
       <div
         className="container border p-1  border-4 border-black"
         style={{ width: "21cm", fontSize: "0.9rem" }}
@@ -376,6 +374,7 @@ const Certificate = ({ data, isPreview }) => {
                       border: "1px solid black",
                       padding: "4px 0px 12px 0px",
                       textAlign: "center",
+                      fontSize: "20px"
                     }}
                   >
                     {data.maxMarks}
@@ -385,6 +384,7 @@ const Certificate = ({ data, isPreview }) => {
                       border: "1px solid black",
                       padding: "4px 0px 12px 0px",
                       textAlign: "center",
+                      fontSize: "20px"
                     }}
                   >
                     {data.totalExternalMaxMarks}
@@ -394,6 +394,7 @@ const Certificate = ({ data, isPreview }) => {
                       border: "1px solid black",
                       padding: "4px 0px 12px 0px",
                       textAlign: "center",
+                      fontSize: "20px"
                     }}
                   >
                     {data.totalExternalMarksObtained}
@@ -403,6 +404,7 @@ const Certificate = ({ data, isPreview }) => {
                       border: "1px solid black",
                       padding: "4px 0px 12px 0px",
                       textAlign: "center",
+                      fontSize: "20px"
                     }}
                   >
                     {data.totalInternalMaxMarks}
@@ -412,6 +414,7 @@ const Certificate = ({ data, isPreview }) => {
                       border: "1px solid black",
                       padding: "4px 0px 12px 0px",
                       textAlign: "center",
+                      fontSize: "20px"
                     }}
                   >
                     {data.totalInternalMarksObtained}
@@ -420,7 +423,9 @@ const Certificate = ({ data, isPreview }) => {
                     style={{
                       border: "1px solid black",
                       padding: "4px 0px 12px 0px",
-                      textAlign: "center",
+                      textAlign: "center"
+                      ,
+                      fontSize: "20px"
                     }}
                   >
                     {data.totalPracticalMaxMarks}
@@ -430,6 +435,7 @@ const Certificate = ({ data, isPreview }) => {
                       border: "1px solid black",
                       padding: "4px 0px 12px 0px",
                       textAlign: "center",
+                      fontSize: "20px"
                     }}
                   >
                     {data.totalPracticalMarksObtained}
@@ -440,6 +446,7 @@ const Certificate = ({ data, isPreview }) => {
                       textAlign: "center",
                       fontWeight: "bold",
                       padding: "4px 0px 12px 0px",
+                      fontSize: "20px"
                     }}
                   >
                     {data.totalMarks}

@@ -106,7 +106,7 @@ const EditCandidate = () => {
       const response = await API.get(
         `Candidates/GetByDetails/${searchFilters.rollNumber}/${searchFilters.sesID}/${searchFilters.semID}`
       );
-      console.log(response.data)
+      // console.log(response.data)
       const candidateData = {
         candidateID: response.data.candidateID,
         candidateName: response.data.candidateName,
