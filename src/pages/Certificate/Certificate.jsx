@@ -269,7 +269,7 @@ const Certificate = () => {
 
   const generatePDF = async (result, result2, options = {}) => {
     const data = formatCertificateData(result, result2);
-    console.log(data)
+    // console.log(data)
     setCertificateData(data);
     setShowPreview(true);
 
@@ -278,7 +278,7 @@ const Certificate = () => {
 
     const template = document.getElementById("certificate-template");
     const canvas = await html2canvas(template, {
-      scale: 1, // Reduce the scale to lower resolution
+      scale: 3, // Reduce the scale to lower resolution
       useCORS: true,
       logging: false,
     });
@@ -291,7 +291,7 @@ const Certificate = () => {
     const pageHeight = pdf.internal.pageSize.getHeight();
 
     // Add the image to the PDF with compression
-    pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, pageHeight, "", "FAST");
+    pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, pageHeight, "", "");
     return { pdf, fileName: `Certificate_${data.rollNo}.pdf` };
   };
 
@@ -386,7 +386,7 @@ const Certificate = () => {
       const result = response.data;
       const result2 = response2.data;
 
-      const {pdf, fileName} = await generatePDF(result, result2, { quality: 'low' });
+      const {pdf, fileName} = await generatePDF(result, result2, { quality: 'high' });
       pdf.save(fileName);
       setShowPreview(false);
       //------------------------------------------------------
@@ -427,155 +427,6 @@ const Certificate = () => {
     }
   };
 
-  // const handleBulkDownload = async () => {
-  //   if (!selectedSession || !selectedSemester) {
-  //     setError("Please select both session and semester");
-  //     return;
-  //   }
-
-  //   setLoading(true);
-  //   setError(null);
-
-  //   try {
-  //     // Fetch the list of candidates
-  //     const candidatesResponse = await API.post("/Candidates/GetStudents", {
-  //       sesID: parseInt(selectedSession),
-  //       semID: parseInt(selectedSemester),
-  //     });
-
-  //     const candidates = candidatesResponse.data;
-  //     const pdfPromises = candidates.map(async (candidate) => {
-  //       try {
-  //         const datatosend = {
-  //           rollNumber: candidate.rollNumber,
-  //           sessionId: parseInt(selectedSession),
-  //           semesterId: parseInt(selectedSemester),
-  //         };
-  //         const auditresult = await API.post(
-  //           "/StudentsMarksObtaineds/AuditforSingle",
-  //           datatosend
-  //         );
-  //         const data = auditresult.data;
-  //         if (data) {
-  //           const resultResponse = await API.post(
-  //             "/StudentsMarksObtaineds/GetStudentResult",
-  //             {
-  //               rollNumber: candidate.rollNumber,
-  //               sessionId: parseInt(selectedSession),
-  //               semesterId: parseInt(selectedSemester),
-  //             }
-  //           );
-  //           const response2 = await API.get(
-  //             `/StudentsMarksObtaineds/GetAllYearsResult/${rollNumber}`
-  //           );
-
-  //           if (
-  //             resultResponse.data.message &&
-  //             resultResponse.data.message === "No scores found for the student."
-  //           ) {
-  //             console.warn(
-  //               `Skipping candidate ${candidate.rollNumber}: No scores found.`
-  //             );
-  //             return {
-  //               rollNumber: candidate.rollNumber,
-  //               reason: "No scores found",
-  //             };
-  //           }
-
-  //           const result = resultResponse.data;
-  //           const result2 = response2.data;
-  //           const pdf = await generatePDF(result, result2, { quality: 'low' });
-  //           return { pdf, rollNumber: candidate.rollNumber };
-  //         } else {
-  //           console.warn(
-  //             `Skipping candidate ${candidate.rollNumber}: Incomplete data.`
-  //           );
-  //           return {
-  //             rollNumber: candidate.rollNumber,
-  //             reason: "Incomplete data",
-  //           };
-  //         }
-  //       } catch (error) {
-  //         if (error.response && error.response.status === 404) {
-  //           console.warn(
-  //             `Skipping candidate ${candidate.rollNumber}: Data not found.`
-  //           );
-  //           return {
-  //             rollNumber: candidate.rollNumber,
-  //             reason: "Data not found",
-  //           };
-  //         }
-  //         console.error(
-  //           `Error processing candidate ${candidate.rollNumber}:`,
-  //           error
-  //         );
-  //         throw error;
-  //       }
-  //     });
-
-  //     const results = await Promise.all(pdfPromises);
-
-  //     // Filter out valid PDFs and skipped candidates
-  //     const pdfs = results.filter((result) => result?.pdf);
-  //     const skipped = results.filter((result) => !result?.pdf);
-
-  //     // Generate and download the ZIP file
-  //     if (pdfs.length > 0) {
-  //       const zip = new JSZip();
-  //       pdfs.forEach(({ pdf, rollNumber }) => {
-  //         zip.file(`Certificate_${rollNumber}.pdf`, pdf.output("blob"), {
-  //           binary: true,
-  //         });
-  //       });
-
-  //       const zipBlob = await zip.generateAsync({ type: "blob" });
-  //       const zipUrl = URL.createObjectURL(zipBlob);
-  //       const a = document.createElement("a");
-  //       a.href = zipUrl;
-  //       a.download = `Certificates_${selectedSession}_${selectedSemester}.zip`;
-  //       document.body.appendChild(a);
-  //       a.click();
-  //       document.body.removeChild(a);
-  //     }
-
-  //     // Generate the Excel file for skipped candidates
-  //     if (skipped.length > 0) {
-  //       const worksheet = XLSX.utils.json_to_sheet(
-  //         skipped.map((skip) => ({
-  //           RollNumber: skip.rollNumber,
-  //           Reason: skip.reason,
-  //         }))
-  //       );
-  //       const workbook = XLSX.utils.book_new();
-  //       XLSX.utils.book_append_sheet(workbook, worksheet, "SkippedCandidates");
-
-  //       // Correct type usage: 'array' for generating blob
-  //       const excelBuffer = XLSX.write(workbook, {
-  //         bookType: "xlsx",
-  //         type: "array",
-  //       });
-
-  //       const excelBlob = new Blob([excelBuffer], {
-  //         type: "application/octet-stream",
-  //       });
-
-  //       const excelUrl = URL.createObjectURL(excelBlob);
-  //       const a = document.createElement("a");
-  //       a.href = excelUrl;
-  //       a.download = `SkippedCandidates_${selectedSession}_${selectedSemester}.xlsx`;
-  //       document.body.appendChild(a);
-  //       a.click();
-  //       document.body.removeChild(a);
-  //     }
-
-  //     setError("Certificates and skipped list generated successfully!");
-  //   } catch (error) {
-  //     console.error("Error generating certificates:", error);
-  //     setError("Failed to generate certificates. Please try again.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleBulkDownload = async () => {
     if (!selectedSession || !selectedSemester) {
@@ -630,7 +481,7 @@ const Certificate = () => {
           );
           const result2 = response2.data;
   
-          const { pdf, fileName } = await generatePDF(result, result2, { quality: 'low' });
+          const { pdf, fileName } = await generatePDF(result, result2, { quality: 'high' });
           results.push({ candidate, pdf, fileName });
   
         } catch (error) {
