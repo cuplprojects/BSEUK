@@ -278,20 +278,19 @@ const Certificate = () => {
 
     const template = document.getElementById("certificate-template");
     const canvas = await html2canvas(template, {
-      scale: 3, // Reduce the scale to lower resolution
+      scale: 3, 
       useCORS: true,
       logging: false,
     });
 
-    // Convert canvas to a data URL with lower quality
-    const imgData = canvas.toDataURL("image/jpeg", 1); // Use JPEG with quality 0.7
+    const imgData = canvas.toDataURL("image/jpeg", 1); 
 
     const pdf = new jsPDF("p", "mm", "a4");
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
 
     // Add the image to the PDF with compression
-    pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, pageHeight, "", "");
+    pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, pageHeight);
     return { pdf, fileName: `Certificate_${data.rollNo}.pdf` };
   };
 
