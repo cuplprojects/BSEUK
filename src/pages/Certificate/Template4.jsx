@@ -235,7 +235,6 @@ const Certificate2 = ({ data, isPreview }) => {
             >
               <i>प्रारम्भिक शिक्षा में द्विवर्षीय डिप्लोमा-{" "}
                 20{data.entersession || data.session.split("-")[1]}</i>
-
             </h4>
             <h4
               style={{
