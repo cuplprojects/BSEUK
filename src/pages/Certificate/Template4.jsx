@@ -100,26 +100,26 @@ const Certificate2 = ({ data, isPreview }) => {
     const dataLength = data?.OverAllDetails.results.length;
     return data?.OverAllDetails.results.map((mark, index) => (
       <tr>
-        <td style={{  
+        <td style={{
           borderLeft: '2px solid #C00000',
-          borderBottom: '1px solid #C00000', 
+          borderBottom: '1px solid #C00000',
           borderTop: index === 0 ? '' : '1px solid #C00000',
-          textAlign: 'left', 
-          padding: "4px 0px 12px 12px", 
-          color: "#C00000" 
+          textAlign: 'left',
+          padding: "4px 0px 12px 12px",
+          color: "#C00000"
         }}>
           {semesterIdHindi[`${mark?.semID}`]}
         </td>
         {/* ------------------------------------------------------ */}
-        <td style={{ borderLeft: '2px solid #C00000',borderRight: '2px solid #C00000',borderBottom: '2px solid #C00000', textAlign: 'center', padding: '4px  0px 12px 0px', color: "#C00000", fontSize: "20px" }}>
+        <td style={{ borderLeft: '2px solid #C00000', borderRight: '2px solid #C00000', borderBottom: '2px solid #C00000', textAlign: 'center', padding: '4px  0px 12px 0px', color: "#C00000", fontSize: "20px" }}>
           {mark.semID === 4 ? "-" : mark.totalTheoryMaxMarks + mark.totalInternalMaxMarks}
         </td>
         {/* ------------------------------------------------------ */}
-        <td style={{ borderBottom: '2px solid #C00000',borderRight: '2px solid #C00000', textAlign: 'center', padding: '4px  0px 12px 0px', fontSize: "20px" }}>
+        <td style={{ borderBottom: '2px solid #C00000', borderRight: '2px solid #C00000', textAlign: 'center', padding: '4px  0px 12px 0px', fontSize: "20px" }}>
           {mark.semID === 4 ? "-" : mark.totalTheoryMarks + mark.totalInternalMarks}
         </td>
         {/* ------------------------------------------------------ */}
-        <td style={{ borderRight: '2px solid #C00000',borderBottom: '2px solid #C00000', textAlign: 'center', padding: '4px  0px 12px 0px', color: "#C00000", fontSize: "20px" }}>
+        <td style={{ borderRight: '2px solid #C00000', borderBottom: '2px solid #C00000', textAlign: 'center', padding: '4px  0px 12px 0px', color: "#C00000", fontSize: "20px" }}>
           {mark.semID === 4 ? mark.overallTotalMaxMarks : mark.totalPracticalMaxMarks}
         </td>
         {/* ------------------------------------------------------ */}
@@ -127,16 +127,16 @@ const Certificate2 = ({ data, isPreview }) => {
         {/* ------------------------------------------------------ */}
         <td style={{ borderBottom: '2px solid #C00000', textAlign: 'center', padding: '4px  0px 12px 0px', fontSize: "20px" }}>{mark.semID === 4 ? mark.overallTotalMarks : mark.totalPracticalMarks}</td>
         {/* ------------------------------------------------------ */}
-        <td style={{borderLeft: '2px solid #C00000',borderBottom: '2px solid #C00000',textAlign: 'center', padding: '4px  0px 12px 0px', color: "#C00000", fontSize: "20px" }}>{mark.overallTotalMaxMarks}</td>
+        <td style={{ borderLeft: '2px solid #C00000', borderBottom: '2px solid #C00000', textAlign: 'center', padding: '4px  0px 12px 0px', color: "#C00000", fontSize: "20px" }}>{mark.overallTotalMaxMarks}</td>
         {/* ------------------------------------------------------ */}
 
         {/* ------------------------------------------------------ */}
-        <td style={{ borderLeft: '2px solid #C00000',borderBottom: '2px solid #C00000', textAlign: 'center', padding: '4px  0px 12px 0px', fontSize: "20px" }}>{mark.overallTotalMarks}</td>
+        <td style={{ borderLeft: '2px solid #C00000', borderBottom: '2px solid #C00000', textAlign: 'center', padding: '4px  0px 12px 0px', fontSize: "20px" }}>{mark.overallTotalMarks}</td>
         {/* ------------------------------------------------------ */}
-        <td style={{ borderLeft: '2px solid #C00000',borderBottom: '2px solid #C00000', textAlign: 'center', padding: '4px  0px 12px 0px', fontSize: "20px" }}>{mark.status === "Pass" ? "PASS" : "FAIL"}</td>
+        <td style={{ borderLeft: '2px solid #C00000', borderBottom: '2px solid #C00000', textAlign: 'center', padding: '4px  0px 12px 0px', fontSize: "20px" }}>{mark.status === "Pass" ? "PASS" : "FAIL"}</td>
         {/* ------------------------------------------------------ */}
         {index === 0 && (
-          <td rowSpan={dataLength + 1} style={{ borderLeft: '2px solid #C00000',borderBottom: '2px solid #C00000', borderRight: '2px solid #C00000',  textAlign: 'center', padding: '4px  0px 12px 0px', fontSize: '30px' }}>{mark.status === "Pass" ? (
+          <td rowSpan={dataLength + 1} style={{ borderLeft: '2px solid #C00000', borderBottom: '2px solid #C00000', borderRight: '2px solid #C00000', textAlign: 'center', padding: '4px  0px 12px 0px', fontSize: '30px' }}>{mark.status === "Pass" ? (
             <>
               उत्तीर्ण <br /> {data.rank}
             </>
@@ -404,68 +404,77 @@ const Certificate2 = ({ data, isPreview }) => {
                       fontSize: "1rem"
                     }}>सेमेस्टर</td>
 
-                  <td colSpan="2" className="text-center" 
-                  style={{ borderTop: '2px solid #C00000',
-                    borderRight: '2px solid #C00000',
-                    borderBottom: '2px solid #C00000',
-                    borderLeft: '2px solid #C00000',
-                   padding: "4px 0px 12px 0px", 
-                   color: "#C00000", 
-                   fontSize: "1rem" }}>सैद्धान्तिक</td>
+                  <td colSpan="2" className="text-center"
+                    style={{
+                      borderTop: '2px solid #C00000',
+                      borderRight: '2px solid #C00000',
+                      borderBottom: '2px solid #C00000',
+                      borderLeft: '2px solid #C00000',
+                      padding: "4px 0px 12px 0px",
+                      color: "#C00000",
+                      fontSize: "1rem"
+                    }}>सैद्धान्तिक</td>
 
-                  <td colSpan="2" className="text-center" 
-                  style={{
-                     borderTop: '2px solid #C00000', 
-                    borderBottom: '2px solid #C00000', 
-                  padding: "4px 0px 12px 0px", 
-                  color: "#C00000", 
-                  fontSize: "1rem" }}>क्रियात्मक / प्रयोगात्मक </td>
+                  <td colSpan="2" className="text-center"
+                    style={{
+                      borderTop: '2px solid #C00000',
+                      borderBottom: '2px solid #C00000',
+                      padding: "4px 0px 12px 0px",
+                      color: "#C00000",
+                      fontSize: "1rem"
+                    }}>क्रियात्मक / प्रयोगात्मक </td>
 
-                  <td colSpan="2" className="text-center" 
-                  style={{  borderTop: '2px solid #C00000', 
-                    borderBottom: '2px solid #C00000', 
-                    borderLeft: '2px solid #C00000', 
-                  padding: "4px 0px 12px 0px", 
-                  color: "#C00000", 
-                  fontSize: "1rem" }}>योग </td>
+                  <td colSpan="2" className="text-center"
+                    style={{
+                      borderTop: '2px solid #C00000',
+                      borderBottom: '2px solid #C00000',
+                      borderLeft: '2px solid #C00000',
+                      padding: "4px 0px 12px 0px",
+                      color: "#C00000",
+                      fontSize: "1rem"
+                    }}>योग </td>
 
-                  <td rowSpan="2" className="text-center" 
-                  style={{ borderTop: '2px solid #C00000', 
-                    borderBottom: '2px solid #C00000', 
-                    borderLeft: '2px solid #C00000', 
+                  <td rowSpan="2" className="text-center"
+                    style={{
+                      borderTop: '2px solid #C00000',
+                      borderBottom: '2px solid #C00000',
+                      borderLeft: '2px solid #C00000',
 
-                  padding: "4px 0px 12px 0px", 
-                  color: "#C00000", 
-                  fontSize: "1rem" }}>परीक्षाफल </td>
+                      padding: "4px 0px 12px 0px",
+                      color: "#C00000",
+                      fontSize: "1rem"
+                    }}>परीक्षाफल </td>
 
-                  <td rowSpan="2" colSpan="2" className="text-center" 
-                  style={{ border: '2px solid #C00000', 
-                  padding: "4px 0px 12px 0px", 
-                  color: "#C00000", 
-                  fontSize: "1rem" }}>सम्पूर्ण  परीक्षाफल / श्रेणी </td>
+                  <td rowSpan="2" colSpan="2" className="text-center"
+                    style={{
+                      border: '2px solid #C00000',
+                      padding: "4px 0px 12px 0px",
+                      color: "#C00000",
+                      fontSize: "1rem"
+                    }}>सम्पूर्ण  परीक्षाफल / श्रेणी </td>
                 </tr>
                 <tr>
-                  <td colSpan="" className="text-center" style={{ borderBottom: '2px solid #C00000',borderLeft: '2px solid #C00000',borderRight: '2px solid #C00000', padding: "4px 0px 12px 0px", color: "#C00000", fontSize: "1rem" }}>पूर्णांक</td>
-                  <td colSpan="" className="text-center" style={{ borderBottom: '2px solid #C00000',borderRight: '2px solid #C00000', padding: "4px 0px 12px 0px", color: "#C00000", fontSize: "1rem" }}>प्राप्तांक</td>
-                  <td colSpan="" className="text-center" style={{ borderBottom: '2px solid #C00000',borderRight: '2px solid #C00000', padding: "4px 0px 12px 0px", color: "#C00000", fontSize: "1rem" }}>पूर्णांक</td>
-                  <td colSpan="" className="text-center" style={{ borderBottom: '2px solid #C00000',padding: "4px 0px 12px 0px", color: "#C00000", fontSize: "1rem" }}>प्राप्तांक</td>
-                  <td colSpan="" className="text-center" style={{ borderBottom: '2px solid #C00000',borderLeft: '2px solid #C00000', padding: "4px 0px 12px 0px", color: "#C00000", fontSize: "1rem" }}>पूर्णांक</td>
-                  <td colSpan="" className="text-center" style={{ borderBottom: '2pxsolid #C00000',borderLeft: '2px solid #C00000',borderBottom: '2px solid #C00000', padding: "4px 0px 12px 0px", color: "#C00000", fontSize: "1rem" }}>प्राप्तांक</td>
+                  <td colSpan="" className="text-center" style={{ borderBottom: '2px solid #C00000', borderLeft: '2px solid #C00000', borderRight: '2px solid #C00000', padding: "4px 0px 12px 0px", color: "#C00000", fontSize: "1rem" }}>पूर्णांक</td>
+                  <td colSpan="" className="text-center" style={{ borderBottom: '2px solid #C00000', borderRight: '2px solid #C00000', padding: "4px 0px 12px 0px", color: "#C00000", fontSize: "1rem" }}>प्राप्तांक</td>
+                  <td colSpan="" className="text-center" style={{ borderBottom: '2px solid #C00000', borderRight: '2px solid #C00000', padding: "4px 0px 12px 0px", color: "#C00000", fontSize: "1rem" }}>पूर्णांक</td>
+                  <td colSpan="" className="text-center" style={{ borderBottom: '2px solid #C00000', padding: "4px 0px 12px 0px", color: "#C00000", fontSize: "1rem" }}>प्राप्तांक</td>
+                  <td colSpan="" className="text-center" style={{ borderBottom: '2px solid #C00000', borderLeft: '2px solid #C00000', padding: "4px 0px 12px 0px", color: "#C00000", fontSize: "1rem" }}>पूर्णांक</td>
+                  <td colSpan="" className="text-center" style={{ borderBottom: '2pxsolid #C00000', borderLeft: '2px solid #C00000', borderBottom: '2px solid #C00000', padding: "4px 0px 12px 0px", color: "#C00000", fontSize: "1rem" }}>प्राप्तांक</td>
                 </tr>
               </thead>
               <tbody>
                 {renderTotalResultRows()}
                 <tr>
-                  <td colSpan="" className="text-left" style={{ borderBottom: '2px solid #C00000',borderTop: '1px solid #C00000', borderLeft: '2px solid #C00000', padding: '4px 0px 12px 12px', color: "#C00000", fontSize: "1rem" }}>महायोग </td>
+                  <td colSpan="" className="text-left" style={{ borderBottom: '2px solid #C00000', borderTop: '1px solid #C00000', borderLeft: '2px solid #C00000', padding: '4px 0px 12px 12px', color: "#C00000", fontSize: "1rem" }}>महायोग </td>
 
-                  <th colSpan="" className="text-center" style={{  padding: '4px 0px 12px 0px', color: "#C00000", fontSize: "20px" ,borderLeft: '2px solid #C00000',borderBottom: '2px solid #C00000',borderRight: '2px solid #C00000'}}>{data?.OverAllDetails.semMarks}</th>
-                  
-                  <th colSpan="" className="text-center" style={{ borderBottom: '2px solid #C00000',borderRight: '2px solid #C00000', padding: '4px 0px 12px 0px', fontSize: "20px" }}>{grandInternal} </th>
-                  <th colSpan="" className="text-center" style={{borderBottom: '2px solid #C00000',borderRight: '2px solid #C00000', padding: '4px 0px 12px 0px', color: "#C00000", fontSize: "20px" }}>{data?.OverAllDetails.totalPracticalMarks} </th>
+                  <th colSpan="" className="text-center" style={{ padding: '4px 0px 12px 0px', color: "#C00000", fontSize: "20px", borderLeft: '2px solid #C00000', borderBottom: '2px solid #C00000', borderRight: '2px solid #C00000' }}>{data?.OverAllDetails.semMarks}</th>
+
+                  <th colSpan="" className="text-center" style={{ borderBottom: '2px solid #C00000', borderRight: '2px solid #C00000', padding: '4px 0px 12px 0px', fontSize: "20px" }}>{grandInternal} </th>
+                  <th colSpan="" className="text-center" style={{ borderBottom: '2px solid #C00000', borderRight: '2px solid #C00000', padding: '4px 0px 12px 0px', color: "#C00000", fontSize: "20px" }}>{data?.OverAllDetails.totalPracticalMarks} </th>
                   <th colSpan="" className="text-center" style={{ borderBottom: '2px solid #C00000', padding: '4px 0px 12px 0px', fontSize: "20px" }}> {grandPractical}</th>
-                  <th colSpan="" className="text-center" style={{ borderBottom: '2px solid #C00000',borderLeft: '2px solid #C00000', padding: '4px 0px 12px 0px', color: "#C00000", fontSize: "20px" }}>{data?.OverAllDetails.total}</th>
-                  <th colSpan="" className="text-center" style={{ borderBottom: '2px solid #C00000',borderLeft: '2px solid #C00000', padding: '4px 0px 12px 0px', fontSize: "20px" }}> {grandTotal}</th>
-                  <th colSpan="" className="text-center" style={{ borderBottom: '2px solid #C00000',borderLeft: '2px solid #C00000', padding: '4px 0px 12px 0px', fontSize: "20px" }}>{isPassed ? "PASS" : "FAIL"} </th>
+                  <th colSpan="" className="text-center" style={{ borderBottom: '2px solid #C00000', borderLeft: '2px solid #C00000', padding: '4px 0px 12px 0px', color: "#C00000", fontSize: "20px" }}>{data?.OverAllDetails.total}</th>
+                  <th colSpan="" className="text-center" style={{ borderBottom: '2px solid #C00000', borderLeft: '2px solid #C00000', padding: '4px 0px 12px 0px', fontSize: "20px" }}> {grandTotal}</th>
+                  <th colSpan="" className="text-center" style={{ borderBottom: '2px solid #C00000', borderLeft: '2px solid #C00000', padding: '4px 0px 12px 0px', fontSize: "20px" }}>{isPassed ? "PASS" : "FAIL"} </th>
                 </tr>
               </tbody>
             </table>
