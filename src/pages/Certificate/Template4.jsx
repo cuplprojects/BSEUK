@@ -73,9 +73,7 @@ const Certificate2 = ({ data, isPreview }) => {
           <td style={getCellStyle(mark.internal)}>{mark.internal}</td>
           <td style={{ border: '1px solid #C00000', textAlign: 'center', padding: '0px  0px 12px 0px', color: "#C00000", fontSize: "1rem" }}>{mark.maxMarks}</td>
           <td style={getCellStyle(mark.total)}>{mark.total}</td>
-          {index === 0 && (
-            <th rowSpan="11" className="text-center" style={{ borderRight: '2px solid #C00000', padding: '4px 0px 12px 0px', fontSize: "1.5rem" }}>{isPassed ? "उत्तीर्ण" : "अनुत्तीर्ण"} </th>
-          )}
+          <th className="text-center" style={{ borderRight: '2px solid #C00000',borderBottom :"1px solid #C00000",borderTop: index === 0 ? '1px solid #C00000' : '1px solid #C00000', padding: '4px 0px 12px 0px', fontSize: "1.5rem" }}>{isPassed ? "P" : "F"} </th>
         </tr>
       ));
   };
@@ -91,7 +89,7 @@ const Certificate2 = ({ data, isPreview }) => {
         <td style={{ ...getCellStyle(mark.practical), borderTop: index === 0 ? '2px solid #C00000' : '1px solid #C00000' }}>{mark.practical}</td>
         <td style={{ border: '1px solid #C00000', borderTop: index === 0 ? '2px solid #C00000' : '1px solid #C00000', textAlign: 'center', padding: '4px  0px 12px 0px', color: "#C00000", fontSize: "20px" }}>{mark.maxMarks}</td>
         <td style={{ ...getCellStyle(mark.practical), borderTop: index === 0 ? '2px solid #C00000' : '1px solid #C00000' }}>{mark.total}</td>
-        {/* <td style={{ border: '1px solid #C00000', textAlign: 'center', padding: '4px  0px 12px 0px',fontSize:"20px" }}><b>{mark.pageremark === "उत्तीर्ण" ? "P" : "F"}</b></td> */}
+        <td style={{ borderBottom: '1px solid #C00000', borderRight:"2px solid #C00000",borderTop: index === 0 ? '2px solid #C00000' : '',  textAlign: 'center', padding: '4px  0px 12px 0px',fontSize:"20px" }}><b>{mark.pageremark === "उत्तीर्ण" ? "P" : "F"}</b></td>
       </tr>
     ));
   }
@@ -170,7 +168,7 @@ const Certificate2 = ({ data, isPreview }) => {
           backgroundSize: "500px 800px", // Custom width and height
           backgroundPosition: "center 45%",
           backgroundRepeat: "no-repeat",
-          opacity: 0.30,
+          opacity: 0.2,
           zIndex: -1,
         }}
       />
@@ -236,7 +234,7 @@ const Certificate2 = ({ data, isPreview }) => {
               }}
             >
               <i>प्रारम्भिक शिक्षा में द्विवर्षीय डिप्लोमा-{" "}
-                {data.entersession || data.session.split("-")[0]}</i>
+                20{data.entersession || data.session.split("-")[1]}</i>
 
             </h4>
             <h4
@@ -249,7 +247,7 @@ const Certificate2 = ({ data, isPreview }) => {
               }}
             >
               <i>TWO-YEAR DIPLOMA IN ELEMENTARY EDUCATION -{" "}
-                {data.entersession || data.session.split("-")[0]}</i>
+                20{data.entersession || data.session.split("-")[1]}</i>
 
             </h4>
           </div>
@@ -339,7 +337,7 @@ const Certificate2 = ({ data, isPreview }) => {
                   <td colSpan="2" className="text-center" style={{ padding: "4px 0px 12px 0px", border: "1px solid #C00000", color: "#C00000" }}>आंतरिक आकलन</td>
                   <td rowSpan="2" className="text-center" style={{ padding: "4px 0px 12px 0px", border: "1px solid #C00000", color: "#C00000" }}>योग <br /> पूर्णांक</td>
                   <td rowSpan="2" className="text-center" style={{ padding: "4px 0px 12px 0px", border: "1px solid #C00000", color: "#C00000" }}>योग <br />प्राप्तांक</td>
-                  <td rowSpan="2" className="text-center" style={{ padding: "4px 0px 12px 0px", border: "1px solid #C00000", color: "#C00000", borderRight: '2px solid #C00000', borderBottom: '2px solid #C00000' }}>परीक्षाफल</td>
+                  <td rowSpan="2" className="text-center" style={{ padding: "4px 0px 12px 0px", borderTop: "1px solid #C00000", color: "#C00000", borderRight: '2px solid #C00000', borderBottom: '1px solid #C00000' }}>परीक्षाफल</td>
                 </tr>
                 <tr>
                   <td colSpan="" className="text-center" style={{ padding: "4px 0px 12px 0px", border: "1px solid #C00000", color: "#C00000" }}>अधिकतम <br /> अंक</td>
