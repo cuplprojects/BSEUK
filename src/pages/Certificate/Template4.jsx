@@ -142,7 +142,7 @@ const Certificate2 = ({ data, isPreview }) => {
               fontSize: "1.5rem",
             }}
           >
-            {isPassed ? "P" : "F"}{" "}
+            {mark.pageremark === "उत्तीर्ण" ? "P" : "F"}
           </th>
         </tr>
       ));
@@ -235,7 +235,7 @@ const Certificate2 = ({ data, isPreview }) => {
             borderTop: index === 0 ? "2px solid #C00000" : "",
             textAlign: "center",
             padding: "4px  0px 12px 0px",
-            fontSize: "20px",
+            fontSize: "1.5rem",
           }}
         >
           <b>{mark.pageremark === "उत्तीर्ण" ? "P" : "F"}</b>
@@ -288,7 +288,7 @@ const Certificate2 = ({ data, isPreview }) => {
         >
           {mark.semID === 4
             ? "-"
-            : mark.totalTheoryMarks + mark.totalInternalMarks}
+            : mark.status === "N/A" ? "": mark.totalTheoryMarks + mark.totalInternalMarks}
         </td>
         {/* ------------------------------------------------------ */}
         <td
@@ -316,7 +316,7 @@ const Certificate2 = ({ data, isPreview }) => {
             fontSize: "20px",
           }}
         >
-          {mark.semID === 4 ? mark.overallTotalMarks : mark.totalPracticalMarks}
+          {mark.status === "N/A" ? "" : mark.semID === 4 ?  mark.overallTotalMarks : mark.totalPracticalMarks}
         </td>
         {/* ------------------------------------------------------ */}
         <td
@@ -340,10 +340,10 @@ const Certificate2 = ({ data, isPreview }) => {
             borderBottom: "2px solid #C00000",
             textAlign: "center",
             padding: "4px  0px 12px 0px",
-            fontSize: "20px",
+            fontSize: "20px", 
           }}
         >
-          {mark.overallTotalMarks}
+          {mark.status === "N/A" ? "" : mark.overallTotalMarks}
         </td>
         {/* ------------------------------------------------------ */}
         <td
@@ -355,7 +355,7 @@ const Certificate2 = ({ data, isPreview }) => {
             fontSize: "20px",
           }}
         >
-          {mark.status === "Pass" ? "PASS" : "FAIL"}
+          {mark.status === "Pass" ? "PASS" : mark.status === "Fail" ? "FAIL" : ""}
         </td>
         {/* ------------------------------------------------------ */}
         {index === 0 && (
@@ -387,13 +387,13 @@ const Certificate2 = ({ data, isPreview }) => {
   const semesterStatuses =
     data?.OverAllDetails?.results
       ?.slice(0, 4)
-      ?.map((result) => (result?.status === "Pass" ? "P" : "F")) || [];
+      ?.map((result) => (result?.status === "N/A" ? "N/A" : result?.status === "Pass" ? "P" : "F")) || [];
 
-  const isPassed =
-    semesterStatuses.length === 4 &&
-    semesterStatuses.every((status) => status === "P")
-      ? "P"
-      : "F";
+  const isPassed = semesterStatuses.includes("N/A")
+    ? ""
+    : semesterStatuses.every((status) => status === "P")
+    ? "P"
+    : "F";
 
   return (
     <div
@@ -1196,7 +1196,7 @@ const Certificate2 = ({ data, isPreview }) => {
                       fontSize: "20px",
                     }}
                   >
-                    {isPassed ? "PASS" : "FAIL"}{" "}
+                    {isPassed == "" ? "" : isPassed == "P"? "PASS" : "FAIL"}{" "}
                   </th>
                 </tr>
               </tbody>
