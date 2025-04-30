@@ -33,11 +33,11 @@ const Certificate2 = ({ data, isPreview }) => {
           <td style={getCellStyle(mark.name)}>{mark.name}</td>
           <td style={getCellStyle(mark.maxMarks)}><b><center style={{fontSize:"20px"}}>{mark.maxMarks}</center></b></td>
           <td style={getCellStyle(mark.theoryMax)}><center style={{fontSize:"20px"}}>{mark.theoryMax}</center></td>
-          <td style={getCellStyle(mark.isAbsent ? 'A' : mark.theory)}><center style={{fontSize:"20px"}}>{mark.isAbsent ? 'A' : mark.theory}</center></td>
+          <td style={getCellStyle(mark.isAbsent ? 'A' : mark.theory)}><center style={{fontSize:"20px"}}>{mark.isAbsent ? (mark.theory === 0 ? 'A' : mark.theory) : mark.theory}</center></td>
           <td style={getCellStyle(mark.internalMax)}><center style={{fontSize:"20px"}}>{mark.internalMax}</center></td>
-          <td style={getCellStyle(mark.isAbsent ? 'A' : mark.internal)}><center style={{fontSize:"20px"}}>{mark.isAbsent ? 'A' : mark.internal}</center></td>
+          <td style={getCellStyle(mark.isAbsent ? 'A' : mark.internal)}><center style={{fontSize:"20px"}}>{mark.isAbsent ? (mark.internal === 0 ? 'A' : mark.internal) : mark.internal}</center></td>
           <td colSpan={2} style={getCellStyle('-')}><center style={{fontSize:"20px"}}>-</center></td>
-          <td style={getCellStyle(mark.isAbsent ? "A" : mark.total)}><center style={{fontSize:"20px"}}>{mark.isAbsent ? "A" : mark.total}</center></td>
+          <td style={getCellStyle(mark.isAbsent ? "A" : mark.total)}><center style={{fontSize:"20px"}}>{mark.isAbsent ? (mark.total === 0 ? 'A' : mark.total) : mark.total}</center></td>
           <td style={getCellStyle(mark.pageremark === "उत्तीर्ण" ? "P" : "F")}><center style={{fontSize:"20px"}}>{mark.pageremark === "उत्तीर्ण" ? "P" : "F"}</center></td>
         </tr>
       ));
