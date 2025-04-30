@@ -97,9 +97,9 @@ const Certificate = () => {
     console.log("Selected Session:", selectedSession);
     console.log("Selected Semester:", selectedSemester);
 
-    // if (selectedSession && selectedSemester) {
-    //   checkLockStatus();
-    // }
+    if (selectedSession && selectedSemester) {
+      checkLockStatus();
+    }
   }, [selectedSession, selectedSemester]);
 
   const formatCertificateData = (result, result2) => {
