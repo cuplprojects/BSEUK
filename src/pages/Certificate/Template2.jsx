@@ -277,7 +277,7 @@ const Certificate2 = ({ data, isPreview }) => {
                     }}>परीक्षाफल</span></th>
                 </tr>
                 <tr>
-                  <th colSpan="2" className="text-center" style={{ border: '1px solid black', padding: "4px 3px 12px 3px" }}>वाहय</th>
+                  <th colSpan="2" className="text-center" style={{ border: '1px solid black', padding: "4px 3px 12px 3px" }}>वा‍ह्‍य</th>
                   <th colSpan="2" className="text-center" style={{ border: '1px solid black', padding: "4px 3px 12px 3px" }}>आंतरिक</th>
                 </tr>
                 <tr>
