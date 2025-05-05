@@ -303,7 +303,7 @@ const Certificate = ({ data, isPreview }) => {
                     className="text-center"
                     style={{ border: "1px solid black", padding: "4px 3px 12px 3px" }}
                   >
-                    वाहय
+                    वा‍ह्‍य
                   </th>
                   <th
                     colSpan="2"

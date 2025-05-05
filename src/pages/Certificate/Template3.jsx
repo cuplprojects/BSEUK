@@ -237,7 +237,7 @@ const Certificate3 = ({ data, isPreview }) => {
                   <th rowSpan="4" className="text-center" style={{ border: '1px solid black', padding: '4px' }}>परीक्षाफल</th>
                 </tr>
                 <tr>
-                  <th colSpan="2" className="text-center" style={{ border: '1px solid black', padding: "4px 3px 12px 3px"  }}>वाहय</th>
+                  <th colSpan="2" className="text-center" style={{ border: '1px solid black', padding: "4px 3px 12px 3px"  }}>वा‍ह्‍य</th>
                   <th colSpan="2" className="text-center" style={{ border: '1px solid black', padding: "4px 3px 12px 3px"  }}>आंतरिक</th>
                 </tr>
                 <tr>
@@ -257,7 +257,6 @@ const Certificate3 = ({ data, isPreview }) => {
                   <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center',fontSize:"20px" }}>{totalTheoryMax}</td>
                   <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center',fontSize:"20px" }}>{data.totalExternalMaxMarks}</td>
                   <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center',fontSize:"20px" }}>{totalInternalMax}</td>
-                  {/* <td style={{ border: '1px solid black', padding: "4px  0px 12px 0px" }}>{data.totalExternalMaxMarks}</td> */}
                   <td colSpan={2} style={{ border: '1px solid black', padding: "4px  0px 12px 0px", textAlign: 'center',fontSize:"20px"  }}>{practicalMax}</td>
                   <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', padding: "4px  0px 12px 0px",fontSize:"20px"  }}>{data.totalMarks}</td>
                   <td style={{ border: '1px solid black', textAlign: 'center', fontWeight: 'bold', padding: "4px  0px 12px 0px",fontSize:"20px"  }}></td>
