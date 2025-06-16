@@ -666,7 +666,7 @@ const Certificate2 = ({ data, isPreview }) => {
                       color: "#C00000",
                     }}
                   >
-                    बाह्य आकलन
+                    वा‍ह्‍य आकलन
                   </td>
                   <td
                     colSpan="2"
