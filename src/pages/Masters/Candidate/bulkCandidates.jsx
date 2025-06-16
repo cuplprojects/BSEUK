@@ -16,6 +16,7 @@ const NewFormComponent = () => {
   const [candidates, setCandidates] = useState([]);
   const [headers, setHeaders] = useState([]);
   const [fieldHeaderMapping, setFieldHeaderMapping] = useState({});
+  const [Institutes, setInstitutes] = useState([]);
 
   const theme = useThemeStore((state) => state.theme);
 
@@ -50,7 +51,7 @@ const NewFormComponent = () => {
     { key: "fName", label: "Father's Name" },
     { key: "mName", label: "Mother's Name" },
     { key: "dob", label: "Date of Birth" },
-    { key: "institutionName", label: "Institution Name" },
+    { key: "dist_code", label: "District Code" },
     { key: "category", label: "Category" },
     { key: "papersOpted", label: "Papers" },
   ];
@@ -88,8 +89,18 @@ const NewFormComponent = () => {
       }
     };
 
+    const fetchInstitutions = async () => {
+      try {
+        const response = await API.get("Institutes");
+        setInstitutes(response.data);
+      } catch (error) {
+        console.error("Error fetching institutions:", error);
+      }
+    };
+
     fetchSemesters();
     fetchSessions();
+    fetchInstitutions();
   }, []);
 
   const handleFileChange = (e) => {
@@ -207,6 +218,16 @@ const NewFormComponent = () => {
             candidateData[field.key] = candidate[selectedHeader];
           }
         });
+
+        // Set institutionName based on dist_code
+        if (candidateData.dist_code) {
+          const matchedInstitute = Institutes.find(
+            (inst) => String(inst.dist_Code) === String(candidateData.dist_code)
+          );
+          if (matchedInstitute) {
+            candidateData.institutionName = matchedInstitute.instituteNameEnglish;
+          }
+        }
 
         candidateData.rollNumber = JSON.stringify(candidateData.rollNumber);
         return candidateData;
