@@ -21,6 +21,7 @@ const AddCandidate = () => {
         sesID: "",
         category: "",
         papersOpted: "",
+        Dist_code: "",
     });
 
     const clearFormData = () => {
@@ -37,6 +38,7 @@ const AddCandidate = () => {
             sesID: "",
             category: "",
             papersOpted: "",
+            Dist_code: "",
         });
     };
 
@@ -100,6 +102,7 @@ const AddCandidate = () => {
         const fetchInstitutions = async () => {
             try {
                 const response = await API.get('Institutes');
+                console.log(response.data)
                 setInstitutions(response.data);
             } catch (error) {
                 console.error("Error fetching institutions:", error);
@@ -142,6 +145,19 @@ const AddCandidate = () => {
         setFormData({ ...formData, [name]: value });
     };
 
+    // Custom handler for institution selection
+    const handleInstitutionChange = (e) => {
+        const selectedInstitutionName = e.target.value;
+        const selectedInstitution = institutions.find(
+            (inst) => inst.instituteNameEnglish === selectedInstitutionName
+        );
+        setFormData((prev) => ({
+            ...prev,
+            institutionName: selectedInstitutionName,
+            Dist_code: selectedInstitution ? selectedInstitution.dist_Code : ''
+        }));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -158,6 +174,7 @@ const AddCandidate = () => {
                 sesID: formData.sesID,
                 category: formData.category,
                 papersOpted: formData.papersOpted,
+                Dist_code: formData.Dist_code,
             });
             toast.success("Candidate added successfully!");
             clearFormData();
@@ -298,13 +315,13 @@ const AddCandidate = () => {
                             <select
                                 name="institutionName"
                                 value={formData.institutionName}
-                                onChange={handleChange}
+                                onChange={handleInstitutionChange}
                                 className={`w-full px-4 py-2 rounded-lg border ${inputClass}`}
                             >
                                 <option value="">Select Institution</option>
                                 {institutions.map((institution) => (
-                                    <option key={institution.id} value={institution.instituteName}>
-                                        {institution.instituteName}
+                                    <option key={institution.id} value={institution.instituteNameEnglish}>
+                                        {institution.instituteNameEnglish}
                                     </option>
                                 ))}
                             </select>
