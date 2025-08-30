@@ -471,80 +471,102 @@ const Papers = () => {
       <h1 className={`text-3xl font-bold mb-6 ${textClass}`}>Papers</h1>
 
       {/* Add Paper Form */}
-      <div className={`mb-6 p-4 rounded-lg ${cardClass}`}>
-        <form onSubmit={handleAdd} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <input
-            type="text"
-            placeholder="Paper Name"
-            value={form.paperName}
-            onChange={(e) => updateForm("paperName", e.target.value)}
-            className={`rounded-lg px-4 py-2 ${inputClass}`}
-          />
-          <input
-            type="number"
-            placeholder="Paper Code"
-            value={form.paperCode}
-            onChange={(e) => updateForm("paperCode", e.target.value)}
-            className={`rounded-lg px-4 py-2 ${inputClass}`}
-          />
-          <select
-            value={form.paperType}
-            onChange={(e) => updateForm("paperType", e.target.value)}
-            className={`rounded-lg px-4 py-2 ${inputClass}`}
-          >
-            <option value={0}>Type 0</option>
-            <option value={1}>Type 1</option>
-            <option value={2}>Type 2</option>
-          </select>
-          <select
-            value={form.semID}
-            onChange={(e) => updateForm("semID", e.target.value)}
-            className={`rounded-lg px-4 py-2 ${inputClass}`}
-          >
-            {semesters.map((s) => (
-              <option key={s.semID} value={s.semID}>
-                {s.semesterName}
-              </option>
-            ))}
-          </select>
+            <div className={`mb-6 p-4 rounded-lg ${cardClass}`}>
+                <form onSubmit={handleAdd} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+                    <div>
+                        <label htmlFor="paperName" className={`block mb-2 ${textClass}`}>Paper Name</label>
+                        <input
+                            type="text"
+                            placeholder="Paper Name"
+                            value={form.paperName}
+                            onChange={(e) => updateForm("paperName", e.target.value)}
+                            className={`rounded-lg px-4 py-2 ${inputClass}`}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="paperCode" className={`block mb-2 ${textClass}`}>Paper Code</label>
+                        <input
+                            type="number"
+                            placeholder="Paper Code"
+                            value={form.paperCode}
+                            onChange={(e) => updateForm("paperCode", e.target.value)}
+                            className={`rounded-lg px-4 py-2 ${inputClass}`}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="paperType" className={`block mb-2 ${textClass}`}>Paper Type</label>
+                        <select
+                            value={form.paperType}
+                            onChange={(e) => updateForm("paperType", e.target.value)}
+                            className={`rounded-lg px-4 py-2 ${inputClass}`}
+                        >
+                            <option value={0}>Type 0</option>
+                            <option value={1}>Type 1</option>
+                            <option value={2}>Type 2</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label htmlFor="semID" className={`block mb-2 ${textClass}`}>Semester</label>
+                        <select
+                            value={form.semID}
+                            onChange={(e) => updateForm("semID", e.target.value)}
+                            className={`rounded-lg px-4 py-2 ${inputClass}`}
+                        >
+                            {semesters.map((s) => (
+                                <option key={s.semID} value={s.semID}>
+                                    {s.semesterName}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div>
+                        <label htmlFor="theoryPaperMaxMarks" className={`block mb-2 ${textClass}`}>Theory Max Marks</label>
+                        <input
+                            type="number"
+                            placeholder="Theory Max Marks"
+                            value={form.theoryPaperMaxMarks}
+                            onChange={(e) => updateForm("theoryPaperMaxMarks", e.target.value)}
+                            className={`rounded-lg px-4 py-2 ${inputClass}`}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="interalMaxMarks" className={`block mb-2 ${textClass}`}>Internal Max Marks</label>
+                        <input
+                            type="number"
+                            placeholder="Internal Max Marks"
+                            value={form.interalMaxMarks}
+                            onChange={(e) => updateForm("interalMaxMarks", e.target.value)}
+                            className={`rounded-lg px-4 py-2 ${inputClass}`}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="practicalMaxMarks" className={`block mb-2 ${textClass}`}>Practical Max Marks</label>
+                        <input
+                            type="number"
+                            placeholder="Practical Max Marks"
+                            value={form.practicalMaxMarks}
+                            onChange={(e) => updateForm("practicalMaxMarks", e.target.value)}
+                            className={`rounded-lg px-4 py-2 ${inputClass}`}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="totalMaxMarks" className={`block mb-2 ${textClass}`}>Total Max Marks</label>
+                        <input
+                            type="number"
+                            placeholder="Total Max (auto)"
+                            value={computeTotal(form.theoryPaperMaxMarks, form.interalMaxMarks, form.practicalMaxMarks)}
+                            readOnly
+                            className={`rounded-lg px-4 py-2 ${inputClass}`}
+                        />
+                    </div>
 
-          <input
-            type="number"
-            placeholder="Theory Max Marks"
-            value={form.theoryPaperMaxMarks}
-            onChange={(e) => updateForm("theoryPaperMaxMarks", e.target.value)}
-            className={`rounded-lg px-4 py-2 ${inputClass}`}
-          />
-          <input
-            type="number"
-            placeholder="Internal Max Marks"
-            value={form.interalMaxMarks}
-            onChange={(e) => updateForm("interalMaxMarks", e.target.value)}
-            className={`rounded-lg px-4 py-2 ${inputClass}`}
-          />
-          <input
-            type="number"
-            placeholder="Practical Max Marks"
-            value={form.practicalMaxMarks}
-            onChange={(e) => updateForm("practicalMaxMarks", e.target.value)}
-            className={`rounded-lg px-4 py-2 ${inputClass}`}
-          />
-          <input
-            type="number"
-            placeholder="Total Max (auto)"
-            value={computeTotal(form.theoryPaperMaxMarks, form.interalMaxMarks, form.practicalMaxMarks)}
-            readOnly
-            className={`rounded-lg px-4 py-2 ${inputClass}`}
-          />
-
-          <div className="md:col-span-2 lg:col-span-4 flex justify-end">
-            <button type="submit" className={`px-6 py-2 rounded-lg ${buttonClass}`}>
-              Add Paper
-            </button>
-          </div>
-        </form>
-      </div>
-
+                    <div className="md:col-span-2 lg:col-span-4 flex justify-end">
+                        <button type="submit" className={`px-6 py-2 rounded-lg ${buttonClass}`}>
+                            Add Paper
+                        </button>
+                    </div>
+                </form>
+            </div>
       {/* Search and Rows per page */}
       {papers.length > 0 && (
         <div className={`mb-6 p-4 rounded-lg ${cardClass}`}>
