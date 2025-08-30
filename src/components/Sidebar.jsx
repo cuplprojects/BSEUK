@@ -99,13 +99,14 @@ const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
     ] : [])
 ];
 
-  const toggleExpand = (path) => {
-    setExpandedItems(prev =>
-      prev.includes(path)
-        ? prev.filter(item => item !== path)
-        : [...prev, path]
-    );
-  };
+const toggleExpand = (path) => {
+  setExpandedItems(prev =>
+    prev.includes(path)
+      ? [] // If the clicked item is already expanded, collapse all
+      : [path] // Otherwise, expand only the clicked item
+  );
+};
+
 
   const renderMenuItem = (item) => (
     <div key={item.path}>
