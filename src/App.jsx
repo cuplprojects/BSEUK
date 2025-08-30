@@ -21,6 +21,7 @@ import AllUsers from './pages/Masters/Users/Tabs/AllUsers';
 import EditCandidate from './pages/Masters/Candidate/EditCandidate';
 import { useEffect, useState } from 'react';
 import isAdminAccess from './services/isAdminAccess';
+import Papers from './pages/Masters/Papers/Papers';
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, isLoading } = useUserStore();
@@ -108,6 +109,7 @@ function App() {
           {/* Basic User Routes */}
           <Route path="marks-entry" element={<MarksEntry />} />
           <Route path="certificate-generation" element={<Certificate />} />
+          <Route path="papers" element={<Papers/>} />
 
           {/* Admin Only Routes - Only shown if isAdmin is true */}
           {isAdmin && (
