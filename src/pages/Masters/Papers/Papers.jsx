@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import API from "../../../services/api";
 import { useThemeStore } from "../../../store/themeStore";
 import { motion } from "framer-motion";
@@ -71,6 +71,7 @@ const Papers = () => {
 
   // Edit state
   const [editingId, setEditingId] = useState(null);
+  const editFormRef = useRef(null);
   const [editForm, setEditForm] = useState(null);
 
   useEffect(() => {
@@ -126,7 +127,8 @@ const Papers = () => {
   };
 
   const updateEditForm = (key, value) => {
-    const next = { ...editForm, [key]: value };
+    const source = editFormRef.current ?? editForm ?? {};
+    const next = { ...source, [key]: value };
     if (
       ["theoryPaperMaxMarks", "interalMaxMarks", "practicalMaxMarks"].includes(key)
     ) {
@@ -136,6 +138,7 @@ const Papers = () => {
         next.practicalMaxMarks
       );
     }
+    editFormRef.current = next; // keep ref in sync to avoid unmounting inputs
     setEditForm(next);
   };
 
@@ -180,32 +183,35 @@ const Papers = () => {
 
   const startEdit = (row) => {
     setEditingId(row.paperID);
-    setEditForm({ ...row });
+    editFormRef.current = { ...row };
+    setEditForm(editFormRef.current);
   };
 
   const cancelEdit = () => {
     setEditingId(null);
+    editFormRef.current = null;
     setEditForm(null);
   };
 
   const saveEdit = async () => {
-    if (!editForm || !editingId) return;
-    if (!editForm.paperName?.trim()) {
+    const current = editFormRef.current ?? editForm;
+    if (!current || !editingId) return;
+    if (!current.paperName?.trim()) {
       toast.warning("Paper name cannot be empty", { autoClose: 2000 });
       return;
     }
 
     const payload = {
       paperID: editingId,
-      paperName: editForm.paperName,
-      paperCode: toInt(editForm.paperCode),
-      paperType: toInt(editForm.paperType),
-      theoryPaperMaxMarks: toInt(editForm.theoryPaperMaxMarks),
-      interalMaxMarks: toInt(editForm.interalMaxMarks),
-      practicalMaxMarks: toInt(editForm.practicalMaxMarks),
-      semID: toInt(editForm.semID),
+      paperName: current.paperName,
+      paperCode: toInt(current.paperCode),
+      paperType: toInt(current.paperType),
+      theoryPaperMaxMarks: toInt(current.theoryPaperMaxMarks),
+      interalMaxMarks: toInt(current.interalMaxMarks),
+      practicalMaxMarks: toInt(current.practicalMaxMarks),
+      semID: toInt(current.semID),
       totalMaxMarks: toInt(
-        computeTotal(editForm.theoryPaperMaxMarks, editForm.interalMaxMarks, editForm.practicalMaxMarks)
+        computeTotal(current.theoryPaperMaxMarks, current.interalMaxMarks, current.practicalMaxMarks)
       ),
     };
 
@@ -213,6 +219,7 @@ const Papers = () => {
       await API.put(`/Papers/${editingId}`, payload);
       toast.success("Paper updated", { autoClose: 2000 });
       setEditingId(null);
+      editFormRef.current = null;
       setEditForm(null);
       fetchPapers();
     } catch (err) {
@@ -239,11 +246,11 @@ const Papers = () => {
         cell: ({ row }) => {
           const r = row.original;
           if (editingId === r.paperID) {
+            const ef = editFormRef.current || {};
             return (
               <input
-                autoFocus
                 type="text"
-                value={editForm.paperName}
+                value={ef.paperName ?? ""}
                 className={`w-full rounded-lg px-3 py-1 ${inputClass}`}
                 onChange={(e) => updateEditForm("paperName", e.target.value)}
                 onKeyDown={(e) => {
@@ -262,10 +269,11 @@ const Papers = () => {
         cell: ({ row }) => {
           const r = row.original;
           if (editingId === r.paperID) {
+            const ef = editFormRef.current || {};
             return (
               <input
                 type="number"
-                value={editForm.paperCode}
+                value={ef.paperCode ?? ""}
                 className={`w-full rounded-lg px-3 py-1 ${inputClass}`}
                 onChange={(e) => updateEditForm("paperCode", e.target.value)}
               />
@@ -280,9 +288,10 @@ const Papers = () => {
         cell: ({ row }) => {
           const r = row.original;
           if (editingId === r.paperID) {
+            const ef = editFormRef.current || {};
             return (
               <select
-                value={editForm.paperType}
+                value={ef.paperType ?? 0}
                 className={`w-full rounded-lg px-3 py-1 ${inputClass}`}
                 onChange={(e) => updateEditForm("paperType", e.target.value)}
               >
@@ -301,10 +310,11 @@ const Papers = () => {
         cell: ({ row }) => {
           const r = row.original;
           if (editingId === r.paperID) {
+            const ef = editFormRef.current || {};
             return (
               <input
                 type="number"
-                value={editForm.theoryPaperMaxMarks}
+                value={ef.theoryPaperMaxMarks ?? ""}
                 className={`w-full rounded-lg px-3 py-1 ${inputClass}`}
                 onChange={(e) => updateEditForm("theoryPaperMaxMarks", e.target.value)}
               />
@@ -319,10 +329,11 @@ const Papers = () => {
         cell: ({ row }) => {
           const r = row.original;
           if (editingId === r.paperID) {
+            const ef = editFormRef.current || {};
             return (
               <input
                 type="number"
-                value={editForm.interalMaxMarks}
+                value={ef.interalMaxMarks ?? ""}
                 className={`w-full rounded-lg px-3 py-1 ${inputClass}`}
                 onChange={(e) => updateEditForm("interalMaxMarks", e.target.value)}
               />
@@ -337,10 +348,11 @@ const Papers = () => {
         cell: ({ row }) => {
           const r = row.original;
           if (editingId === r.paperID) {
+            const ef = editFormRef.current || {};
             return (
               <input
                 type="number"
-                value={editForm.practicalMaxMarks}
+                value={ef.practicalMaxMarks ?? ""}
                 className={`w-full rounded-lg px-3 py-1 ${inputClass}`}
                 onChange={(e) => updateEditForm("practicalMaxMarks", e.target.value)}
               />
@@ -355,9 +367,10 @@ const Papers = () => {
         cell: ({ row }) => {
           const r = row.original;
           if (editingId === r.paperID) {
+            const ef = editFormRef.current || {};
             return (
               <select
-                value={editForm.semID}
+                value={ef.semID ?? 0}
                 className={`w-full rounded-lg px-3 py-1 ${inputClass}`}
                 onChange={(e) => updateEditForm("semID", e.target.value)}
               >
@@ -418,7 +431,7 @@ const Papers = () => {
         },
       },
     ],
-    [editingId, editForm, inputClass, textClass, buttonClass, cancelButtonClass, semesters]
+    [editingId, inputClass, textClass, buttonClass, cancelButtonClass, semesters]
   );
 
   const table = useReactTable({
