@@ -25,6 +25,8 @@ import { IoShieldCheckmark } from "react-icons/io5";
 import { FaUsers } from "react-icons/fa";
 import isAdminAccess from './../services/isAdminAccess';
 import { useUserStore } from './../store/useUsertoken';
+import { GiPapers } from "react-icons/gi";
+
 const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
 
   const location = useLocation();
@@ -49,6 +51,7 @@ const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
     { path: "/dashboard", icon: <FiHome className="w-6 h-6" />, label: "Dashboard" },
     { path: "/marks-entry", icon: <GiNotebook className="w-6 h-6" />, label: "Marks Entry" },
     { path: "/certificate-generation", icon: <PiCertificateBold className="w-6 h-6" />, label: "Certificate" },
+    { path: "/papers", icon: <GiPapers className="w-6 h-6" />, label: "Papers" },
     
     // Admin only menu items
     ...(isAdmin ? [
@@ -96,13 +99,14 @@ const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
     ] : [])
 ];
 
-  const toggleExpand = (path) => {
-    setExpandedItems(prev =>
-      prev.includes(path)
-        ? prev.filter(item => item !== path)
-        : [...prev, path]
-    );
-  };
+const toggleExpand = (path) => {
+  setExpandedItems(prev =>
+    prev.includes(path)
+      ? [] // If the clicked item is already expanded, collapse all
+      : [path] // Otherwise, expand only the clicked item
+  );
+};
+
 
   const renderMenuItem = (item) => (
     <div key={item.path}>
