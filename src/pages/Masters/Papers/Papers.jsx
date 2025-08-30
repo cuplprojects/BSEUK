@@ -491,8 +491,8 @@ const Papers = () => {
 
             {/* Add Paper Form */}
             <div className={`mb-6 p-4 rounded-lg ${cardClass}`}>
-                <form onSubmit={handleAdd} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
-                    <div>
+                <form onSubmit={handleAdd} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="flex flex-col">
                         <label htmlFor="paperName" className={`block mb-2 ${textClass}`}>Paper Name</label>
                         <input
                             type="text"
@@ -502,7 +502,8 @@ const Papers = () => {
                             className={`rounded-lg px-4 py-2 ${inputClass}`}
                         />
                     </div>
-                    <div>
+
+                    <div className="flex flex-col">
                         <label htmlFor="paperCode" className={`block mb-2 ${textClass}`}>Paper Code</label>
                         <input
                             type="number"
@@ -512,7 +513,8 @@ const Papers = () => {
                             className={`rounded-lg px-4 py-2 ${inputClass}`}
                         />
                     </div>
-                    <div>
+
+                    <div className="flex flex-col">
                         <label htmlFor="paperType" className={`block mb-2 ${textClass}`}>Paper Type</label>
                         <select
                             value={form.paperType}
@@ -527,7 +529,7 @@ const Papers = () => {
                         </select>
                     </div>
 
-                    <div>
+                    <div className="flex flex-col">
                         <label htmlFor="semID" className={`block mb-2 ${textClass}`}>Semester</label>
                         <select
                             value={form.semID}
@@ -541,7 +543,8 @@ const Papers = () => {
                             ))}
                         </select>
                     </div>
-                    <div>
+
+                    <div className="flex flex-col">
                         <label htmlFor="theoryPaperMaxMarks" className={`block mb-2 ${textClass}`}>Theory Max Marks</label>
                         <input
                             type="number"
@@ -551,7 +554,8 @@ const Papers = () => {
                             className={`rounded-lg px-4 py-2 ${inputClass}`}
                         />
                     </div>
-                    <div>
+
+                    <div className="flex flex-col">
                         <label htmlFor="interalMaxMarks" className={`block mb-2 ${textClass}`}>Internal Max Marks</label>
                         <input
                             type="number"
@@ -561,7 +565,8 @@ const Papers = () => {
                             className={`rounded-lg px-4 py-2 ${inputClass}`}
                         />
                     </div>
-                    <div>
+
+                    <div className="flex flex-col">
                         <label htmlFor="practicalMaxMarks" className={`block mb-2 ${textClass}`}>Practical Max Marks</label>
                         <input
                             type="number"
@@ -571,7 +576,8 @@ const Papers = () => {
                             className={`rounded-lg px-4 py-2 ${inputClass}`}
                         />
                     </div>
-                    <div>
+
+                    <div className="flex flex-col">
                         <label htmlFor="totalMaxMarks" className={`block mb-2 ${textClass}`}>Total Max Marks</label>
                         <input
                             type="number"
@@ -582,13 +588,14 @@ const Papers = () => {
                         />
                     </div>
 
-                    <div className="md:col-span-2 lg:col-span-4 flex justify-end">
+                    <div className="md:col-span-2 lg:col-span-4 flex justify-end mt-4">
                         <button type="submit" className={`px-6 py-2 rounded-lg ${buttonClass}`}>
                             Add Paper
                         </button>
                     </div>
                 </form>
             </div>
+
             {/* Search and Rows per page */}
             {papers.length > 0 && (
                 <div className={`mb-6 p-4 rounded-lg ${cardClass}`}>
