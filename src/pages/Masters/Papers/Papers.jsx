@@ -74,9 +74,14 @@ const Papers = () => {
     const editFormRef = useRef(null);
     const [editForm, setEditForm] = useState(null);
 
+    // Paper Types state
+    const [paperTypes, setPaperTypes] = useState([]);
+
+
     useEffect(() => {
         fetchPapers();
         fetchSemesters();
+        fetchPaperTypes();
     }, []);
 
     const fetchPapers = async () => {
@@ -94,6 +99,15 @@ const Papers = () => {
             setSemesters(res.data || []);
         } catch (err) {
             toast.error("Failed to load semesters");
+        }
+    };
+
+    const fetchPaperTypes = async () => {
+        try {
+            const res = await API.get("/PaperTypes");
+            setPaperTypes(res.data || []);
+        } catch (err) {
+            toast.error("Failed to load paper types");
         }
     };
 
@@ -295,15 +309,20 @@ const Papers = () => {
                                 className={`w-full rounded-lg px-3 py-1 ${inputClass}`}
                                 onChange={(e) => updateEditForm("paperType", e.target.value)}
                             >
-                                <option value={0}>Type 0</option>
-                                <option value={1}>Type 1</option>
-                                <option value={2}>Type 2</option>
+                                {paperTypes.map((pt) => (
+                                    <option key={pt.paperTypeID} value={pt.paperTypeID}>
+                                        {pt.paperTypee}
+                                    </option>
+                                ))}
                             </select>
                         );
                     }
-                    return <span className={textClass}>{r.paperType}</span>;
+                    // Display the paper type name instead of ID
+                    const paperType = paperTypes.find((pt) => pt.paperTypeID === r.paperType);
+                    return <span className={textClass}>{paperType ? paperType.paperTypee : r.paperType}</span>;
                 },
             },
+
             {
                 accessorKey: "theoryPaperMaxMarks",
                 header: "Theory Max",
@@ -500,11 +519,14 @@ const Papers = () => {
                             onChange={(e) => updateForm("paperType", e.target.value)}
                             className={`rounded-lg px-4 py-2 ${inputClass}`}
                         >
-                            <option value={0}>Type 0</option>
-                            <option value={1}>Type 1</option>
-                            <option value={2}>Type 2</option>
+                            {paperTypes.map((pt) => (
+                                <option key={pt.paperTypeID} value={pt.paperTypeID}>
+                                    {pt.paperTypee}
+                                </option>
+                            ))}
                         </select>
                     </div>
+
                     <div>
                         <label htmlFor="semID" className={`block mb-2 ${textClass}`}>Semester</label>
                         <select
@@ -620,10 +642,10 @@ const Papers = () => {
                                             key={header.id}
                                             onClick={header.column.getToggleSortingHandler()}
                                             className={`p-4 text-left font-semibold ${header.id.includes("srNo")
-                                                    ? "w-24"
-                                                    : header.id.includes("actions")
-                                                        ? "w-56"
-                                                        : "flex-1"
+                                                ? "w-24"
+                                                : header.id.includes("actions")
+                                                    ? "w-56"
+                                                    : "flex-1"
                                                 } ${tableCellClass} ${header.column.getCanSort() ? "cursor-pointer" : ""}`}
                                         >
                                             <div className="flex items-center justify-between">
@@ -647,20 +669,20 @@ const Papers = () => {
                                 <tr
                                     key={row.id}
                                     className={`${tableCellClass} ${index % 2 === 0
-                                            ? theme === "dark"
-                                                ? "bg-purple-900/20"
-                                                : "bg-blue-50/50"
-                                            : ""
+                                        ? theme === "dark"
+                                            ? "bg-purple-900/20"
+                                            : "bg-blue-50/50"
+                                        : ""
                                         }`}
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <td
                                             key={cell.id}
                                             className={`p-4 ${cell.column.id.includes("srNo")
-                                                    ? "w-24"
-                                                    : cell.column.id.includes("actions")
-                                                        ? "w-56"
-                                                        : "flex-1"
+                                                ? "w-24"
+                                                : cell.column.id.includes("actions")
+                                                    ? "w-56"
+                                                    : "flex-1"
                                                 }`}
                                         >
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
