@@ -234,7 +234,7 @@ const toggleExpand = (path) => {
             height: isCollapsed ? "3rem" : "8rem"
           }}
           transition={{ duration: 0.2 }}
-          className="hidden md:flex justify-center items-center rounded-full mx-auto mb-2"
+          className="hidden md:flex justify-center items-center rounded-full mx-auto mb-2 mt-2"
           style={{
             backgroundImage: `url(${Logo})`,
             backgroundSize: 'cover',
