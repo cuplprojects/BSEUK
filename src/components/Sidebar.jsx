@@ -26,6 +26,7 @@ import { FaUsers } from "react-icons/fa";
 import isAdminAccess from './../services/isAdminAccess';
 import { useUserStore } from './../store/useUsertoken';
 import { GiPapers } from "react-icons/gi";
+import { FaNewspaper } from "react-icons/fa";
 
 const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
 
@@ -52,6 +53,7 @@ const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
     { path: "/marks-entry", icon: <GiNotebook className="w-6 h-6" />, label: "Marks Entry" },
     { path: "/certificate-generation", icon: <PiCertificateBold className="w-6 h-6" />, label: "Certificate" },
     { path: "/papers", icon: <GiPapers className="w-6 h-6" />, label: "Papers" },
+    { path: "/tabulation-report", icon: <FaNewspaper className="w-6 h-6" />, label: "Tabulation Report" },
     
     // Admin only menu items
     ...(isAdmin ? [
