@@ -49,15 +49,15 @@ const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
 
   const menuItems = [
     // Common routes for all authenticated users
-    { path: "/dashboard", icon: <FiHome className="w-6 h-6" />, label: "Dashboard" },
-    { path: "/marks-entry", icon: <GiNotebook className="w-6 h-6" />, label: "Marks Entry" },
-    { path: "/certificate-generation", icon: <PiCertificateBold className="w-6 h-6" />, label: "Certificate" },
-    { path: "/papers", icon: <GiPapers className="w-6 h-6" />, label: "Papers" },
-    { path: "/tabulation-report", icon: <FaNewspaper className="w-6 h-6" />, label: "Tabulation Report" },
+    { path: "/dashboard", icon: <FiHome className="w-4 h-4" />, label: "Dashboard" },
+    { path: "/marks-entry", icon: <GiNotebook className="w-4 h-4" />, label: "Marks Entry" },
+    { path: "/certificate-generation", icon: <PiCertificateBold className="w-4 h-4" />, label: "Certificate" },
+    { path: "/papers", icon: <GiPapers className="w-4 h-4" />, label: "Papers" },
+    { path: "/tabulation-report", icon: <FaNewspaper className="w-4 h-4" />, label: "Tabulation Report" },
     
     // Admin only menu items
     ...(isAdmin ? [
-      { path: "/users", icon: < FiUsers  className="w-6 h-6" />, label: "Users" ,
+      { path: "/users", icon: < FiUsers  className="w-4 h-4" />, label: "Users" ,
         subItems: [
           {
             path: "/users/add",
@@ -73,7 +73,7 @@ const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
       },
       {
         path: "candidates",
-        icon: <PiStudentBold className="w-6 h-6" />,
+        icon: <PiStudentBold className="w-4 h-4" />,
         label: "Candidates",
         subItems: [
           {
@@ -93,11 +93,11 @@ const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
           }
         ]
       },
-      { path: "/add-groups", icon: <MdGroups className="w-6 h-6" />, label: "Groups" },
-      // { path: "/add-roles", icon: <IoShieldCheckmark className="w-6 h-6" />, label: "Roles" },
-      { path: "/add-session", icon: <SlCalender className="w-6 h-6" />, label: "Sessions" },
-      { path: "/add-institution", icon: <FaBuildingColumns className="w-6 h-6" />, label: "Institutions" },
-      { path: "/add-category", icon: <FaList className="w-6 h-6" />, label: "Category" },
+      { path: "/add-groups", icon: <MdGroups className="w-4 h-4" />, label: "Groups" },
+      // { path: "/add-roles", icon: <IoShieldCheckmark className="w-4 h-4" />, label: "Roles" },
+      { path: "/add-session", icon: <SlCalender className="w-4 h-4" />, label: "Sessions" },
+      { path: "/add-institution", icon: <FaBuildingColumns className="w-4 h-4" />, label: "Institutions" },
+      { path: "/add-category", icon: <FaList className="w-4 h-4" />, label: "Category" },
     ] : [])
 ];
 
@@ -225,7 +225,7 @@ const toggleExpand = (path) => {
       transition={{ duration: 0.2 }}
       className={`h-screen ${theme === 'dark' ? 'bg-black/40 backdrop-blur-xl border-r border-purple-500/20' : 'bg-black/40 backdrop-blur-xl border-r border-slate-200'}`}
     >
-      <div className="p-4">
+      <div className="p-1">
         {/* Logo Container */}
         <motion.div
           initial={false}
@@ -248,7 +248,7 @@ const toggleExpand = (path) => {
               onClick={onClose}
               className="text-purple-300 hover:text-purple-100 transition-colors absolute right-4 top-4"
             >
-              <FiX className="w-6 h-6" />
+              <FiX className="w-4 h-4" />
             </button>
           )}
           <AnimatePresence mode="wait">
@@ -281,14 +281,14 @@ const toggleExpand = (path) => {
                 }`}
             >
               {isCollapsed ? (
-                <FiChevronRight className={`w-6 h-6 ${theme === 'dark' ? 'text-purple-300 hover:text-purple-100' : 'text-white hover:text-blue-700 hover:bg-white hover:rounded-full'}`} />
+                <FiChevronRight className={`w-4 h-4 ${theme === 'dark' ? 'text-purple-300 hover:text-purple-100' : 'text-white hover:text-blue-700 hover:bg-white hover:rounded-full'}`} />
               ) : (
-                <FiChevronLeft className={`w-6 h-6 ${theme === 'dark' ? 'text-purple-300 hover:text-purple-100' : 'text-white hover:text-blue-700 hover:bg-white hover:rounded-full'}`} />
+                <FiChevronLeft className={`w-4 h-4 ${theme === 'dark' ? 'text-purple-300 hover:text-purple-100' : 'text-white hover:text-blue-700 hover:bg-white hover:rounded-full'}`} />
               )}
             </motion.button>
           )}
         </div>
-        <nav className="space-y-2">
+        <nav className="space-y-1">
           {menuItems.map(renderMenuItem)}
         </nav>
       </div>
