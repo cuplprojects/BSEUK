@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import API from '../../services/api';
+import { toast, ToastContainer } from "react-toastify";
 import { useThemeStore } from '../../store/themeStore';
 
 const TabulationReport = () => {
@@ -7,6 +8,8 @@ const TabulationReport = () => {
 
     const [sessions, setSessions] = useState([]);
     const [semesters, setSemesters] = useState([]);
+    const [selectedSemester, setSelectedSemester] = useState('');
+    const [selectedSession, setSelectedSession] = useState('');
 
     const cardClass = theme === 'dark'
         ? 'bg-black/40 backdrop-blur-xl border border-purple-500/20 hover:bg-purple-900/20'
@@ -39,39 +42,80 @@ const TabulationReport = () => {
         }
     };
 
+    const handleDownload = () => {
+        // Download logic goes here
+        // For now just an alert
+        toast.info("Download triggered for selected semester and session");
+    }
+
     return (
-        <div className="p-6">
+        <div className="p-8">
+             <ToastContainer
+                    position="top-right"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    newestOnTop
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    theme={theme === 'dark' ? 'dark' : 'light'}
+                  />
             <h1 className={`text-center text-3xl font-bold mb-6 mt-20 ${textClass}`}>
                 Tabulation Report
             </h1>
 
-            {/* Map Semester Data */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {semesters.map((sem) => (
-                    <div 
-                        key={sem.semID} 
-                        className={`p-4 rounded-2xl ${cardClass}`}
+            {/* Dropdown Selectors */}
+            <div className="flex flex-col md:flex-row items-center gap-6 mb-8">
+                <div>
+                    <label className={`block mb-1 font-semibold ${textClass}`}>Semester</label>
+                    <select
+                        className="px-4 py-2 rounded-md border border-gray-300 focus:ring focus:outline-none"
+                        value={selectedSemester}
+                        onChange={(e) => setSelectedSemester(e.target.value)}
                     >
-                        <h2 className={`text-xl font-semibold ${textClass}`}>
-                            {sem.semesterName} - {sem.semID}
-                        </h2>
-                    </div>
-                ))}
+                        <option value="">Select Semester</option>
+                        {semesters.map(sem => (
+                            <option key={sem.semID} value={sem.semID}>
+                                {sem.semesterName}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div>
+                    <label className={`block mb-1 font-semibold ${textClass}`}>Session</label>
+                    <select
+                        className="px-4 py-2 rounded-md border border-gray-300 focus:ring focus:outline-none"
+                        value={selectedSession}
+                        onChange={(e) => setSelectedSession(e.target.value)}
+                    >
+                        <option value="">Select Session</option>
+                        {sessions.map(sess => (
+                            <option key={sess.sesID} value={sess.sesID}>
+                                {sess.sessionName}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <button
+                    className="mt-4 md:mt-6 px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md font-semibold shadow transition"
+                    onClick={handleDownload}
+                >
+                    Download
+                </button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
-                {sessions.map((sem) => (
-                    <div 
-                        key={sem.semID} 
-                        className={`p-4 rounded-2xl ${cardClass}`}
-                    >
-                        <h2 className={`text-xl font-semibold ${textClass}`}>
-                            {sem.sessionName} - {sem.sesID}
-                        </h2>
-                    </div>
-                ))}
+
+            {/* Preview Area */}
+            <div className="w-full flex justify-center">
+                <div className="border-2 border-dashed border-gray-400 rounded-xl w-[595px] h-[420px] flex items-center justify-center bg-gray-50">
+                    <span className="text-gray-400 text-xl">
+                        [A5 Landscape Preview Area]
+                    </span>
+                </div>
             </div>
         </div>
     )
 }
 
-export default TabulationReport
+export default TabulationReport;
