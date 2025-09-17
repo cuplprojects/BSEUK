@@ -62,7 +62,7 @@ const TabulationReport = () => {
                     pauseOnHover
                     theme={theme === 'dark' ? 'dark' : 'light'}
                   />
-            <h1 className={`text-center text-3xl font-bold mb-6 mt-20 ${textClass}`}>
+            <h1 className={`text-center text-3xl font-bold mb-6 mt-0 ${textClass}`}>
                 Tabulation Report
             </h1>
 
