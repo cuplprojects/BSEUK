@@ -22,6 +22,7 @@ import EditCandidate from './pages/Masters/Candidate/EditCandidate';
 import { useEffect, useState } from 'react';
 import isAdminAccess from './services/isAdminAccess';
 import Papers from './pages/Masters/Papers/Papers';
+import TabulationReport from './pages/TabulationReport/TabulationReport';
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, isLoading } = useUserStore();
@@ -110,6 +111,7 @@ function App() {
           <Route path="marks-entry" element={<MarksEntry />} />
           <Route path="certificate-generation" element={<Certificate />} />
           <Route path="papers" element={<Papers/>} />
+          <Route path="tabulation-report" element={<TabulationReport/>} />
 
           {/* Admin Only Routes - Only shown if isAdmin is true */}
           {isAdmin && (
