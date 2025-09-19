@@ -157,7 +157,7 @@ const TabulationReport = () => {
 
                 {/* Month */}
                 <div>
-                    <label className={`block mb-1 font-semibold ${textClass}`}>Month</label>
+                    <label className={`block mb-1 font-semibold ${textClass}`}>Month <span className='text-red-600'>(in kruti dev)</span> </label>
                     <input
                         type="text"
                         className="px-4 py-2 rounded-md border border-gray-300 focus:ring focus:outline-none"
