@@ -23,6 +23,7 @@ import { useEffect, useState } from 'react';
 import isAdminAccess from './services/isAdminAccess';
 import Papers from './pages/Masters/Papers/Papers';
 import TabulationReport from './pages/TabulationReport/TabulationReport';
+import Marksheet from './pages/Marksheet/Marksheet';
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, isLoading } = useUserStore();
@@ -110,6 +111,7 @@ function App() {
           {/* Basic User Routes */}
           <Route path="marks-entry" element={<MarksEntry />} />
           <Route path="certificate-generation" element={<Certificate />} />
+          <Route path="marksheet-generation" element={<Marksheet />} />
           <Route path="papers" element={<Papers/>} />
           <Route path="tabulation-report" element={<TabulationReport/>} />
 

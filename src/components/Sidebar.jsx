@@ -52,6 +52,7 @@ const Sidebar = ({ onClose, isMobile, isCollapsed, onCollapse }) => {
     { path: "/dashboard", icon: <FiHome className="w-4 h-4" />, label: "Dashboard" },
     { path: "/marks-entry", icon: <GiNotebook className="w-4 h-4" />, label: "Marks Entry" },
     { path: "/certificate-generation", icon: <PiCertificateBold className="w-4 h-4" />, label: "Certificate" },
+    // { path: "/marksheet-generation", icon: <PiCertificateBold className="w-4 h-4" />, label: "Marksheet" },
     { path: "/papers", icon: <GiPapers className="w-4 h-4" />, label: "Papers" },
     { path: "/tabulation-report", icon: <FaNewspaper className="w-4 h-4" />, label: "Tabulation Report" },
     
